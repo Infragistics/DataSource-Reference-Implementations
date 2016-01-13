@@ -11,10 +11,10 @@ using Reference.DataSources.OData;
 
 namespace DataPresenter.DataSources.OData
 {
-    /// <summary>
-    /// Represents an async paging data source that gets data from a remote server using the OData API.
-    /// </summary>
-    public sealed class ODataDataSource : AsyncPagingDataSourceBase 
+	/// <summary>
+	/// Represents an async paging data source that gets data from a remote server using the OData API and is designed to work with the XamDataPresenter family of controls.
+	/// </summary>
+	public sealed class ODataDataSource : AsyncPagingDataSourceBase 
     {
         #region Constructor
         /// <summary>

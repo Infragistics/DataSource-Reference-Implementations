@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataPresenter.DataSources.OData", "DataPresenter.DataSources.OData\DataPresenter.DataSources.OData.csproj", "{BFBFD6BD-05FC-4491-A206-DEA7EA11C4BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataPresenter.DataSources.OData.SampleApp", "DataPresenter.DataSources.OData.SampleApp\DataPresenter.DataSources.OData.SampleApp.csproj", "{E9EB5B6B-511B-47D0-88FE-B65AF73A7CB7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{BFBFD6BD-05FC-4491-A206-DEA7EA11C4BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFBFD6BD-05FC-4491-A206-DEA7EA11C4BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFBFD6BD-05FC-4491-A206-DEA7EA11C4BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9EB5B6B-511B-47D0-88FE-B65AF73A7CB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9EB5B6B-511B-47D0-88FE-B65AF73A7CB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9EB5B6B-511B-47D0-88FE-B65AF73A7CB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9EB5B6B-511B-47D0-88FE-B65AF73A7CB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

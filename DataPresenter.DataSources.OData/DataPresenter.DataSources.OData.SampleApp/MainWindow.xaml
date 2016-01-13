@@ -1,0 +1,69 @@
+﻿<Window x:Class="DataPresenter.DataSources.OData.SampleApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DataPresenter.DataSources.OData.SampleApp"
+        xmlns:igDP="http://infragistics.com/DataPresenter"
+        xmlns:igData="http://infragistics.com/DataPresenter"
+        xmlns:igControls="http://schemas.infragistics.com/xaml"
+        xmlns:PresentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="700" Width="900">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="9*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" Margin="3">
+            <StackPanel>
+                <StackPanel.Resources>
+                    <Style x:Key="HeaderText" TargetType="TextBlock">
+                        <Setter Property="Background" Value="DarkBlue"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="Margin" Value="2"/>
+                        <Setter Property="TextAlignment" Value="Center"/>
+                    </Style>    
+                </StackPanel.Resources>
+                
+                <!-- OData Sources -->
+                <TextBlock Text="OData Sources" Style="{StaticResource HeaderText}"/>
+                <ComboBox x:Name="cboOdataSources" SelectionChanged="cboOdataSources_SelectionChanged" Margin="2">
+                    <local:ODataSourceListItem BaseUri="http://services.odata.org/V4/Northwind/Northwind.svc" EntitySet="Orders" Description="Northwind Orders"/>
+                    <local:ODataSourceListItem BaseUri="http://services.odata.org/AdventureWorksV3/AdventureWorks.svc" EntitySet="CompanySales"  Description="AdventureWorks Company Sales"/>
+                    <local:ODataSourceListItem BaseUri="http://data.scottsdaleaz.gov/Planning/BuildingPermits.svc" EntitySet="BuildingPermits"  Description="Scottsdale Building Permits"/>
+                    <local:ODataSourceListItem BaseUri="http://data.scottsdaleaz.gov/Planning/BuildingPermits.svc" EntitySet="BuildingInspections"  Description="Scottsdale Building Inspections"/>
+                    <local:ODataSourceListItem BaseUri="http://data.scottsdaleaz.gov/MunicipalServices/CapitalImprovementProjects.svc" EntitySet="Projects"  Description="Scottsdale Capital Improvement Projects"/>
+                    <local:ODataSourceListItem BaseUri="http://data.scottsdaleaz.gov/Finance/BusinessLicenses.svc" EntitySet="BusinessLicenses"  Description="Scottsdale Business Licenses"/>
+                    <local:ODataSourceListItem BaseUri="http://data.scottsdaleaz.gov/Purchasing/Solicitations.svc" EntitySet="Solicitations"  Description="Scottsdale Purchasing Solicitations"/>
+                    <local:ODataSourceListItem BaseUri="http://packages.nuget.org/v1/FeedService.svc" EntitySet="Packages"  Description="NuGet Packages"/>
+                    <local:ODataSourceListItem BaseUri="http://www.nerddinner.com/Services/OData.svc" EntitySet="Dinners"  Description="NerdDinner Dinners"/>
+                    <local:ODataSourceListItem BaseUri="http://www.nerddinner.com/Services/OData.svc" EntitySet="RSVPs"  Description="NerdDinner RSVPs"/>
+                </ComboBox>
+                <CheckBox x:Name="chkNullOutDatasource" Margin="0,2" IsChecked="True">Null out datasource before setting new</CheckBox>
+
+                <!-- Pending Message -->
+                <Rectangle Width="1" Height="10" Fill="Transparent"/>
+                <TextBlock Text="Pending Message" Style="{StaticResource HeaderText}"/>
+                <TextBox x:Name="txtPendingMessage" Text="loading..." TextChanged="txtPendingMessage_TextChanged"/>
+            </StackPanel>
+        </StackPanel>
+
+        <GridSplitter Grid.Column="1" Width="7" Margin="2,0" Background="Gray" ResizeBehavior="PreviousAndNext"/>
+        
+        <igDP:XamDataPresenter x:Name="dataGrid1" Grid.Column="2">
+            <igDP:XamDataPresenter.Resources>
+                <Style TargetType="igDP:DataRecordCellArea">
+                    <Setter Property="DynamicDataPendingBackgroundBrush" Value="LightBlue"></Setter>
+                    <Setter Property="DynamicDataPendingForegroundBrush" Value="DarkBlue"></Setter>
+                </Style>    
+            </igDP:XamDataPresenter.Resources>
+            
+            <igDP:XamDataPresenter.FieldSettings>
+                <igDP:FieldSettings LabelClickAction="SortByMultipleFieldsTriState"/>
+            </igDP:XamDataPresenter.FieldSettings>
+        </igDP:XamDataPresenter>
+    </Grid>
+</Window>
