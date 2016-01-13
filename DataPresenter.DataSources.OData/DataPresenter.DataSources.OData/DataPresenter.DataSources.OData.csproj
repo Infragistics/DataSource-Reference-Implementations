@@ -105,11 +105,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseVirtualDataSourceClasses\ODataDataSourcePage.cs" />
-    <Compile Include="BaseVirtualDataSourceClasses\ODataDataSourceSchema.cs" />
-    <Compile Include="BaseVirtualDataSourceClasses\ODataVirtualDataSource.cs" />
-    <Compile Include="BaseVirtualDataSourceClasses\ODataVirtualDataSourceDataProvider.cs" />
-    <Compile Include="BaseVirtualDataSourceClasses\ODataVirtualDataSourceDataProviderWorker.cs" />
+    <Compile Include="BaseODataClasses\ODataDataSourcePage.cs" />
+    <Compile Include="BaseODataClasses\ODataDataSourceSchema.cs" />
+    <Compile Include="BaseODataClasses\ODataVirtualDataSource.cs" />
+    <Compile Include="BaseODataClasses\ODataVirtualDataSourceDataProvider.cs" />
+    <Compile Include="BaseODataClasses\ODataVirtualDataSourceDataProviderWorker.cs" />
     <Compile Include="ODataDataSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
