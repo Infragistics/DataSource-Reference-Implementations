@@ -7,7 +7,7 @@ using System.Linq;
 using GridODataTest;
 using System.Xml;
 
-namespace DataPresenter.DataSources.OData
+namespace Reference.DataSources.OData
 {
     internal class ODataVirtualDataSourceDataProviderWorkerSettings
         : AsyncVirtualDataSourceDataProviderWorkerSettings

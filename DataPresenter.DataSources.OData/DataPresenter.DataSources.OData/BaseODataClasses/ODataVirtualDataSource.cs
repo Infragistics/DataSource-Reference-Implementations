@@ -15,7 +15,7 @@ using Windows.UI;
 using Windows.UI.Xaml;
 #endif
 
-namespace DataPresenter.DataSources.OData
+namespace Reference.DataSources.OData
 {
 
     /// <summary>

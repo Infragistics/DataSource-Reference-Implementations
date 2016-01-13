@@ -8,7 +8,7 @@ using Simple.OData.Client;
 using System.Diagnostics;
 using Infragistics.Controls;
 
-namespace DataPresenter.DataSources.OData
+namespace Reference.DataSources.OData
 {
     /// <summary>
     /// Represents the schema of the items within a page of the virtual data source.

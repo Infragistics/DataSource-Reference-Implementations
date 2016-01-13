@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows;
 using Infragistics.Windows.DataPresenter.DataSources;
 using Infragistics.Controls;
+using Reference.DataSources.OData;
 
 namespace DataPresenter.DataSources.OData
 {

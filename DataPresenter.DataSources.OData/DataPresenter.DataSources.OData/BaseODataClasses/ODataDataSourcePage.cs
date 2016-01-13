@@ -8,7 +8,7 @@ using Simple.OData.Client;
 using System.Diagnostics;
 using Infragistics.Controls;
 
-namespace DataPresenter.DataSources.OData
+namespace Reference.DataSources.OData
 {
     /// <summary>
     /// Represents a single page of data retreived from the ODataVirtualDataSource
