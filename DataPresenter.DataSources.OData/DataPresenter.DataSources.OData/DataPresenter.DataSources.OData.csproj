@@ -34,15 +34,15 @@
   <ItemGroup>
     <Reference Include="InfragisticsWPF4.DataPresenter.DataSources.Async.v16.1, Version=16.1.0.9000, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\..\work\NetAdvantage\DEV\XAML\2016.1\Source\Build\InfragisticsWPF4.DataPresenter.DataSources.Async.v16.1.dll</HintPath>
+      <HintPath>c:\work\NetAdvantage\DEV\XAML\2016.1\Source\Build\InfragisticsWPF4.DataPresenter.DataSources.Async.v16.1.dll</HintPath>
     </Reference>
     <Reference Include="InfragisticsWPF4.DataVisualization.v16.1, Version=16.1.0.9000, Culture=neutral, PublicKeyToken=1102135f7483647e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\..\work\NetAdvantage\DEV\XAML\2016.1\Source\Build\InfragisticsWPF4.DataVisualization.v16.1.dll</HintPath>
+      <HintPath>c:\work\NetAdvantage\DEV\XAML\2016.1\Source\Build\InfragisticsWPF4.DataVisualization.v16.1.dll</HintPath>
     </Reference>
     <Reference Include="InfragisticsWPF4.v16.1, Version=16.1.0.9000, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\..\work\NetAdvantage\DEV\XAML\2016.1\Source\Build\InfragisticsWPF4.v16.1.dll</HintPath>
+      <HintPath>c:\work\NetAdvantage\DEV\XAML\2016.1\Source\Build\InfragisticsWPF4.v16.1.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Data.Edm, Version=5.6.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Data.Edm.5.6.4\lib\net40\Microsoft.Data.Edm.dll</HintPath>
@@ -106,7 +106,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseODataClasses\ODataDataSourcePage.cs" />
-    <Compile Include="BaseODataClasses\ODataDataSourceSchema.cs" />
     <Compile Include="BaseODataClasses\ODataVirtualDataSource.cs" />
     <Compile Include="BaseODataClasses\ODataVirtualDataSourceDataProvider.cs" />
     <Compile Include="BaseODataClasses\ODataVirtualDataSourceDataProviderWorker.cs" />
