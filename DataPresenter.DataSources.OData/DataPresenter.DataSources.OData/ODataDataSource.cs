@@ -12,7 +12,7 @@ using Reference.DataSources.OData;
 namespace DataPresenter.DataSources.OData
 {
 	/// <summary>
-	/// Represents an async paging data source that gets data from a remote server using the OData API and is designed to work with the XamDataPresenter family of controls.
+	/// Represents an async paging data source (designed to work with the XamDataPresenter family of controls) that gets data from a remote server using the OData API.
 	/// </summary>
 	public sealed class ODataDataSource : AsyncPagingDataSourceBase 
     {
@@ -70,7 +70,7 @@ namespace DataPresenter.DataSources.OData
 
 		#region CreateInstanceCore
 		/// <summary>
-		/// 
+		/// Creates a new instance of the System.Windows.Freezable derived class.
 		/// </summary>
 		/// <returns></returns>
 		protected override Freezable CreateInstanceCore()
