@@ -1,0 +1,27 @@
+﻿<Window x:Class="ODataSampleApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ODataSampleApp"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525"
+        xmlns:grid="clr-namespace:Infragistics.Controls;assembly=InfragisticsWPF4.Controls.Grids.XGrid.v16.1">
+    <Grid>
+        <grid:XGrid
+                    Grid.Row="1"
+                    Name="grid1"
+                    RowHeight="50"
+                    RowSeparatorHeight="1" 
+                    AutoGenerateColumns="False"
+                    >
+
+            <grid:XGrid.Columns>
+                <grid:TextColumn Key="CustomerID" HeaderText="Customer ID" />
+                <grid:TextColumn Key="ShipName" HeaderText="Ship Name" />
+                <grid:TextColumn Key="OrderID" HeaderText="Order ID" />
+                <grid:TextColumn Key="ShipCountry" HeaderText="Ship Country" />
+            </grid:XGrid.Columns>
+        </grid:XGrid>
+    </Grid>
+</Window>
