@@ -47,6 +47,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\work\NetAdvantage\DEV\XAML\2016.1\Source\Build\InfragisticsWPF4.DataPresenter.v16.1.dll</HintPath>
     </Reference>
+    <Reference Include="InfragisticsWPF4.Editors.v16.1, Version=16.1.0.9000, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\XAML\2016.1\Source\Build\InfragisticsWPF4.Editors.v16.1.dll</HintPath>
+    </Reference>
     <Reference Include="InfragisticsWPF4.v16.1, Version=16.1.0.9000, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\work\NetAdvantage\DEV\XAML\2016.1\Source\Build\InfragisticsWPF4.v16.1.dll</HintPath>

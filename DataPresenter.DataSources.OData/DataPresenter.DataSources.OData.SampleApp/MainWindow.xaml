@@ -5,11 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DataPresenter.DataSources.OData.SampleApp"
         xmlns:igDP="http://infragistics.com/DataPresenter"
+        xmlns:igEditors="http://infragistics.com/Editors"
         xmlns:igData="http://infragistics.com/DataPresenter"
         xmlns:igControls="http://schemas.infragistics.com/xaml"
         xmlns:PresentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="900">
+        Title="MainWindow" Height="700" Width="1000">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*"/>
@@ -21,16 +23,40 @@
             <StackPanel>
                 <StackPanel.Resources>
                     <Style x:Key="HeaderText" TargetType="TextBlock">
-                        <Setter Property="Background" Value="DarkBlue"/>
-                        <Setter Property="Foreground" Value="White"/>
-                        <Setter Property="Margin" Value="2"/>
-                        <Setter Property="TextAlignment" Value="Center"/>
-                    </Style>    
+                        <Setter Property="FontWeight" Value="Light"/>
+                        <Setter Property="Foreground" Value="#FF0072C6"/>
+                        <Setter Property="Margin" Value="3"/>
+                        <Setter Property="FontSize" Value="18"/>
+                    </Style>
+
+                    <Style x:Key="TextBoxText" TargetType="TextBox">
+                        <Setter Property="FontWeight" Value="Regular"/>
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Setter Property="FontSize" Value="14"/>
+                    </Style>
+
+                    <Style x:Key="NumericEditorText" TargetType="igEditors:XamNumericEditor">
+                        <Setter Property="FontWeight" Value="Regular"/>
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Setter Property="FontSize" Value="14"/>
+                    </Style>
+
+                    <Style x:Key="ComboBoxText" TargetType="ComboBox">
+                        <Setter Property="FontWeight" Value="Regular"/>
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Setter Property="FontSize" Value="14"/>
+                    </Style>
+
+                    <Style x:Key="CheckBoxText" TargetType="CheckBox">
+                        <Setter Property="FontWeight" Value="Regular"/>
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Setter Property="FontSize" Value="14"/>
+                    </Style>
                 </StackPanel.Resources>
                 
                 <!-- OData Sources -->
-                <TextBlock Text="OData Sources" Style="{StaticResource HeaderText}"/>
-                <ComboBox x:Name="cboOdataSources" SelectionChanged="cboOdataSources_SelectionChanged" Margin="2">
+                <TextBlock Text="ODATA SOURCES" Style="{StaticResource HeaderText}"/>
+                <ComboBox x:Name="cboOdataSources" SelectionChanged="cboOdataSources_SelectionChanged" Margin="2" Style="{StaticResource ComboBoxText}">
                     <local:ODataSourceListItem BaseUri="http://services.odata.org/V4/Northwind/Northwind.svc" EntitySet="Orders" Description="Northwind Orders"/>
                     <local:ODataSourceListItem BaseUri="http://services.odata.org/AdventureWorksV3/AdventureWorks.svc" EntitySet="CompanySales"  Description="AdventureWorks Company Sales"/>
                     <local:ODataSourceListItem BaseUri="http://data.scottsdaleaz.gov/Planning/BuildingPermits.svc" EntitySet="BuildingPermits"  Description="Scottsdale Building Permits"/>
@@ -42,25 +68,56 @@
                     <local:ODataSourceListItem BaseUri="http://www.nerddinner.com/Services/OData.svc" EntitySet="Dinners"  Description="NerdDinner Dinners"/>
                     <local:ODataSourceListItem BaseUri="http://www.nerddinner.com/Services/OData.svc" EntitySet="RSVPs"  Description="NerdDinner RSVPs"/>
                 </ComboBox>
-                <CheckBox x:Name="chkNullOutDatasource" Margin="0,2" IsChecked="True">Null out datasource before setting new</CheckBox>
+                <CheckBox x:Name="chkNullOutDatasource" Margin="0,2" IsChecked="True" Style="{StaticResource CheckBoxText}">Null out datasource before setting new</CheckBox>
+
+                <!-- Desired Page Size -->
+                <Rectangle Width="1" Height="20" Fill="Transparent"/>
+                <TextBlock Text="DATASOURCE DESIRED PAGE SIZE" Style="{StaticResource HeaderText}"/>
+                <igEditors:XamNumericEditor x:Name="numDesiredPageSize" Mask="9999" ValueChanged="numDesiredPageSize_ValueChanged" SpinButtonDisplayMode="Always" SpinIncrement="10" Style="{StaticResource NumericEditorText}">
+                    <igEditors:XamNumericEditor.ValueConstraint>
+                        <igEditors:ValueConstraint MinInclusive="5" MaxInclusive="1000"/>
+                    </igEditors:XamNumericEditor.ValueConstraint>
+                </igEditors:XamNumericEditor>
+
+                <!-- Desired Page Size -->
+                <Rectangle Width="1" Height="20" Fill="Transparent"/>
+                <TextBlock Text="DATASOURCE MAX # CACHED PAGES" Style="{StaticResource HeaderText}"/>
+                <igEditors:XamNumericEditor x:Name="numMaximumCachedPages" Mask="9999" ValueChanged="numMaximumCachedPages_ValueChanged" SpinButtonDisplayMode="Always" SpinIncrement="10" Style="{StaticResource NumericEditorText}">
+                    <igEditors:XamNumericEditor.ValueConstraint>
+                        <igEditors:ValueConstraint MinInclusive="5" MaxInclusive="1000"/>
+                    </igEditors:XamNumericEditor.ValueConstraint>
+                </igEditors:XamNumericEditor>
+
+                <!-- Separator -->
+                <Rectangle Height="1" HorizontalAlignment="Stretch" Fill="Gray" Margin="5,20,5,0"/>
 
                 <!-- Pending Message -->
-                <Rectangle Width="1" Height="10" Fill="Transparent"/>
-                <TextBlock Text="Pending Message" Style="{StaticResource HeaderText}"/>
-                <TextBox x:Name="txtPendingMessage" Text="loading..." TextChanged="txtPendingMessage_TextChanged"/>
+                <Rectangle Width="1" Height="20" Fill="Transparent"/>
+                <TextBlock Text="DATA PENDING MESSAGE" Style="{StaticResource HeaderText}"/>
+                <TextBox x:Name="txtPendingMessage" Text="loading..." TextChanged="txtPendingMessage_TextChanged" Style="{StaticResource TextBoxText}"/>
+
+                <!-- XamDataPresenter View -->
+                <Rectangle Width="1" Height="20" Fill="Transparent"/>
+                <TextBlock Text="DATAPRESENTER VIEW" Style="{StaticResource HeaderText}"/>
+                <ComboBox x:Name="cboDataPresenterView" SelectionChanged="cboDataPresenterView_SelectionChanged" Margin="2" Style="{StaticResource ComboBoxText}">
+                    <sys:String>GridView</sys:String>
+                    <sys:String>CardView</sys:String>
+                    <sys:String>CarouselView</sys:String>
+                    <sys:String>TreeView</sys:String>
+                </ComboBox>
             </StackPanel>
         </StackPanel>
 
-        <GridSplitter Grid.Column="1" Width="7" Margin="2,0" Background="Gray" ResizeBehavior="PreviousAndNext"/>
+        <GridSplitter Grid.Column="1" Width="7" Margin="2,0" Background="#FFDDDDDD" ResizeBehavior="PreviousAndNext"/>
         
-        <igDP:XamDataPresenter x:Name="dataGrid1" Grid.Column="2">
+        <igDP:XamDataPresenter x:Name="dataPresenter1" Grid.Column="2" Theme="Office2013" Margin="5,0,0,0">
             <igDP:XamDataPresenter.Resources>
                 <Style TargetType="igDP:DataRecordCellArea">
                     <Setter Property="DynamicDataPendingBackgroundBrush" Value="LightBlue"></Setter>
                     <Setter Property="DynamicDataPendingForegroundBrush" Value="DarkBlue"></Setter>
                 </Style>    
             </igDP:XamDataPresenter.Resources>
-            
+
             <igDP:XamDataPresenter.FieldSettings>
                 <igDP:FieldSettings LabelClickAction="SortByMultipleFieldsTriState"/>
             </igDP:XamDataPresenter.FieldSettings>
