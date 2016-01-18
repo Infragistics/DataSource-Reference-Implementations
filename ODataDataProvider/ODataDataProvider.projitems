@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>15c5ca79-0cda-4d3d-833d-48ebd0f31915</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>ODataDataProvider</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ODataDataSourcePage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ODataVirtualDataSource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ODataVirtualDataSourceDataProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ODataVirtualDataSourceDataProviderWorker.cs" />
+  </ItemGroup>
+</Project>

@@ -1,13 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataPresenter.DataSources.OData", "DataPresenter.DataSources.OData\DataPresenter.DataSources.OData.csproj", "{BFBFD6BD-05FC-4491-A206-DEA7EA11C4BC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataPresenter.DataSources.OData.SampleApp", "DataPresenter.DataSources.OData.SampleApp\DataPresenter.DataSources.OData.SampleApp.csproj", "{E9EB5B6B-511B-47D0-88FE-B65AF73A7CB7}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ODataDataProvider", "..\ODataDataProvider\ODataDataProvider.shproj", "{15C5CA79-0CDA-4D3D-833D-48EBD0F31915}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\ODataDataProvider\ODataDataProvider.projitems*{15c5ca79-0cda-4d3d-833d-48ebd0f31915}*SharedItemsImports = 13
+		..\ODataDataProvider\ODataDataProvider.projitems*{bfbfd6bd-05fc-4491-a206-dea7ea11c4bc}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
