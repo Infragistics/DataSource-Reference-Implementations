@@ -105,16 +105,13 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseODataClasses\ODataDataSourcePage.cs" />
-    <Compile Include="BaseODataClasses\ODataVirtualDataSource.cs" />
-    <Compile Include="BaseODataClasses\ODataVirtualDataSourceDataProvider.cs" />
-    <Compile Include="BaseODataClasses\ODataVirtualDataSourceDataProviderWorker.cs" />
     <Compile Include="ODataDataSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <Import Project="..\..\ODataDataProvider\ODataDataProvider.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
