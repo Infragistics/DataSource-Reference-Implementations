@@ -8,7 +8,11 @@ using GridODataTest;
 using System.Xml;
 using Infragistics.Controls.DataSource;
 
+#if DATA_PRESENTER
 namespace Reference.DataSources.OData
+#else
+namespace Infragistics.Controls.DataSource
+#endif
 {
     internal class ODataVirtualDataSourceDataProviderWorkerSettings
         : AsyncVirtualDataSourceDataProviderWorkerSettings

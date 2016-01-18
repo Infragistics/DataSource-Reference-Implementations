@@ -15,7 +15,11 @@ using Windows.UI;
 using Windows.UI.Xaml;
 #endif
 
+#if DATA_PRESENTER
 namespace Reference.DataSources.OData
+#else
+namespace Infragistics.Controls.DataSource
+#endif
 {
 
     /// <summary>

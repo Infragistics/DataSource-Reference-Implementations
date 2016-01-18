@@ -9,7 +9,11 @@ using System.Threading.Tasks;
 using Simple.OData.Client;
 using System.Diagnostics;
 
+#if DATA_PRESENTER
 namespace Reference.DataSources.OData
+#else
+namespace Infragistics.Controls.DataSource
+#endif
 {
     public class ODataVirtualDataSourceDataProvider
         : IDataSourceVirtualDataProvider
