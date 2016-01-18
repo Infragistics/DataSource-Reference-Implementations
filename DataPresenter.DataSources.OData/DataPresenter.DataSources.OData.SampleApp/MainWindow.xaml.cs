@@ -36,10 +36,10 @@ namespace DataPresenter.DataSources.OData.SampleApp
         {
             InitializeComponent();
 
-			this.cboOdataSources.SelectedIndex = 0;
+			this.cboOdataSources.SelectedIndex		= 0;
 			this.cboDataPresenterView.SelectedIndex = 0;
-			this.numDesiredPageSize.Value = 200;
-			this.numMaximumCachedPages.Value = 200;
+			this.numDesiredPageSize.Value			= 200;
+			this.numMaximumCachedPages.Value		= 200;
         }
 		#endregion //Constructor
 

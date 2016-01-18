@@ -23,10 +23,10 @@
             <StackPanel>
                 <StackPanel.Resources>
                     <Style x:Key="HeaderText" TargetType="TextBlock">
-                        <Setter Property="FontWeight" Value="Light"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
                         <Setter Property="Foreground" Value="#FF0072C6"/>
                         <Setter Property="Margin" Value="3"/>
-                        <Setter Property="FontSize" Value="18"/>
+                        <Setter Property="FontSize" Value="14"/>
                     </Style>
 
                     <Style x:Key="TextBoxText" TargetType="TextBox">
@@ -73,16 +73,16 @@
                 <!-- Desired Page Size -->
                 <Rectangle Width="1" Height="20" Fill="Transparent"/>
                 <TextBlock Text="DATASOURCE DESIRED PAGE SIZE" Style="{StaticResource HeaderText}"/>
-                <igEditors:XamNumericEditor x:Name="numDesiredPageSize" Mask="9999" ValueChanged="numDesiredPageSize_ValueChanged" SpinButtonDisplayMode="Always" SpinIncrement="10" Style="{StaticResource NumericEditorText}">
+                <igEditors:XamNumericEditor x:Name="numDesiredPageSize" Width="100" HorizontalAlignment="Left" Mask="9999" ValueChanged="numDesiredPageSize_ValueChanged" SpinButtonDisplayMode="Always" SpinIncrement="10" Style="{StaticResource NumericEditorText}">
                     <igEditors:XamNumericEditor.ValueConstraint>
                         <igEditors:ValueConstraint MinInclusive="5" MaxInclusive="1000"/>
                     </igEditors:XamNumericEditor.ValueConstraint>
                 </igEditors:XamNumericEditor>
 
-                <!-- Desired Page Size -->
+                <!-- Maximum number of cached pages -->
                 <Rectangle Width="1" Height="20" Fill="Transparent"/>
                 <TextBlock Text="DATASOURCE MAX # CACHED PAGES" Style="{StaticResource HeaderText}"/>
-                <igEditors:XamNumericEditor x:Name="numMaximumCachedPages" Mask="9999" ValueChanged="numMaximumCachedPages_ValueChanged" SpinButtonDisplayMode="Always" SpinIncrement="10" Style="{StaticResource NumericEditorText}">
+                <igEditors:XamNumericEditor x:Name="numMaximumCachedPages" Width="100" HorizontalAlignment="Left" Mask="9999" ValueChanged="numMaximumCachedPages_ValueChanged" SpinButtonDisplayMode="Always" SpinIncrement="10" Style="{StaticResource NumericEditorText}">
                     <igEditors:XamNumericEditor.ValueConstraint>
                         <igEditors:ValueConstraint MinInclusive="5" MaxInclusive="1000"/>
                     </igEditors:XamNumericEditor.ValueConstraint>
