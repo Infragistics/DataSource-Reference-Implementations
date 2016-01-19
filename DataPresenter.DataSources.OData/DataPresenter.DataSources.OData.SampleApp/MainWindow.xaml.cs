@@ -36,10 +36,10 @@ namespace DataPresenter.DataSources.OData.SampleApp
         {
             InitializeComponent();
 
-			this.cboOdataSources.SelectedIndex		= 0;
-			this.cboDataPresenterView.SelectedIndex = 0;
 			this.numDesiredPageSize.Value			= 200;
 			this.numMaximumCachedPages.Value		= 200;
+			this.cboOdataSources.SelectedIndex		= 0;
+			this.cboDataPresenterView.SelectedIndex = 0;
         }
 		#endregion //Constructor
 
@@ -84,6 +84,13 @@ namespace DataPresenter.DataSources.OData.SampleApp
 		}
 		#endregion //CurrentDataSource
 
+		#region DesiredPageSize
+		private int DesiredPageSize
+		{
+			get { return Convert.ToInt32((double)this.numDesiredPageSize.Value); }
+		}
+		#endregion //DesiredPageSize
+
 		#region GridView
 		private Infragistics.Windows.DataPresenter.GridView GridView
 		{
@@ -96,6 +103,13 @@ namespace DataPresenter.DataSources.OData.SampleApp
 			}
 		}
 		#endregion //GridView
+
+		#region MaximumCachedPages
+		private int MaximumCachedPages
+		{
+			get { return Convert.ToInt32((double)this.numMaximumCachedPages.Value); }
+		}
+		#endregion //MaximumCachedPages
 
 		#region TreeView
 		private Infragistics.Windows.DataPresenter.TreeView TreeView
@@ -150,26 +164,26 @@ namespace DataPresenter.DataSources.OData.SampleApp
 					this.dataPresenter1.DataSource = null;
 
 				// Set the grid's DataSource to an instance of an ODataDataSource for the selected Uri and EntitySet..
-				this.dataPresenter1.DataSource = new ODataDataSource { BaseUri = ods.BaseUri, EntitySet = ods.EntitySet };
+				this.dataPresenter1.DataSource = new ODataDataSource { BaseUri = ods.BaseUri, EntitySet = ods.EntitySet, DesiredPageSize = this.DesiredPageSize, MaximumCachedPages = this.MaximumCachedPages };
 			}
 		}
 		#endregion //cboOdataSources_SelectionChanged
 
-		#region numDesiredPageSize_ValueChanged
-		private void numDesiredPageSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+		#region numDesiredPageSize_EditModeEnded
+		private void numDesiredPageSize_EditModeEnded(object sender, Infragistics.Windows.Editors.Events.EditModeEndedEventArgs e)
 		{
 			if (null != this.CurrentDataSource)
-				this.CurrentDataSource.DesiredPageSize = Convert.ToInt32((double)e.NewValue);
+				this.CurrentDataSource.DesiredPageSize = this.DesiredPageSize;
 		}
-		#endregion //numDesiredPageSize_ValueChanged
+		#endregion //numDesiredPageSize_EditModeEnded
 
-		#region numMaximumCachedPages_ValueChanged
-		private void numMaximumCachedPages_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+		#region numMaximumCachedPages_EditModeEnded
+		private void numMaximumCachedPages_EditModeEnded(object sender, Infragistics.Windows.Editors.Events.EditModeEndedEventArgs e)
 		{
 			if (null != this.CurrentDataSource)
-				this.CurrentDataSource.MaximumCachedPages = Convert.ToInt32((double)e.NewValue);
+				this.CurrentDataSource.MaximumCachedPages = this.MaximumCachedPages;
 		}
-		#endregion //numMaximumCachedPages_ValueChanged
+		#endregion //numMaximumCachedPages_EditModeEnded
 
 		#region txtPendingMessage_TextChanged
 		private void txtPendingMessage_TextChanged(object sender, TextChangedEventArgs e)
