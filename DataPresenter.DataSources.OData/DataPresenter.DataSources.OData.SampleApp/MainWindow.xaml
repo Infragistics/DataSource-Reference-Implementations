@@ -113,8 +113,8 @@
         <igDP:XamDataPresenter x:Name="dataPresenter1" Grid.Column="2" Theme="Office2013" Margin="5,0,0,0">
             <igDP:XamDataPresenter.Resources>
                 <Style TargetType="igDP:DataRecordCellArea">
-                    <Setter Property="DynamicDataPendingBackgroundBrush" Value="LightBlue"></Setter>
-                    <Setter Property="DynamicDataPendingForegroundBrush" Value="DarkBlue"></Setter>
+                    <Setter Property="DynamicDataPendingBackgroundBrush" Value="#200080FF"></Setter>
+                    <Setter Property="DynamicDataPendingForegroundBrush" Value="DarkGray"></Setter>
                 </Style>    
             </igDP:XamDataPresenter.Resources>
 

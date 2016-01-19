@@ -76,7 +76,7 @@ namespace DataPresenter.DataSources.OData.SampleApp
 		{
 			get
 			{
-				if (null != this._cardView)
+				if (null != this.dataPresenter1)
 					return this.dataPresenter1.DataSource as ODataDataSource;
 
 				return null;
@@ -159,7 +159,7 @@ namespace DataPresenter.DataSources.OData.SampleApp
 		private void numDesiredPageSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
 			if (null != this.CurrentDataSource)
-				this.CurrentDataSource.DesiredPageSize = (int)e.NewValue;
+				this.CurrentDataSource.DesiredPageSize = Convert.ToInt32((double)e.NewValue);
 		}
 		#endregion //numDesiredPageSize_ValueChanged
 
@@ -167,7 +167,7 @@ namespace DataPresenter.DataSources.OData.SampleApp
 		private void numMaximumCachedPages_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
 			if (null != this.CurrentDataSource)
-				this.CurrentDataSource.MaximumCachedPages = (int)e.NewValue;
+				this.CurrentDataSource.MaximumCachedPages = Convert.ToInt32((double)e.NewValue);
 		}
 		#endregion //numMaximumCachedPages_ValueChanged
 
