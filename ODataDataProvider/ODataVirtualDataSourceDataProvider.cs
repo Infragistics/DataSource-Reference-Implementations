@@ -102,7 +102,8 @@ namespace Infragistics.Controls.DataSource
                 TimeoutMilliseconds = _timeoutMilliseconds,
                 PageLoaded = _callback,
                 ExecutionContext = _executionContext,
-                SortDescriptions = _sortDescriptions
+                SortDescriptions = _sortDescriptions,
+                FilterExpressions = _filterExpressions
             };
         }
 
