@@ -4,6 +4,7 @@ using Infragistics.Windows.Themes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -169,6 +170,24 @@ namespace DataPresenter.DataSources.OData.SampleApp
 		}
 		#endregion //cboOdataSources_SelectionChanged
 
+		#region chkShowProgressBar_Checked
+		private void chkShowProgressBar_Checked(object sender, RoutedEventArgs e)
+		{
+			if (this.chkShowProgressBar.IsChecked.Value)
+			{
+				FrameworkElementFactory fef = new FrameworkElementFactory(typeof(ProgressBar));
+				fef.SetValue(ProgressBar.IsIndeterminateProperty, true);
+				fef.SetValue(ProgressBar.WidthProperty, 100d);
+				fef.SetValue(ProgressBar.HeightProperty, 5d);
+
+				DataTemplate customTemplate = new DataTemplate { VisualTree = fef };
+				this.dataPresenter1.FieldLayoutSettings.DynamicDataPendingContentTemplate = customTemplate;
+			}
+			else
+				this.dataPresenter1.FieldLayoutSettings.DynamicDataPendingContentTemplate = null;
+		}
+		#endregion //chkShowProgressBar_Checked
+
 		#region numDesiredPageSize_EditModeEnded
 		private void numDesiredPageSize_EditModeEnded(object sender, Infragistics.Windows.Editors.Events.EditModeEndedEventArgs e)
 		{
@@ -196,6 +215,7 @@ namespace DataPresenter.DataSources.OData.SampleApp
 		#endregion //Event Handlers
 	}
 
+	#region ODataSourceListItem Class
 	public class ODataSourceListItem
 	{
 		public override string ToString() { return Description; }
@@ -204,4 +224,75 @@ namespace DataPresenter.DataSources.OData.SampleApp
 		public string Description { get; set; }
 		public string EntitySet{ get; set; }
 	}
+	#endregion //ODataSourceListItem Class
+
+	#region ColorToBrushConverter Class
+	public class ColorToBrushConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return Process(value, targetType, parameter, culture);
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return Process(value, targetType, parameter, culture);
+		}
+
+		private static object Process(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			if (value is string)
+			{
+				Color color = Parse((string)value);
+
+				if (targetType == typeof(Brush) || targetType == typeof(SolidColorBrush))
+					return new SolidColorBrush(color);
+				else
+				if (targetType == typeof(Color) || targetType == typeof(Nullable<Color>))
+					return color;
+			}
+
+			if (value is SolidColorBrush)
+			{
+				if (targetType == typeof(Brush) || targetType == typeof(SolidColorBrush))
+					return value;
+				else
+				if (targetType == typeof(Color) || targetType == typeof(Nullable<Color>))
+					return ((SolidColorBrush)value).Color;
+			}
+
+			if (value == null)
+			{
+				if (targetType == typeof(Brush) || targetType == typeof(SolidColorBrush))
+					return new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+				else
+				if (targetType == typeof(Color) || targetType == typeof(Nullable<Color>))
+					return Color.FromArgb(0, 0, 0, 0);
+			}
+
+			if (value is Color)
+			{
+				if (targetType == typeof(Brush) || targetType == typeof(SolidColorBrush))
+					return new SolidColorBrush((Color)value);
+				else
+				if (targetType == typeof(Color) || targetType == typeof(Nullable<Color>))
+					return value;
+			}
+
+			throw new NotSupportedException("ColorToBrushConverter cannot convert value!");
+		}
+
+		private static Color Parse(string color)
+		{
+			var offset = color.StartsWith("#") ? 1 : 0;
+
+			var a = Byte.Parse(color.Substring(0 + offset, 2), NumberStyles.HexNumber);
+			var r = Byte.Parse(color.Substring(2 + offset, 2), NumberStyles.HexNumber);
+			var g = Byte.Parse(color.Substring(4 + offset, 2), NumberStyles.HexNumber);
+			var b = Byte.Parse(color.Substring(6 + offset, 2), NumberStyles.HexNumber);
+
+			return Color.FromArgb(a, r, g, b);
+		}
+	}
+	#endregion //ColorToBrushConverter Class
 }

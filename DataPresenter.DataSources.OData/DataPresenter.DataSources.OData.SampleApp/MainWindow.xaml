@@ -12,6 +12,10 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="MainWindow" Height="700" Width="1000">
+    <Window.Resources>
+        <local:ColorToBrushConverter x:Key="colorToBrushConverter"/>
+    </Window.Resources>
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*"/>
@@ -19,44 +23,57 @@
             <ColumnDefinition Width="9*"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Column="0" Margin="3">
+        <StackPanel Grid.Column="0" Margin="6">
             <StackPanel>
                 <StackPanel.Resources>
                     <Style x:Key="HeaderText" TargetType="TextBlock">
                         <Setter Property="FontWeight" Value="Bold"/>
                         <Setter Property="Foreground" Value="#FF0072C6"/>
-                        <Setter Property="Margin" Value="3"/>
+                        <Setter Property="Margin" Value="0,3"/>
                         <Setter Property="FontSize" Value="14"/>
+                    </Style>
+
+                    <Style x:Key="LabelText" TargetType="TextBlock">
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Margin" Value="0,3"/>
+                    </Style>
+
+                    <Style x:Key="ColorPicker" TargetType="igControls:XamColorPicker">
+                        <Setter Property="Margin" Value="0,3"/>
                     </Style>
 
                     <Style x:Key="TextBoxText" TargetType="TextBox">
                         <Setter Property="FontWeight" Value="Regular"/>
                         <Setter Property="Foreground" Value="Black"/>
                         <Setter Property="FontSize" Value="14"/>
+                        <Setter Property="Margin" Value="0,3"/>
                     </Style>
 
                     <Style x:Key="NumericEditorText" TargetType="igEditors:XamNumericEditor">
                         <Setter Property="FontWeight" Value="Regular"/>
                         <Setter Property="Foreground" Value="Black"/>
                         <Setter Property="FontSize" Value="14"/>
+                        <Setter Property="Margin" Value="0,2"/>
                     </Style>
 
                     <Style x:Key="ComboBoxText" TargetType="ComboBox">
                         <Setter Property="FontWeight" Value="Regular"/>
                         <Setter Property="Foreground" Value="Black"/>
                         <Setter Property="FontSize" Value="14"/>
+                        <Setter Property="Margin" Value="0,2"/>
                     </Style>
 
                     <Style x:Key="CheckBoxText" TargetType="CheckBox">
                         <Setter Property="FontWeight" Value="Regular"/>
                         <Setter Property="Foreground" Value="Black"/>
                         <Setter Property="FontSize" Value="14"/>
+                        <Setter Property="Margin" Value="0,2"/>
                     </Style>
                 </StackPanel.Resources>
                 
                 <!-- OData Sources -->
                 <TextBlock Text="ODATA SOURCES" Style="{StaticResource HeaderText}"/>
-                <ComboBox x:Name="cboOdataSources" SelectionChanged="cboOdataSources_SelectionChanged" Margin="2" Style="{StaticResource ComboBoxText}">
+                <ComboBox x:Name="cboOdataSources" SelectionChanged="cboOdataSources_SelectionChanged" Style="{StaticResource ComboBoxText}">
                     <local:ODataSourceListItem BaseUri="http://services.odata.org/V4/Northwind/Northwind.svc" EntitySet="Orders" Description="Northwind Orders"/>
                     <local:ODataSourceListItem BaseUri="http://services.odata.org/AdventureWorksV3/AdventureWorks.svc" EntitySet="CompanySales"  Description="AdventureWorks Company Sales"/>
                     <local:ODataSourceListItem BaseUri="http://data.scottsdaleaz.gov/Planning/BuildingPermits.svc" EntitySet="BuildingPermits"  Description="Scottsdale Building Permits"/>
@@ -68,7 +85,7 @@
                     <local:ODataSourceListItem BaseUri="http://www.nerddinner.com/Services/OData.svc" EntitySet="Dinners"  Description="NerdDinner Dinners"/>
                     <local:ODataSourceListItem BaseUri="http://www.nerddinner.com/Services/OData.svc" EntitySet="RSVPs"  Description="NerdDinner RSVPs"/>
                 </ComboBox>
-                <CheckBox x:Name="chkNullOutDatasource" Margin="0,2" IsChecked="True" Style="{StaticResource CheckBoxText}">Null out datasource before setting new</CheckBox>
+                <CheckBox x:Name="chkNullOutDatasource" IsChecked="True" Style="{StaticResource CheckBoxText}">Null out datasource before setting new</CheckBox>
 
                 <!-- Desired Page Size -->
                 <Rectangle Width="1" Height="20" Fill="Transparent"/>
@@ -91,10 +108,34 @@
                 <!-- Separator -->
                 <Rectangle Height="1" HorizontalAlignment="Stretch" Fill="Gray" Margin="5,20,5,0"/>
 
-                <!-- Pending Message -->
+                <!-- Pending Message Settings -->
                 <Rectangle Width="1" Height="20" Fill="Transparent"/>
                 <TextBlock Text="DATA PENDING MESSAGE" Style="{StaticResource HeaderText}"/>
-                <TextBox x:Name="txtPendingMessage" Text="loading..." TextChanged="txtPendingMessage_TextChanged" Style="{StaticResource TextBoxText}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="MESSAGE TEXT" Style="{StaticResource LabelText}"/>
+                    <TextBox x:Name="txtPendingMessage" Grid.Row="0" Grid.Column="1"  Text="loading..." TextChanged="txtPendingMessage_TextChanged" Style="{StaticResource TextBoxText}"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="BACKGROUND" Style="{StaticResource LabelText}"/>
+                    <igControls:XamColorPicker Grid.Row="1" Grid.Column="1" Style="{StaticResource ColorPicker}" SelectedColor="{Binding ElementName=dataPresenter1, Mode=TwoWay, Path=(igDP:XamDataPresenter.FieldLayoutSettings).DynamicDataPendingBackgroundBrush, Converter={StaticResource colorToBrushConverter}}"/>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="FOREGROUND" Style="{StaticResource LabelText}"/>
+                    <igControls:XamColorPicker Grid.Row="2" Grid.Column="1" Style="{StaticResource ColorPicker}" SelectedColor="{Binding ElementName=dataPresenter1, Mode=TwoWay, Path=(igDP:XamDataPresenter.FieldLayoutSettings).DynamicDataPendingForegroundBrush, Converter={StaticResource colorToBrushConverter}}"/>
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="SHOW CUSTOM TEMPLATE" Style="{StaticResource LabelText}"/>
+                    <CheckBox x:Name="chkShowProgressBar" Grid.Row="3" Grid.Column="1" Margin="0,2" IsChecked="False" Style="{StaticResource CheckBoxText}" Checked="chkShowProgressBar_Checked" Unchecked="chkShowProgressBar_Checked"/>
+                </Grid>
 
                 <!-- XamDataPresenter View -->
                 <Rectangle Width="1" Height="20" Fill="Transparent"/>
@@ -111,12 +152,9 @@
         <GridSplitter Grid.Column="1" Width="7" Margin="2,0" Background="#FFDDDDDD" ResizeBehavior="PreviousAndNext"/>
         
         <igDP:XamDataPresenter x:Name="dataPresenter1" Grid.Column="2" Theme="Office2013" Margin="5,0,0,0">
-            <igDP:XamDataPresenter.Resources>
-                <Style TargetType="igDP:DataRecordCellArea">
-                    <Setter Property="DynamicDataPendingBackgroundBrush" Value="#200080FF"></Setter>
-                    <Setter Property="DynamicDataPendingForegroundBrush" Value="DarkGray"></Setter>
-                </Style>    
-            </igDP:XamDataPresenter.Resources>
+            <igDP:XamDataPresenter.FieldLayoutSettings>
+                <igDP:FieldLayoutSettings DynamicDataPendingBackgroundBrush="#200080FF" DynamicDataPendingForegroundBrush="DarkGray"/>
+            </igDP:XamDataPresenter.FieldLayoutSettings>
 
             <igDP:XamDataPresenter.FieldSettings>
                 <igDP:FieldSettings LabelClickAction="SortByMultipleFieldsTriState"/>
