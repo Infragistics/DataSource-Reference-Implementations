@@ -33,7 +33,9 @@ namespace ODataSampleApp
                 DesiredPageSize = 200
             };
 
-            source.SortDescriptions.Add(new DataSourceSortDescription("ShipName", true));
+            source.SortDescriptions.Add(new DataSourceSortDescription("OrderID", true));
+            source.FilterExpressions.Add(DataSourceFilterExpression.CreateSimpleOperation(
+                "ShipName", DataSourceExpressionOperatorType.Equal, "Wartian Herkku"));
 
             grid1.ItemsSource = source;
         }

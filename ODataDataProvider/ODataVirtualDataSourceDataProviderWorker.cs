@@ -7,6 +7,7 @@ using System.Linq;
 using GridODataTest;
 using System.Xml;
 using Infragistics.Controls.DataSource;
+using System.Text;
 
 #if DATA_PRESENTER
 namespace Reference.DataSources.OData
@@ -21,6 +22,8 @@ namespace Infragistics.Controls.DataSource
         public string EntitySet { get; set; }
 
         public DataSourceSortDescriptionCollection SortDescriptions { get; set; }
+
+        public DataSourceFilterExpressionCollection FilterExpressions { get; set; }
     }
 
     
@@ -41,12 +44,21 @@ namespace Infragistics.Controls.DataSource
         private string _baseUri;
         private string _entitySet;
         private DataSourceSortDescriptionCollection _sortDescriptions;
+        private DataSourceFilterExpressionCollection _filterExpressions;
 
         protected DataSourceSortDescriptionCollection SortDescriptions
         {
             get
             {
                 return _sortDescriptions;
+            }
+        }
+
+        protected DataSourceFilterExpressionCollection FilterExpressions
+        {
+            get
+            {
+                return _filterExpressions;
             }
         }
 
@@ -99,6 +111,7 @@ namespace Infragistics.Controls.DataSource
             _baseUri = settings.BaseUri;
             _entitySet = settings.EntitySet;
             _sortDescriptions = settings.SortDescriptions;
+            _filterExpressions = settings.FilterExpressions;
             Task.Factory.StartNew(() => DoWork(), TaskCreationOptions.LongRunning);
         }        
       
@@ -214,6 +227,8 @@ namespace Infragistics.Controls.DataSource
 			return sp.GetODataDataSourceSchema(this._entitySet);
         }
 
+        private string _filterString = null;
+
         protected override void MakeTaskForRequest(AsyncDataSourcePageRequest request, int retryDelay)
         {
             int actualPageSize = 0;
@@ -227,17 +242,57 @@ namespace Infragistics.Controls.DataSource
             ODataFeedAnnotations annotations = new ODataFeedAnnotations();
 
             var client = _client.For(_entitySet);
-            if (sortDescriptions != null)
+
+            lock (SyncLock)
             {
-                foreach (var sort in sortDescriptions)
+                if (FilterExpressions != null &&
+                    FilterExpressions.Count > 0 &&
+                    _filterString == null)
                 {
-                    if (sort.IsDescending)
+                    StringBuilder sb = new StringBuilder();
+                    bool first = true;
+                    foreach (var expr in FilterExpressions)
                     {
-                        client = client.OrderByDescending(sort.PropertyName);                        
+                        if (first)
+                        {
+                            first = false;
+                        }
+                        else
+                        {
+                            sb.Append(" AND ");
+                        }
+
+                        ODataDataSourceFilterExpressionVisitor visitor = new ODataDataSourceFilterExpressionVisitor();
+
+                        visitor.Visit(expr);
+
+                        var txt = visitor.ToString();
+                        if (FilterExpressions.Count > 1)
+                        {
+                            txt = "(" + txt + ")";
+                        }
+                        sb.Append(txt);
                     }
-                    else
+                    _filterString = sb.ToString();
+                }
+
+                if (_filterString != null)
+                {
+                    client = client.Filter(_filterString);
+                }
+
+                if (SortDescriptions != null)
+                {
+                    foreach (var sort in SortDescriptions)
                     {
-                        client = client.OrderBy(sort.PropertyName);                        
+                        if (sort.IsDescending)
+                        {
+                            client = client.OrderByDescending(sort.PropertyName);
+                        }
+                        else
+                        {
+                            client = client.OrderBy(sort.PropertyName);
+                        }
                     }
                 }
             }
