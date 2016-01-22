@@ -24,6 +24,8 @@ namespace Infragistics.Controls.DataSource
         public DataSourceSortDescriptionCollection SortDescriptions { get; set; }
 
         public DataSourceFilterExpressionCollection FilterExpressions { get; set; }
+
+        public string[] DesiredProperties { get; set; }
     }
 
     
@@ -45,6 +47,7 @@ namespace Infragistics.Controls.DataSource
         private string _entitySet;
         private DataSourceSortDescriptionCollection _sortDescriptions;
         private DataSourceFilterExpressionCollection _filterExpressions;
+        private string[] _desiredPropeties;
 
         protected DataSourceSortDescriptionCollection SortDescriptions
         {
@@ -59,6 +62,14 @@ namespace Infragistics.Controls.DataSource
             get
             {
                 return _filterExpressions;
+            }
+        }
+
+        protected string[] DesiredProperties
+        {
+            get
+            {
+                return _desiredPropeties;
             }
         }
 
@@ -112,6 +123,7 @@ namespace Infragistics.Controls.DataSource
             _entitySet = settings.EntitySet;
             _sortDescriptions = settings.SortDescriptions;
             _filterExpressions = settings.FilterExpressions;
+            _desiredPropeties = settings.DesiredProperties;
             Task.Factory.StartNew(() => DoWork(), TaskCreationOptions.LongRunning);
         }        
       
@@ -228,6 +240,7 @@ namespace Infragistics.Controls.DataSource
         }
 
         private string _filterString = null;
+        private string _selectedString = null;
 
         protected override void MakeTaskForRequest(AsyncDataSourcePageRequest request, int retryDelay)
         {
@@ -294,6 +307,11 @@ namespace Infragistics.Controls.DataSource
                             client = client.OrderBy(sort.PropertyName);
                         }
                     }
+                }
+
+                if (DesiredProperties != null && DesiredProperties.Length > 0)
+                {
+                    client = client.Select(DesiredProperties);   
                 }
             }
 

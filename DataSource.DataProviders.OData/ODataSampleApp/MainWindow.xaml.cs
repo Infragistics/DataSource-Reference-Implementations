@@ -34,8 +34,17 @@ namespace ODataSampleApp
             };
 
             source.SortDescriptions.Add(new DataSourceSortDescription("OrderID", true));
-            source.FilterExpressions.Add(DataSourceFilterExpression.CreateSimpleOperation(
-                "ShipName", DataSourceExpressionOperatorType.Equal, "Wartian Herkku"));
+            //source.FilterExpressions.Add(DataSourceFilterExpression.CreateSimpleOperation(
+            //    "ShipName", DataSourceExpressionOperatorType.Equal, "Wartian Herkku"));
+
+            //Task.Delay(8000).ContinueWith((t) =>
+            //{
+            //    Dispatcher.BeginInvoke(new Action(() =>
+            //    {
+            //        grid1.SortDescriptions.Clear();
+            //        grid1.SortDescriptions.Add(new DataSourceSortDescription("OrderID", false));
+            //    }));
+            //});
 
             grid1.ItemsSource = source;
         }

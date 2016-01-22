@@ -103,7 +103,8 @@ namespace Infragistics.Controls.DataSource
                 PageLoaded = _callback,
                 ExecutionContext = _executionContext,
                 SortDescriptions = _sortDescriptions,
-                FilterExpressions = _filterExpressions
+                FilterExpressions = _filterExpressions,
+                DesiredProperties = _desiredProperties
             };
         }
 
@@ -334,6 +335,20 @@ namespace Infragistics.Controls.DataSource
             get
             {
                 return _sortDescriptions;
+            }
+        }
+
+        private string[] _desiredProperties;
+        public string[] DesiredProperties
+        {
+            get
+            {
+                return _desiredProperties;
+            }
+            set
+            {
+                _desiredProperties = value;
+                QueueAutoRefresh();
             }
         }
 
