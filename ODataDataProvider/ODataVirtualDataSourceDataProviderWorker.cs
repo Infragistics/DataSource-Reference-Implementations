@@ -21,9 +21,9 @@ namespace Infragistics.Controls.DataSource
         public string BaseUri { get; set; }
         public string EntitySet { get; set; }
 
-        public DataSourceSortDescriptionCollection SortDescriptions { get; set; }
+        public SortDescriptionCollection SortDescriptions { get; set; }
 
-        public DataSourceFilterExpressionCollection FilterExpressions { get; set; }
+        public FilterExpressionCollection FilterExpressions { get; set; }
 
         public string[] DesiredProperties { get; set; }
     }
@@ -45,11 +45,11 @@ namespace Infragistics.Controls.DataSource
         private ODataClient _client;
         private string _baseUri;
         private string _entitySet;
-        private DataSourceSortDescriptionCollection _sortDescriptions;
-        private DataSourceFilterExpressionCollection _filterExpressions;
+        private SortDescriptionCollection _sortDescriptions;
+        private FilterExpressionCollection _filterExpressions;
         private string[] _desiredPropeties;
 
-        protected DataSourceSortDescriptionCollection SortDescriptions
+        protected SortDescriptionCollection SortDescriptions
         {
             get
             {
@@ -57,7 +57,7 @@ namespace Infragistics.Controls.DataSource
             }
         }
 
-        protected DataSourceFilterExpressionCollection FilterExpressions
+        protected FilterExpressionCollection FilterExpressions
         {
             get
             {
@@ -245,7 +245,7 @@ namespace Infragistics.Controls.DataSource
         protected override void MakeTaskForRequest(AsyncDataSourcePageRequest request, int retryDelay)
         {
             int actualPageSize = 0;
-            DataSourceSortDescriptionCollection sortDescriptions = null;
+            SortDescriptionCollection sortDescriptions = null;
             lock (SyncLock)
             {
                 actualPageSize = ActualPageSize;
@@ -298,7 +298,7 @@ namespace Infragistics.Controls.DataSource
                 {
                     foreach (var sort in SortDescriptions)
                     {
-                        if (sort.IsDescending)
+                        if (sort.Direction == System.ComponentModel.ListSortDirection.Descending)
                         {
                             client = client.OrderByDescending(sort.PropertyName);
                         }

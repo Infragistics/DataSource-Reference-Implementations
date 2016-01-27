@@ -2,6 +2,7 @@
 using Infragistics.Controls.DataSource;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,7 +34,7 @@ namespace ODataSampleApp
                 DesiredPageSize = 200
             };
 
-            source.SortDescriptions.Add(new DataSourceSortDescription("OrderID", true));
+            source.SortDescriptions.Add(new SortDescription("OrderID", ListSortDirection.Descending));
             //source.FilterExpressions.Add(DataSourceFilterExpression.CreateSimpleOperation(
             //    "ShipName", DataSourceExpressionOperatorType.Equal, "Wartian Herkku"));
 

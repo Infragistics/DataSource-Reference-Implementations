@@ -25,9 +25,9 @@ namespace Infragistics.Controls.DataSource
 
         public ODataVirtualDataSourceDataProvider()
         {
-            _sortDescriptions = new DataSourceSortDescriptionCollection();
+            _sortDescriptions = new SortDescriptionCollection();
             _sortDescriptions.CollectionChanged += SortDescriptions_CollectionChanged;
-            _filterExpressions = new DataSourceFilterExpressionCollection();
+            _filterExpressions = new FilterExpressionCollection();
             _filterExpressions.CollectionChanged += FilterExpressions_CollectionChanged;
         }
 
@@ -329,8 +329,8 @@ namespace Infragistics.Controls.DataSource
             }
         }
 
-        private DataSourceSortDescriptionCollection _sortDescriptions;
-        public DataSourceSortDescriptionCollection SortDescriptions
+        private SortDescriptionCollection _sortDescriptions;
+        public SortDescriptionCollection SortDescriptions
         {
             get
             {
@@ -352,8 +352,8 @@ namespace Infragistics.Controls.DataSource
             }
         }
 
-        private DataSourceFilterExpressionCollection _filterExpressions;
-        public DataSourceFilterExpressionCollection FilterExpressions
+        private FilterExpressionCollection _filterExpressions;
+        public FilterExpressionCollection FilterExpressions
         {
             get
             {
