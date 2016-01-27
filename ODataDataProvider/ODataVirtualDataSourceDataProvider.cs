@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Simple.OData.Client;
 using System.Diagnostics;
+using Infragistics.Controls.DataSource;
 
 #if DATA_PRESENTER
 namespace Reference.DataSources.OData

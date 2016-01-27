@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Simple.OData.Client;
 using System.Diagnostics;
 using System.Windows;
+using Infragistics.Controls.DataSource;
 
 #if WINDOWS_UWP
 using Windows.UI;

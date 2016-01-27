@@ -9,6 +9,7 @@ using Infragistics.Windows.DataPresenter.DataSources;
 using Infragistics.Controls;
 using Reference.DataSources.OData;
 using Infragistics.Windows.Controls;
+using Infragistics.Controls.DataSource;
 
 namespace DataPresenter.DataSources.OData
 {
@@ -121,7 +122,6 @@ namespace DataPresenter.DataSources.OData
 
         private void OnBaseUriChanged(string oldValue, string newValue)
         {
-            this.UnderlyingVirtualDataSource.ResetCache();
             if (this.UnderlyingVirtualDataSource.ActualDataProvider is ODataVirtualDataSourceDataProvider)
             {
                 ((ODataVirtualDataSourceDataProvider)this.UnderlyingVirtualDataSource.ActualDataProvider).BaseUri = BaseUri;
@@ -150,7 +150,6 @@ namespace DataPresenter.DataSources.OData
 
         private void OnEntitySetChanged(string oldValue, string newValue)
         {
-            this.UnderlyingVirtualDataSource.ResetCache();
             if (this.UnderlyingVirtualDataSource.ActualDataProvider is ODataVirtualDataSourceDataProvider)
             {
 				((ODataVirtualDataSourceDataProvider)this.UnderlyingVirtualDataSource.ActualDataProvider).EntitySet = EntitySet;
