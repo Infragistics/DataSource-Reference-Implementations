@@ -44,11 +44,11 @@ namespace Infragistics.Controls.DataSource
 
         private void OnBaseUriChanged(string oldValue, string newValue)
         {
-            ResetCache();
             if (ActualDataProvider is ODataVirtualDataSourceDataProvider)
             {
                 ((ODataVirtualDataSourceDataProvider)ActualDataProvider).BaseUri = BaseUri;
             }
+            QueueAutoRefresh();
         }
 
         /// <summary>
@@ -74,11 +74,11 @@ namespace Infragistics.Controls.DataSource
 
         private void OnEntitySetChanged(string oldValue, string newValue)
         {
-            ResetCache();
             if (ActualDataProvider is ODataVirtualDataSourceDataProvider)
             {
                 ((ODataVirtualDataSourceDataProvider)ActualDataProvider).EntitySet = EntitySet;
             }
+            QueueAutoRefresh();
         }
 
         /// <summary>

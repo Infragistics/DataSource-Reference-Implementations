@@ -19,7 +19,7 @@
             <grid:XGrid.Columns>
                 <grid:TextColumn Key="CustomerID" HeaderText="Customer ID" />
                 <grid:TextColumn Key="ShipName" HeaderText="Ship Name" />
-                <grid:TextColumn Key="OrderID" HeaderText="Order ID" />
+                <grid:NumericColumn Key="OrderID" HeaderText="Order ID" />
                 <grid:TextColumn Key="ShipCountry" HeaderText="Ship Country" />
             </grid:XGrid.Columns>
         </grid:XGrid>

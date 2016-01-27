@@ -34,18 +34,14 @@ namespace ODataSampleApp
                 DesiredPageSize = 200
             };
 
-            source.SortDescriptions.Add(new SortDescription("OrderID", ListSortDirection.Descending));
-            //source.FilterExpressions.Add(DataSourceFilterExpression.CreateSimpleOperation(
-            //    "ShipName", DataSourceExpressionOperatorType.Equal, "Wartian Herkku"));
+            source.SortDescriptions.Add(new SortDescription("ShipName", ListSortDirection.Descending));
 
-            //Task.Delay(8000).ContinueWith((t) =>
-            //{
-            //    Dispatcher.BeginInvoke(new Action(() =>
-            //    {
-            //        grid1.SortDescriptions.Clear();
-            //        grid1.SortDescriptions.Add(new DataSourceSortDescription("OrderID", false));
-            //    }));
-            //});
+            source.FilterExpressions.Add(
+                FilterFactory.Build((f) =>
+                {
+                    return f.Property("ShipName").ToUpper().IsLessThan("G")
+                    .Or(f.Property("ShipName").ToUpper().IsGreaterThan("U"));
+                }));
 
             grid1.ItemsSource = source;
         }
