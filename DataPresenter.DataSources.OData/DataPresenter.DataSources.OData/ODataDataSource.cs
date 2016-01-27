@@ -8,6 +8,7 @@ using System.Windows;
 using Infragistics.Windows.DataPresenter.DataSources;
 using Infragistics.Controls;
 using Reference.DataSources.OData;
+using Infragistics.Windows.Controls;
 
 namespace DataPresenter.DataSources.OData
 {
@@ -16,11 +17,14 @@ namespace DataPresenter.DataSources.OData
 	/// </summary>
 	public sealed class ODataDataSource : AsyncPagingDataSourceBase 
     {
-        #region Constructor
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public ODataDataSource()
+		#region Member Variables
+		#endregion //Member Variables
+
+		#region Constructor
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public ODataDataSource()
         {
         }
 		#endregion //Constructor
@@ -36,8 +40,7 @@ namespace DataPresenter.DataSources.OData
 		{
 			get
 			{
-				// TODO: Return the appropriate CanFilter value
-				return false;
+				return true;
 			}
 		}
 		#endregion //CanFilter
@@ -81,24 +84,36 @@ namespace DataPresenter.DataSources.OData
 
         #region CreateUnderlyingDataSource
         /// <summary>
-        /// 
+        /// Returns a <see cref="VirtualDataSource"/> derived class that will serve as the foundation for this datasource implementation.  All
+		/// threaded data page fetches and backend access will be managed and executed by the instance returned from this method.
         /// </summary>
         /// <returns></returns>
         protected override VirtualDataSource CreateUnderlyingDataSource()
         {
             return new ODataVirtualDataSource();
         }
-        #endregion //CreateUnderlyingDataSource
+		#endregion //CreateUnderlyingDataSource
 
-        #endregion //Base Class Overrides
+		#region OnEndDeferRefresh
+		/// <summary>
+		/// Called when <see cref="IsRefreshDeferred"/> changes to false and modifications to the data are allowed.
+		/// </summary>
+		protected override void OnEndDeferRefresh()
+		{
+		}
+		#endregion //OnEndDeferRefresh
 
-        #region //Properties
+		#endregion //Base Class Overrides
 
-        #region BaseUri
+		#region //Properties
+
+		#region Public Properties
+
+		#region BaseUri
 		/// <summary>
 		/// Returns the BaseUri DependencyProperty.
 		/// </summary>
-        public static readonly DependencyProperty BaseUriProperty = DependencyProperty.Register("BaseUri",
+		public static readonly DependencyProperty BaseUriProperty = DependencyProperty.Register("BaseUri",
         typeof(string), typeof(ODataDataSource), new PropertyMetadata(default(string), (sender, e) =>
         {
             ((ODataDataSource)sender).OnBaseUriChanged((string)e.OldValue, (string)e.NewValue);
@@ -138,7 +153,7 @@ namespace DataPresenter.DataSources.OData
             this.UnderlyingVirtualDataSource.ResetCache();
             if (this.UnderlyingVirtualDataSource.ActualDataProvider is ODataVirtualDataSourceDataProvider)
             {
-                ((ODataVirtualDataSourceDataProvider)this.UnderlyingVirtualDataSource.ActualDataProvider).EntitySet = EntitySet;
+				((ODataVirtualDataSourceDataProvider)this.UnderlyingVirtualDataSource.ActualDataProvider).EntitySet = EntitySet;
             }
         }
 
@@ -178,8 +193,10 @@ namespace DataPresenter.DataSources.OData
             get { return (int)GetValue(TimeoutMillisecondsProperty); }
             set { SetValue(TimeoutMillisecondsProperty, value); }
         }
-        #endregion //TimeoutMilliseconds
+		#endregion //TimeoutMilliseconds
 
-        #endregion //Properties
-    }
+		#endregion //Public Properties
+
+		#endregion //Properties
+	}
 }

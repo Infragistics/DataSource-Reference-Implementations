@@ -1,4 +1,5 @@
 ﻿using DataPresenter.DataSources.OData;
+using Infragistics.Windows.Controls;
 using Infragistics.Windows.DataPresenter;
 using Infragistics.Windows.Themes;
 using System;
@@ -37,11 +38,12 @@ namespace DataPresenter.DataSources.OData.SampleApp
         {
             InitializeComponent();
 
-			this.numDesiredPageSize.Value			= 200;
-			this.numMaximumCachedPages.Value		= 200;
-			this.cboOdataSources.SelectedIndex		= 0;
-			this.cboDataPresenterView.SelectedIndex = 0;
-        }
+			this.numDesiredPageSize.Value						= 200;
+			this.numMaximumCachedPages.Value					= 200;
+			this.cboOdataSources.SelectedIndex					= 0;
+			this.cboDataPresenterView.SelectedIndex				= 0;
+			this.cboRecordFilterLogicalOperator.SelectedIndex	= 0;
+		}
 		#endregion //Constructor
 
 		#region Private Properties
@@ -169,6 +171,23 @@ namespace DataPresenter.DataSources.OData.SampleApp
 			}
 		}
 		#endregion //cboOdataSources_SelectionChanged
+
+		private void cboRecordFilterLogicalOperator_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (null == this.dataPresenter1)
+				return;
+
+			string logicalOperator = (string)this.cboRecordFilterLogicalOperator.SelectedValue;
+			switch (logicalOperator)
+			{
+				case "And":
+					this.dataPresenter1.FieldLayoutSettings.RecordFiltersLogicalOperator = LogicalOperator.And;
+					break;
+				case "Or":
+					this.dataPresenter1.FieldLayoutSettings.RecordFiltersLogicalOperator = LogicalOperator.Or;
+					break;
+			}
+		}
 
 		#region chkShowProgressBar_Checked
 		private void chkShowProgressBar_Checked(object sender, RoutedEventArgs e)

@@ -11,14 +11,14 @@
         xmlns:PresentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="1000">
+        Title="MainWindow" Height="700" Width="1100">
     <Window.Resources>
         <local:ColorToBrushConverter x:Key="colorToBrushConverter"/>
     </Window.Resources>
     
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="5*"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="9*"/>
         </Grid.ColumnDefinitions>
@@ -26,7 +26,14 @@
         <StackPanel Grid.Column="0" Margin="6">
             <StackPanel>
                 <StackPanel.Resources>
-                    <Style x:Key="HeaderText" TargetType="TextBlock">
+                    <Style x:Key="HeaderText1" TargetType="TextBlock">
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Foreground" Value="#FF0052A6"/>
+                        <Setter Property="Margin" Value="0,3"/>
+                        <Setter Property="FontSize" Value="18"/>
+                    </Style>
+                    
+                    <Style x:Key="HeaderText2" TargetType="TextBlock">
                         <Setter Property="FontWeight" Value="Bold"/>
                         <Setter Property="Foreground" Value="#FF0072C6"/>
                         <Setter Property="Margin" Value="0,3"/>
@@ -71,8 +78,8 @@
                     </Style>
                 </StackPanel.Resources>
                 
-                <!-- OData Sources -->
-                <TextBlock Text="ODATA SOURCES" Style="{StaticResource HeaderText}"/>
+                <!-- ODATA SERVICES-->
+                <TextBlock Text="ODATA SERVICES" Style="{StaticResource HeaderText1}"/>
                 <ComboBox x:Name="cboOdataSources" SelectionChanged="cboOdataSources_SelectionChanged" Style="{StaticResource ComboBoxText}">
                     <local:ODataSourceListItem BaseUri="http://services.odata.org/V4/Northwind/Northwind.svc" EntitySet="Orders" Description="Northwind Orders"/>
                     <local:ODataSourceListItem BaseUri="http://services.odata.org/AdventureWorksV3/AdventureWorks.svc" EntitySet="CompanySales"  Description="AdventureWorks Company Sales"/>
@@ -87,9 +94,15 @@
                 </ComboBox>
                 <CheckBox x:Name="chkNullOutDatasource" IsChecked="True" Style="{StaticResource CheckBoxText}">Null out datasource before setting new</CheckBox>
 
-                <!-- Desired Page Size -->
+                <!-- Separator -->
+                <Rectangle Height="1" HorizontalAlignment="Stretch" Fill="Gray" Margin="5,20,5,0"/>
+
+                <!-- DATA SOURCE SETTINGS -->
                 <Rectangle Width="1" Height="20" Fill="Transparent"/>
-                <TextBlock Text="DATASOURCE DESIRED PAGE SIZE" Style="{StaticResource HeaderText}"/>
+                <TextBlock Text="DATASOURCE SETTINGS" Style="{StaticResource HeaderText1}"/>
+                
+                <!-- Desired Page Size -->
+                <TextBlock Text="DESIRED PAGE SIZE" Style="{StaticResource HeaderText2}"/>
                 <igEditors:XamNumericEditor x:Name="numDesiredPageSize" Width="100" HorizontalAlignment="Left" Mask="9999" EditModeEnded="numDesiredPageSize_EditModeEnded" SpinButtonDisplayMode="Always" SpinIncrement="10" Style="{StaticResource NumericEditorText}">
                     <igEditors:XamNumericEditor.ValueConstraint>
                         <igEditors:ValueConstraint MinInclusive="5" MaxInclusive="1000"/>
@@ -98,7 +111,7 @@
 
                 <!-- Maximum number of cached pages -->
                 <Rectangle Width="1" Height="20" Fill="Transparent"/>
-                <TextBlock Text="DATASOURCE MAX # CACHED PAGES" Style="{StaticResource HeaderText}"/>
+                <TextBlock Text="MAX # CACHED PAGES" Style="{StaticResource HeaderText2}"/>
                 <igEditors:XamNumericEditor x:Name="numMaximumCachedPages" Width="100" HorizontalAlignment="Left" Mask="9999" EditModeEnded="numMaximumCachedPages_EditModeEnded" SpinButtonDisplayMode="Always" SpinIncrement="10" Style="{StaticResource NumericEditorText}">
                     <igEditors:XamNumericEditor.ValueConstraint>
                         <igEditors:ValueConstraint MinInclusive="5" MaxInclusive="1000"/>
@@ -108,9 +121,12 @@
                 <!-- Separator -->
                 <Rectangle Height="1" HorizontalAlignment="Stretch" Fill="Gray" Margin="5,20,5,0"/>
 
-                <!-- Pending Message Settings -->
                 <Rectangle Width="1" Height="20" Fill="Transparent"/>
-                <TextBlock Text="DATA PENDING MESSAGE" Style="{StaticResource HeaderText}"/>
+                <TextBlock Text="DATAPRESENTER SETTINGS" Style="{StaticResource HeaderText1}"/>
+
+                <!-- Pending Message Settings -->
+                <Rectangle Width="1" Height="5" Fill="Transparent"/>
+                <TextBlock Text="DATA PENDING MESSAGE SETTINGS" Style="{StaticResource HeaderText2}"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="3*"/>
@@ -137,15 +153,48 @@
                     <CheckBox x:Name="chkShowProgressBar" Grid.Row="3" Grid.Column="1" Margin="0,2" IsChecked="False" Style="{StaticResource CheckBoxText}" Checked="chkShowProgressBar_Checked" Unchecked="chkShowProgressBar_Checked"/>
                 </Grid>
 
-                <!-- XamDataPresenter View -->
+                <!-- Filter Settings -->
                 <Rectangle Width="1" Height="20" Fill="Transparent"/>
-                <TextBlock Text="DATAPRESENTER VIEW" Style="{StaticResource HeaderText}"/>
-                <ComboBox x:Name="cboDataPresenterView" SelectionChanged="cboDataPresenterView_SelectionChanged" Margin="2" Style="{StaticResource ComboBoxText}">
-                    <sys:String>GridView</sys:String>
-                    <sys:String>CardView</sys:String>
-                    <sys:String>CarouselView</sys:String>
-                    <sys:String>TreeView</sys:String>
-                </ComboBox>
+                <TextBlock Text="FILTER SETTINGS" Style="{StaticResource HeaderText2}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="RECORD FILTER LOGICAL OPERATOR" Style="{StaticResource LabelText}"/>
+                    <ComboBox x:Name="cboRecordFilterLogicalOperator" Grid.Row="0" Grid.Column="1" SelectionChanged="cboRecordFilterLogicalOperator_SelectionChanged" Margin="2" Style="{StaticResource ComboBoxText}">
+                        <sys:String>And</sys:String>
+                        <sys:String>Or</sys:String>
+                    </ComboBox>
+                </Grid>
+
+                <!-- Appearance Settings -->
+                <Rectangle Width="1" Height="20" Fill="Transparent"/>
+                <TextBlock Text="APPEARANCE SETTINGS" Style="{StaticResource HeaderText2}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="VIEW" Style="{StaticResource LabelText}"/>
+                    <ComboBox x:Name="cboDataPresenterView" Grid.Row="0" Grid.Column="1" SelectionChanged="cboDataPresenterView_SelectionChanged" Margin="2" Style="{StaticResource ComboBoxText}">
+                        <sys:String>GridView</sys:String>
+                        <sys:String>CardView</sys:String>
+                        <sys:String>CarouselView</sys:String>
+                        <sys:String>TreeView</sys:String>
+                    </ComboBox>
+                </Grid>
+
             </StackPanel>
         </StackPanel>
 
@@ -153,11 +202,13 @@
         
         <igDP:XamDataPresenter x:Name="dataPresenter1" Grid.Column="2" Theme="Office2013" Margin="5,0,0,0">
             <igDP:XamDataPresenter.FieldLayoutSettings>
-                <igDP:FieldLayoutSettings DynamicDataPendingBackgroundBrush="#200080FF" DynamicDataPendingForegroundBrush="DarkGray"/>
+                <igDP:FieldLayoutSettings DynamicDataPendingBackgroundBrush="#200080FF" 
+                                          DynamicDataPendingForegroundBrush="DarkGray"
+                                          FilterEvaluationMode="UseCollectionView"/>
             </igDP:XamDataPresenter.FieldLayoutSettings>
 
             <igDP:XamDataPresenter.FieldSettings>
-                <igDP:FieldSettings LabelClickAction="SortByMultipleFieldsTriState"/>
+                <igDP:FieldSettings LabelClickAction="SortByMultipleFieldsTriState" AllowRecordFiltering="True"/>
             </igDP:XamDataPresenter.FieldSettings>
         </igDP:XamDataPresenter>
     </Grid>
