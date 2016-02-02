@@ -370,6 +370,22 @@ namespace Infragistics.Controls.DataSource
             }
         }
 
+        public bool IsItemIndexLookupSupported
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public bool IsKeyIndexLookupSupported
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         public void NotifySetItem(int index, object oldItem, object newItem)
         {
             if (UpdateNotifier != null)
@@ -455,6 +471,16 @@ namespace Infragistics.Controls.DataSource
         public void Refresh()
         {
             RefreshInternal();
+        }
+
+        public int IndexOfItem(object item)
+        {
+            return -1;
+        }
+
+        public int IndexOfKey(object[] key)
+        {
+            return -1;
         }
     }
 
