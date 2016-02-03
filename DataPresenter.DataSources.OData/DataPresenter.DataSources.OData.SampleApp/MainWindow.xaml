@@ -43,6 +43,7 @@
                     <Style x:Key="LabelText" TargetType="TextBlock">
                         <Setter Property="FontWeight" Value="Bold"/>
                         <Setter Property="Margin" Value="0,3"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
                     </Style>
 
                     <Style x:Key="ColorPicker" TargetType="igControls:XamColorPicker">
@@ -75,6 +76,7 @@
                         <Setter Property="Foreground" Value="Black"/>
                         <Setter Property="FontSize" Value="14"/>
                         <Setter Property="Margin" Value="0,2"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
                     </Style>
                 </StackPanel.Resources>
                 
@@ -82,15 +84,19 @@
                 <TextBlock Text="ODATA SERVICES" Style="{StaticResource HeaderText1}"/>
                 <ComboBox x:Name="cboOdataSources" SelectionChanged="cboOdataSources_SelectionChanged" Style="{StaticResource ComboBoxText}">
                     <local:ODataSourceListItem BaseUri="http://services.odata.org/V4/Northwind/Northwind.svc" EntitySet="Orders" Description="Northwind Orders"/>
+                    <local:ODataSourceListItem BaseUri="http://services.odata.org/V4/Northwind/Northwind.svc" EntitySet="Employees" Description="Northwind Employees"/>
+                    <local:ODataSourceListItem BaseUri="http://services.odata.org/V4/Northwind/Northwind.svc" EntitySet="Suppliers" Description="Northwind Suppliers"/>
                     <local:ODataSourceListItem BaseUri="http://services.odata.org/AdventureWorksV3/AdventureWorks.svc" EntitySet="CompanySales"  Description="AdventureWorks Company Sales"/>
+                    <local:ODataSourceListItem BaseUri="http://services.odata.org/AdventureWorksV3/AdventureWorks.svc" EntitySet="ProductCatalog"  Description="AdventureWorks Product Catalog"/>
+                    <local:ODataSourceListItem BaseUri="http://services.odata.org/AdventureWorksV3/AdventureWorks.svc" EntitySet="WorkOrderRouting"  Description="AdventureWorks Workorder Routing"/>
                     <local:ODataSourceListItem BaseUri="http://data.scottsdaleaz.gov/Planning/BuildingPermits.svc" EntitySet="BuildingPermits"  Description="Scottsdale Building Permits"/>
                     <local:ODataSourceListItem BaseUri="http://data.scottsdaleaz.gov/Planning/BuildingPermits.svc" EntitySet="BuildingInspections"  Description="Scottsdale Building Inspections"/>
                     <local:ODataSourceListItem BaseUri="http://data.scottsdaleaz.gov/MunicipalServices/CapitalImprovementProjects.svc" EntitySet="Projects"  Description="Scottsdale Capital Improvement Projects"/>
                     <local:ODataSourceListItem BaseUri="http://data.scottsdaleaz.gov/Finance/BusinessLicenses.svc" EntitySet="BusinessLicenses"  Description="Scottsdale Business Licenses"/>
                     <local:ODataSourceListItem BaseUri="http://data.scottsdaleaz.gov/Purchasing/Solicitations.svc" EntitySet="Solicitations"  Description="Scottsdale Purchasing Solicitations"/>
                     <local:ODataSourceListItem BaseUri="http://packages.nuget.org/v1/FeedService.svc" EntitySet="Packages"  Description="NuGet Packages"/>
-                    <local:ODataSourceListItem BaseUri="http://www.nerddinner.com/Services/OData.svc" EntitySet="Dinners"  Description="NerdDinner Dinners"/>
-                    <local:ODataSourceListItem BaseUri="http://www.nerddinner.com/Services/OData.svc" EntitySet="RSVPs"  Description="NerdDinner RSVPs"/>
+                    <local:ODataSourceListItem BaseUri="http://odata.research.microsoft.com/odata.svc" EntitySet="Projects"  Description="Microsoft Research - Projects"/>
+                    <local:ODataSourceListItem BaseUri="http://odata.research.microsoft.com/odata.svc" EntitySet="Publications"  Description="Microsoft Research - Publications"/>
                 </ComboBox>
                 <CheckBox x:Name="chkNullOutDatasource" IsChecked="True" Style="{StaticResource CheckBoxText}">Null out datasource before setting new</CheckBox>
 
@@ -150,7 +156,7 @@
                     <igControls:XamColorPicker Grid.Row="2" Grid.Column="1" Style="{StaticResource ColorPicker}" SelectedColor="{Binding ElementName=dataPresenter1, Mode=TwoWay, Path=(igDP:XamDataPresenter.FieldLayoutSettings).DynamicDataPendingForegroundBrush, Converter={StaticResource colorToBrushConverter}}"/>
 
                     <TextBlock Grid.Row="3" Grid.Column="0" Text="SHOW CUSTOM TEMPLATE" Style="{StaticResource LabelText}"/>
-                    <CheckBox x:Name="chkShowProgressBar" Grid.Row="3" Grid.Column="1" Margin="0,2" IsChecked="False" Style="{StaticResource CheckBoxText}" Checked="chkShowProgressBar_Checked" Unchecked="chkShowProgressBar_Checked"/>
+                    <CheckBox x:Name="chkShowCustomTemplate" Grid.Row="3" Grid.Column="1" Margin="0,2" IsChecked="False" Style="{StaticResource CheckBoxText}" Checked="chkShowCustomTemplate_Checked" Unchecked="chkShowCustomTemplate_Checked"/>
                 </Grid>
 
                 <!-- Filter Settings -->
