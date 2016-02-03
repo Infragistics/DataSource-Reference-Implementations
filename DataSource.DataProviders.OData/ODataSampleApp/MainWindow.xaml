@@ -17,10 +17,10 @@
                     >
 
             <grid:XGrid.Columns>
-                <grid:TextColumn Key="CustomerID" HeaderText="Customer ID" />
-                <grid:TextColumn Key="ShipName" HeaderText="Ship Name" />
-                <grid:NumericColumn Key="OrderID" HeaderText="Order ID" />
-                <grid:TextColumn Key="ShipCountry" HeaderText="Ship Country" />
+                <grid:TextColumn Key="CustomerID" Title="Customer ID" />
+                <grid:TextColumn Key="ShipName" Title="Ship Name" />
+                <grid:NumericColumn Key="OrderID" Title="Order ID" />
+                <grid:TextColumn Key="ShipCountry" Title="Ship Country" />
             </grid:XGrid.Columns>
         </grid:XGrid>
     </Grid>

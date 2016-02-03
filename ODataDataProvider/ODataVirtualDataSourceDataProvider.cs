@@ -44,6 +44,11 @@ namespace Infragistics.Controls.DataSource
 
         public void AddPageRequest(int pageIndex, DataSourcePageRequestPriority priority)
         {
+            if (ShouldDeferAutoRefresh)
+            {
+                return;
+            }
+
             if (_worker != null && _worker.IsShutdown)
             {
                 _worker = null;
@@ -84,7 +89,6 @@ namespace Infragistics.Controls.DataSource
 
             _worker = new ODataVirtualDataSourceDataProviderWorker(
                 settings);
-            _worker.AddPageRequest(0, DataSourcePageRequestPriority.Normal);
         }
 
         private bool Valid()
@@ -172,7 +176,11 @@ namespace Infragistics.Controls.DataSource
                         SchemaChanged(this, new DataSourceDataProviderSchemaChangedEventArgs(_currentSchema, _currentFullCount));
                     }
                 }
-                _pageLoaded(page, fullCount, actualPageSize);
+
+                if (page.PageIndex() != ODataVirtualDataSourceDataProviderWorker.SchemaRequestIndex)
+                {
+                    _pageLoaded(page, fullCount, actualPageSize);
+                }
             }
         }
 
@@ -209,8 +217,16 @@ namespace Infragistics.Controls.DataSource
             }
             set
             {
+                var oldValue = _baseUri;
                 _baseUri = value;
-                QueueAutoRefresh();
+                if (oldValue != _baseUri)
+                {
+                    QueueAutoRefresh();
+                    if (Valid() && ShouldDeferAutoRefresh)
+                    {
+                        QueueSchemaFetch();
+                    }
+                }
             }
         }
 
@@ -223,8 +239,16 @@ namespace Infragistics.Controls.DataSource
             }
             set
             {
+                var oldValue = _entitySet;
                 _entitySet = value;
-                QueueAutoRefresh();
+                if (oldValue != _entitySet)
+                {
+                    QueueAutoRefresh();
+                    if (Valid() && ShouldDeferAutoRefresh)
+                    {
+                        QueueSchemaFetch();
+                    }
+                }
             }
         }
 
@@ -310,6 +334,10 @@ namespace Infragistics.Controls.DataSource
                 if (!_shouldDeferAutoRefresh)
                 {
                     QueueAutoRefresh();
+                }
+                if (_shouldDeferAutoRefresh && Valid() && _currentSchema == null)
+                {
+                    QueueSchemaFetch();
                 }
             }
         }
@@ -418,6 +446,57 @@ namespace Infragistics.Controls.DataSource
             }
         }
 
+        internal bool _schemaFetchQueued = false;
+        public void QueueSchemaFetch()
+        {
+            if (_schemaFetchQueued)
+            {
+                return;
+            }
+
+            if (ExecutionContext != null)
+            {
+                _schemaFetchQueued = true;
+                ExecutionContext.EnqueueAction(DoSchemaFetchInternal);
+            }
+        }
+
+        internal void DoSchemaFetchInternal()
+        {
+            if (!_schemaFetchQueued)
+            {
+                return;
+            }
+            _schemaFetchQueued = false;
+            SchemaFetchInternal();
+        }
+
+        internal void SchemaFetchInternal()
+        {
+            SchemaFetchInternalOverride();
+        }
+
+        protected virtual void SchemaFetchInternalOverride()
+        {
+            if (!ShouldDeferAutoRefresh)
+            {
+                return;
+            }
+            RemoveAllPageRequests();
+            KillWorker();
+            CreateWorker();
+        
+            AddSchemaRequest();
+        }
+
+        private void AddSchemaRequest()
+        {
+            _worker.AddPageRequest(
+                ODataVirtualDataSourceDataProviderWorker.SchemaRequestIndex,
+                DataSourcePageRequestPriority.High
+                );
+        }
+
         internal bool _autoRefreshQueued = false;
         public void QueueAutoRefresh()
         {
@@ -441,6 +520,7 @@ namespace Infragistics.Controls.DataSource
         {
             if (ShouldDeferAutoRefresh)
             {
+                _autoRefreshQueued = false;
                 return;
             }
             if (!_autoRefreshQueued)
@@ -461,6 +541,8 @@ namespace Infragistics.Controls.DataSource
             RemoveAllPageRequests();
             KillWorker();
             CreateWorker();
+            //TODO: should we have this here? prob need to readd request for current page instead.
+            _worker.AddPageRequest(0, DataSourcePageRequestPriority.Normal);
         }
 
         public void FlushAutoRefresh()

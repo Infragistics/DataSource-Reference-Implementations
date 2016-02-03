@@ -27,7 +27,14 @@ namespace Infragistics.Controls.DataSource
 
         public ODataDataSourcePage(IEnumerable<IDictionary<string, object>> sourceData, IDataSourceSchema schema, int pageIndex)
         {
-            _actualData = sourceData.ToArray();
+            if (sourceData == null)
+            {
+                _actualData = null;
+            }
+            else
+            {
+                _actualData = sourceData.ToArray();
+            }
             _schema = schema;
             _pageIndex = pageIndex;
         }

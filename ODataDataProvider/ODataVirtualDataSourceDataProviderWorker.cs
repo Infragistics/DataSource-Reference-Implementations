@@ -131,11 +131,23 @@ namespace Infragistics.Controls.DataSource
         {
             ODataVirtualDataSourceProviderTaskDataHolder h = (ODataVirtualDataSourceProviderTaskDataHolder)taskDataHolder;
             IDataSourceSchema schema = null;
-            IEnumerable<IDictionary<string, object>> result;
-            Task<IEnumerable<IDictionary<string, object>>> task = (Task<IEnumerable<IDictionary<string, object>>>)completedTask.Task;
+            IEnumerable<IDictionary<string, object>> result = null;
+            int schemaFetchCount = -1;
+
             try
             {
-                result = task.Result;
+                if (pageIndex == SchemaRequestIndex)
+                {
+                    Task<int> task = (Task<int>)completedTask.Task;
+
+                    schemaFetchCount = task.Result;
+                }
+                else
+                {
+                    Task<IEnumerable<IDictionary<string, object>>> task = (Task<IEnumerable<IDictionary<string, object>>>)completedTask.Task;
+
+                    result = task.Result;
+                }                
             }
             catch (AggregateException e)
             {
@@ -169,30 +181,51 @@ namespace Infragistics.Controls.DataSource
             DataSourcePageLoadedCallback pageLoaded;
             lock (SyncLock)
             {
-                var completedAnnotation = h.CompletedAnnotation;
-                if (completedAnnotation.Count.HasValue)
+                if (schemaFetchCount >= 0)
                 {
-                    ActualCount = (int)completedAnnotation.Count.Value;
+                    ActualCount = schemaFetchCount;
+                }
+                else
+                {
+                    var completedAnnotation = h.CompletedAnnotation;
+                    if (completedAnnotation.Count.HasValue)
+                    {
+                        ActualCount = (int)completedAnnotation.Count.Value;
+                    }
                 }
 
                 schema = ActualSchema;
-                if (schema == null)
-                {
-                    schema = ResolveSchema(result.FirstOrDefault());
-                }
+            }
+
+            if (schema == null)
+            {
+                schema = ResolveSchema();
+            }
+
+            lock (SyncLock)
+            {                
                 ActualSchema = schema;
                 executionContext = ExecutionContext;
                 pageLoaded = PageLoaded;
             }
 
-            ODataDataSourcePage page = new ODataDataSourcePage(result, schema, pageIndex);
-            lock (SyncLock)
+            ODataDataSourcePage page = null;
+
+            if (result != null)
             {
-                if (!IsLastPage(pageIndex) && page.Count() > 0 && !PopulatedActualPageSize)
+                page = new ODataDataSourcePage(result, schema, pageIndex);
+                lock (SyncLock)
                 {
-                    PopulatedActualPageSize = true;
-                    ActualPageSize = page.Count();
+                    if (!IsLastPage(pageIndex) && page.Count() > 0 && !PopulatedActualPageSize)
+                    {
+                        PopulatedActualPageSize = true;
+                        ActualPageSize = page.Count();
+                    }
                 }
+            }
+            else
+            {
+                page = new ODataDataSourcePage(null, schema, pageIndex);
             }
 
             if (PageLoaded != null)
@@ -225,13 +258,8 @@ namespace Infragistics.Controls.DataSource
 
         
 
-        private IDataSourceSchema ResolveSchema(IDictionary<string, object> item)
+        private IDataSourceSchema ResolveSchema()
         {
-            if (item == null)
-            {
-                return null;
-            }
-
             var t = this._client.GetMetadataDocumentAsync();
             t.Wait();
             var metadataDocument = t.Result;
@@ -241,6 +269,7 @@ namespace Infragistics.Controls.DataSource
 
         private string _filterString = null;
         private string _selectedString = null;
+        public const int SchemaRequestIndex = -1;
 
         protected override void MakeTaskForRequest(AsyncDataSourcePageRequest request, int retryDelay)
         {
@@ -315,10 +344,20 @@ namespace Infragistics.Controls.DataSource
                 }
             }
 
-            Task<IEnumerable<IDictionary<string, object>>> task = client
-                .Skip(request.Index * actualPageSize)
-                .Top(actualPageSize)
-                .FindEntriesAsync(annotations);
+            Task task;
+            if (request.Index == SchemaRequestIndex)
+            {
+                task = client
+                    .Count()
+                    .FindScalarAsync<int>();
+            }
+            else
+            {
+                task = client
+                    .Skip(request.Index * actualPageSize)
+                    .Top(actualPageSize)
+                    .FindEntriesAsync(annotations);
+            }
 
             request.TaskHolder = new AsyncDataSourcePageTaskHolder();
             request.TaskHolder.Task = task;

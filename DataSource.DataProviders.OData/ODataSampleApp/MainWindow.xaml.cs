@@ -33,6 +33,8 @@ namespace ODataSampleApp
                 EntitySet = "Orders",
                 DesiredPageSize = 200
             };
+            source.ShouldDeferAutoRefresh = true;
+            source.SchemaChanged += Source_SchemaChanged;
 
             source.SortDescriptions.Add(new SortDescription("ShipName", ListSortDirection.Descending));
 
@@ -44,6 +46,19 @@ namespace ODataSampleApp
                 }));
 
             grid1.ItemsSource = source;
+
+            Task.Delay(10000).ContinueWith((t) =>
+            {
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    source.ShouldDeferAutoRefresh = false;
+                }));
+            });
+        }
+
+        private void Source_SchemaChanged(object sender, DataSourceSchemaChangedEventArgs args)
+        {
+            System.Diagnostics.Debug.WriteLine("schema fetched: " + args.Count);
         }
     }
 }
