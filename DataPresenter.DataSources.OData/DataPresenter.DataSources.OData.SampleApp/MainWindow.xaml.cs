@@ -172,6 +172,7 @@ namespace DataPresenter.DataSources.OData.SampleApp
 		}
 		#endregion //cboOdataSources_SelectionChanged
 
+		#region cboRecordFilterLogicalOperator_SelectionChanged
 		private void cboRecordFilterLogicalOperator_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (null == this.dataPresenter1)
@@ -188,11 +189,12 @@ namespace DataPresenter.DataSources.OData.SampleApp
 					break;
 			}
 		}
+		#endregion //cboRecordFilterLogicalOperator_SelectionChanged
 
-		#region chkShowProgressBar_Checked
-		private void chkShowProgressBar_Checked(object sender, RoutedEventArgs e)
+		#region chkShowCustomTemplate_Checked
+		private void chkShowCustomTemplate_Checked(object sender, RoutedEventArgs e)
 		{
-			if (this.chkShowProgressBar.IsChecked.Value)
+			if (this.chkShowCustomTemplate.IsChecked.Value)
 			{
 				FrameworkElementFactory fef = new FrameworkElementFactory(typeof(ProgressBar));
 				fef.SetValue(ProgressBar.IsIndeterminateProperty, true);
@@ -205,7 +207,7 @@ namespace DataPresenter.DataSources.OData.SampleApp
 			else
 				this.dataPresenter1.FieldLayoutSettings.DynamicDataPendingContentTemplate = null;
 		}
-		#endregion //chkShowProgressBar_Checked
+		#endregion //chkShowCustomTemplate_Checked
 
 		#region numDesiredPageSize_EditModeEnded
 		private void numDesiredPageSize_EditModeEnded(object sender, Infragistics.Windows.Editors.Events.EditModeEndedEventArgs e)
