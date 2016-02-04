@@ -159,15 +159,60 @@ namespace DataPresenter.DataSources.OData.SampleApp
 		#region cboOdataSources_SelectionChanged
 		private void cboOdataSources_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			ODataSourceListItem ods = this.cboOdataSources.SelectedItem as ODataSourceListItem;
-			if (null != ods)
+			// Establish the DataSourceConfigurationInfo combobox item that was selected.  Refer to the MainWindow.xaml file
+			// to see how these combobox items were defined.
+			DataSourceConfigurationInfo dataSourceConfigInfo = this.cboOdataSources.SelectedItem as DataSourceConfigurationInfo;
+			if (null != dataSourceConfigInfo)
 			{
 				// If requested, null out the grid's DataSource before setting the new one.
 				if (this.chkNullOutDatasource.IsChecked.HasValue && this.chkNullOutDatasource.IsChecked.Value == true)
 					this.dataPresenter1.DataSource = null;
 
-				// Set the grid's DataSource to an instance of an ODataDataSource for the selected Uri and EntitySet..
-				this.dataPresenter1.DataSource = new ODataDataSource { BaseUri = ods.BaseUri, EntitySet = ods.EntitySet, DesiredPageSize = this.DesiredPageSize, MaximumCachedPages = this.MaximumCachedPages };
+				// Reset some FieldLayout related fields and settings.
+				this.dataPresenter1.FieldLayouts.Clear();
+				this.dataPresenter1.DefaultFieldLayout = null;
+				this.dataPresenter1.FieldLayoutSettings.AutoGenerateFields = true;
+
+				// For demo purposes, define a subset of fields to display in the grid.
+				//
+				// For the Northwind Orders table let's limit the number of fields by defining a DefaultFieldLayout
+				// in the XamDataPresenter that includes a subset of all the fields in the Orders table.  Not only will this
+				// limit the number of fields that are displayed by the grid, but it will also improve response time by
+				// limiting which columns of data are requested from the backend and transmitted over the connection.
+				if (dataSourceConfigInfo.BaseUri == @"http://services.odata.org/V4/Northwind/Northwind.svc" && dataSourceConfigInfo.EntitySet == "Orders")
+				{
+					this.dataPresenter1.FieldLayoutSettings.AutoGenerateFields = false;
+					FieldLayout fieldLayout = new FieldLayout();
+					fieldLayout.Fields.Add(new Field("CustomerID", typeof(string)));
+					fieldLayout.Fields.Add(new Field("EmployeeID", typeof(int)));
+					fieldLayout.Fields.Add(new Field("ShipName", typeof(string)));
+					fieldLayout.Fields.Add(new Field("ShipAddress", typeof(string)));
+					fieldLayout.Fields.Add(new Field("ShipCity", typeof(string)));
+					fieldLayout.Fields.Add(new Field("ShipRegion", typeof(string)));
+					fieldLayout.Fields.Add(new Field("ShipPostalCode", typeof(string)));
+
+					this.dataPresenter1.FieldLayouts.Add(fieldLayout);
+					fieldLayout.IsDefault = true;
+				}
+
+
+				// ======================================================================================================
+				// Another way to limit the number of fields that are fetched from the backend to improve response time is to set 
+				// the DesiredFields property on the ODataDataSource. Refer to the MainWindow.xaml file to see how we have limited
+				// the number of fields requested and returned by the data source by setting the DesiredFields property of the 
+				// DataSourceConfigurationInfo combobox item.  We will use this configuration info below when we create the
+				// ODataDataSource instance.
+				// ======================================================================================================
+
+
+				// Set the grid's DataSource to an instance of an ODataDataSource created using the settings from the
+				// selected DataSourceConfigurationInfo.
+				this.dataPresenter1.DataSource = 
+					new ODataDataSource {	BaseUri = dataSourceConfigInfo.BaseUri,
+											EntitySet = dataSourceConfigInfo.EntitySet,
+											DesiredFields = dataSourceConfigInfo.DesiredFields,
+											DesiredPageSize = this.DesiredPageSize,
+											MaximumCachedPages = this.MaximumCachedPages };
 			}
 		}
 		#endregion //cboOdataSources_SelectionChanged
@@ -236,16 +281,17 @@ namespace DataPresenter.DataSources.OData.SampleApp
 		#endregion //Event Handlers
 	}
 
-	#region ODataSourceListItem Class
-	public class ODataSourceListItem
+	#region DataSourceConfigurationInfo Class
+	public class DataSourceConfigurationInfo
 	{
 		public override string ToString() { return Description; }
 
 		public string BaseUri { get; set; }
 		public string Description { get; set; }
 		public string EntitySet{ get; set; }
+		public string[] DesiredFields { get; set; }
 	}
-	#endregion //ODataSourceListItem Class
+	#endregion //DataSourceConfigurationInfo Class
 
 	#region ColorToBrushConverter Class
 	public class ColorToBrushConverter : IValueConverter

@@ -80,23 +80,36 @@
                     </Style>
                 </StackPanel.Resources>
                 
-                <!-- ODATA SERVICES-->
+                <!-- Dropdown list of publicly accessible ODATA SERVICES-->
                 <TextBlock Text="ODATA SERVICES" Style="{StaticResource HeaderText1}"/>
                 <ComboBox x:Name="cboOdataSources" SelectionChanged="cboOdataSources_SelectionChanged" Style="{StaticResource ComboBoxText}">
-                    <local:ODataSourceListItem BaseUri="http://services.odata.org/V4/Northwind/Northwind.svc" EntitySet="Orders" Description="Northwind Orders"/>
-                    <local:ODataSourceListItem BaseUri="http://services.odata.org/V4/Northwind/Northwind.svc" EntitySet="Employees" Description="Northwind Employees"/>
-                    <local:ODataSourceListItem BaseUri="http://services.odata.org/V4/Northwind/Northwind.svc" EntitySet="Suppliers" Description="Northwind Suppliers"/>
-                    <local:ODataSourceListItem BaseUri="http://services.odata.org/AdventureWorksV3/AdventureWorks.svc" EntitySet="CompanySales"  Description="AdventureWorks Company Sales"/>
-                    <local:ODataSourceListItem BaseUri="http://services.odata.org/AdventureWorksV3/AdventureWorks.svc" EntitySet="ProductCatalog"  Description="AdventureWorks Product Catalog"/>
-                    <local:ODataSourceListItem BaseUri="http://services.odata.org/AdventureWorksV3/AdventureWorks.svc" EntitySet="WorkOrderRouting"  Description="AdventureWorks Workorder Routing"/>
-                    <local:ODataSourceListItem BaseUri="http://data.scottsdaleaz.gov/Planning/BuildingPermits.svc" EntitySet="BuildingPermits"  Description="Scottsdale Building Permits"/>
-                    <local:ODataSourceListItem BaseUri="http://data.scottsdaleaz.gov/Planning/BuildingPermits.svc" EntitySet="BuildingInspections"  Description="Scottsdale Building Inspections"/>
-                    <local:ODataSourceListItem BaseUri="http://data.scottsdaleaz.gov/MunicipalServices/CapitalImprovementProjects.svc" EntitySet="Projects"  Description="Scottsdale Capital Improvement Projects"/>
-                    <local:ODataSourceListItem BaseUri="http://data.scottsdaleaz.gov/Finance/BusinessLicenses.svc" EntitySet="BusinessLicenses"  Description="Scottsdale Business Licenses"/>
-                    <local:ODataSourceListItem BaseUri="http://data.scottsdaleaz.gov/Purchasing/Solicitations.svc" EntitySet="Solicitations"  Description="Scottsdale Purchasing Solicitations"/>
-                    <local:ODataSourceListItem BaseUri="http://packages.nuget.org/v1/FeedService.svc" EntitySet="Packages"  Description="NuGet Packages"/>
-                    <local:ODataSourceListItem BaseUri="http://odata.research.microsoft.com/odata.svc" EntitySet="Projects"  Description="Microsoft Research - Projects"/>
-                    <local:ODataSourceListItem BaseUri="http://odata.research.microsoft.com/odata.svc" EntitySet="Publications"  Description="Microsoft Research - Publications"/>
+                    <local:DataSourceConfigurationInfo BaseUri="http://services.odata.org/V4/Northwind/Northwind.svc" EntitySet="Orders" Description="Northwind Orders"/>
+                    <local:DataSourceConfigurationInfo BaseUri="http://services.odata.org/V4/Northwind/Northwind.svc" EntitySet="Employees" Description="Northwind Employees"/>
+                    <local:DataSourceConfigurationInfo BaseUri="http://services.odata.org/V4/Northwind/Northwind.svc" EntitySet="Suppliers" Description="Northwind Suppliers"/>
+                    <local:DataSourceConfigurationInfo BaseUri="http://services.odata.org/AdventureWorksV3/AdventureWorks.svc" EntitySet="CompanySales"  Description="AdventureWorks Company Sales"/>
+                    <local:DataSourceConfigurationInfo BaseUri="http://services.odata.org/AdventureWorksV3/AdventureWorks.svc" EntitySet="ProductCatalog"  Description="AdventureWorks Product Catalog"/>
+                    <local:DataSourceConfigurationInfo BaseUri="http://services.odata.org/AdventureWorksV3/AdventureWorks.svc" EntitySet="WorkOrderRouting"  Description="AdventureWorks Workorder Routing"/>
+                    <local:DataSourceConfigurationInfo BaseUri="http://data.scottsdaleaz.gov/Planning/BuildingPermits.svc" EntitySet="BuildingPermits"  Description="Scottsdale Building Permits">
+                        <!-- Limit the amount of data fetched from this OData service by setting the DesiredFIelds property.  Refer to
+                        the cboOdataSources_SelectionChanged event handler code in MainWindow.xaml.cs to see how we apply these settings when
+                        we create a new ODataDataSource instance. -->
+                        <local:DataSourceConfigurationInfo.DesiredFields>
+                            <x:Array Type="sys:String">
+                                <sys:String>PermitNumber</sys:String>
+                                <sys:String>PermitStatus</sys:String>
+                                <sys:String>IssueDate</sys:String>
+                                <sys:String>Address</sys:String>
+                                <sys:String>Zone</sys:String>
+                            </x:Array>
+                        </local:DataSourceConfigurationInfo.DesiredFields>
+                    </local:DataSourceConfigurationInfo>
+                    <local:DataSourceConfigurationInfo BaseUri="http://data.scottsdaleaz.gov/Planning/BuildingPermits.svc" EntitySet="BuildingInspections"  Description="Scottsdale Building Inspections"/>
+                    <local:DataSourceConfigurationInfo BaseUri="http://data.scottsdaleaz.gov/MunicipalServices/CapitalImprovementProjects.svc" EntitySet="Projects"  Description="Scottsdale Capital Improvement Projects"/>
+                    <local:DataSourceConfigurationInfo BaseUri="http://data.scottsdaleaz.gov/Finance/BusinessLicenses.svc" EntitySet="BusinessLicenses"  Description="Scottsdale Business Licenses"/>
+                    <local:DataSourceConfigurationInfo BaseUri="http://data.scottsdaleaz.gov/Purchasing/Solicitations.svc" EntitySet="Solicitations"  Description="Scottsdale Purchasing Solicitations"/>
+                    <local:DataSourceConfigurationInfo BaseUri="http://packages.nuget.org/v1/FeedService.svc" EntitySet="Packages"  Description="NuGet Packages"/>
+                    <local:DataSourceConfigurationInfo BaseUri="http://odata.research.microsoft.com/odata.svc" EntitySet="Projects"  Description="Microsoft Research - Projects"/>
+                    <local:DataSourceConfigurationInfo BaseUri="http://odata.research.microsoft.com/odata.svc" EntitySet="Publications"  Description="Microsoft Research - Publications"/>
                 </ComboBox>
                 <CheckBox x:Name="chkNullOutDatasource" IsChecked="True" Style="{StaticResource CheckBoxText}">Null out datasource before setting new</CheckBox>
 

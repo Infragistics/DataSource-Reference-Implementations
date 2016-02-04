@@ -95,14 +95,14 @@ namespace DataPresenter.DataSources.OData
         }
 		#endregion //CreateUnderlyingDataSource
 
-		#region OnEndDeferRefresh
+		#region OnEndDeferCollectionViewRefresh
 		/// <summary>
-		/// Called when <see cref="IsRefreshDeferred"/> changes to false and modifications to the data are allowed.
+		/// Called when <see cref="IsRefreshDeferred"/> changes to false and modifications to the data exposed via ICollectionView are allowed.
 		/// </summary>
-		protected override void OnEndDeferRefresh()
+		protected override void OnEndDeferCollectionViewRefresh()
 		{
 		}
-		#endregion //OnEndDeferRefresh
+		#endregion //OnEndDeferCollectionViewRefresh
 
 		#endregion //Base Class Overrides
 
