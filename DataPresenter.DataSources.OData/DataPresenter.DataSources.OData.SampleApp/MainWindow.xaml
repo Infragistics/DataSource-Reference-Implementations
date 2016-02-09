@@ -143,9 +143,9 @@
                 <Rectangle Width="1" Height="20" Fill="Transparent"/>
                 <TextBlock Text="DATAPRESENTER SETTINGS" Style="{StaticResource HeaderText1}"/>
 
-                <!-- Pending Message Settings -->
+                <!-- Data Pending Overlay Settings -->
                 <Rectangle Width="1" Height="5" Fill="Transparent"/>
-                <TextBlock Text="DATA PENDING MESSAGE SETTINGS" Style="{StaticResource HeaderText2}"/>
+                <TextBlock Text="DATA PENDING OVERLAY SETTINGS" Style="{StaticResource HeaderText2}"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="3*"/>
@@ -154,22 +154,10 @@
                     
                     <Grid.RowDefinitions>
                         <RowDefinition />
-                        <RowDefinition />
-                        <RowDefinition />
-                        <RowDefinition />
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="MESSAGE TEXT" Style="{StaticResource LabelText}"/>
-                    <TextBox x:Name="txtPendingMessage" Grid.Row="0" Grid.Column="1"  Text="loading..." TextChanged="txtPendingMessage_TextChanged" Style="{StaticResource TextBoxText}"/>
-
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="BACKGROUND" Style="{StaticResource LabelText}"/>
-                    <igControls:XamColorPicker Grid.Row="1" Grid.Column="1" Style="{StaticResource ColorPicker}" SelectedColor="{Binding ElementName=dataPresenter1, Mode=TwoWay, Path=(igDP:XamDataPresenter.FieldLayoutSettings).DynamicDataPendingBackgroundBrush, Converter={StaticResource colorToBrushConverter}}"/>
-
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="FOREGROUND" Style="{StaticResource LabelText}"/>
-                    <igControls:XamColorPicker Grid.Row="2" Grid.Column="1" Style="{StaticResource ColorPicker}" SelectedColor="{Binding ElementName=dataPresenter1, Mode=TwoWay, Path=(igDP:XamDataPresenter.FieldLayoutSettings).DynamicDataPendingForegroundBrush, Converter={StaticResource colorToBrushConverter}}"/>
-
-                    <TextBlock Grid.Row="3" Grid.Column="0" Text="SHOW CUSTOM TEMPLATE" Style="{StaticResource LabelText}"/>
-                    <CheckBox x:Name="chkShowCustomTemplate" Grid.Row="3" Grid.Column="1" Margin="0,2" IsChecked="False" Style="{StaticResource CheckBoxText}" Checked="chkShowCustomTemplate_Checked" Unchecked="chkShowCustomTemplate_Checked"/>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="FILL" Style="{StaticResource LabelText}"/>
+                    <igControls:XamColorPicker x:Name="colorPicker" Grid.Row="0" Grid.Column="1" Style="{StaticResource ColorPicker}" SelectedColorChanged="colorPicker_SelectedColorChanged"/>
                 </Grid>
 
                 <!-- Filter Settings -->
@@ -221,9 +209,7 @@
         
         <igDP:XamDataPresenter x:Name="dataPresenter1" Grid.Column="2" Theme="Office2013" Margin="5,0,0,0">
             <igDP:XamDataPresenter.FieldLayoutSettings>
-                <igDP:FieldLayoutSettings DynamicDataPendingBackgroundBrush="#200080FF" 
-                                          DynamicDataPendingForegroundBrush="DarkGray"
-                                          FilterEvaluationMode="UseCollectionView"/>
+                <igDP:FieldLayoutSettings FilterEvaluationMode="UseCollectionView"/>
             </igDP:XamDataPresenter.FieldLayoutSettings>
 
             <igDP:XamDataPresenter.FieldSettings>

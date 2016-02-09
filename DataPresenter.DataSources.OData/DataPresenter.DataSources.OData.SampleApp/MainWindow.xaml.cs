@@ -43,6 +43,14 @@ namespace DataPresenter.DataSources.OData.SampleApp
 			this.cboOdataSources.SelectedIndex					= 0;
 			this.cboDataPresenterView.SelectedIndex				= 0;
 			this.cboRecordFilterLogicalOperator.SelectedIndex	= 0;
+
+			// Initialize the color picker with the current DataPendingOverlayBrush.
+			if (this.dataPresenter1.Resources.Contains(DataPresenterBrushKeys.DataPendingOverlayBrushKey))
+			{
+				SolidColorBrush overlayBrush = this.dataPresenter1.Resources[DataPresenterBrushKeys.DataPendingOverlayBrushKey] as SolidColorBrush;
+				if (null != overlayBrush)
+					this.colorPicker.SelectedColor = overlayBrush.Color;
+			}
 		}
 		#endregion //Constructor
 
@@ -236,23 +244,20 @@ namespace DataPresenter.DataSources.OData.SampleApp
 		}
 		#endregion //cboRecordFilterLogicalOperator_SelectionChanged
 
-		#region chkShowCustomTemplate_Checked
-		private void chkShowCustomTemplate_Checked(object sender, RoutedEventArgs e)
+		#region colorPicker_SelectedColorChanged
+		private void colorPicker_SelectedColorChanged(object sender, Infragistics.Controls.Editors.SelectedColorChangedEventArgs e)
 		{
-			if (this.chkShowCustomTemplate.IsChecked.Value)
+			if (e.NewColor.HasValue)
 			{
-				FrameworkElementFactory fef = new FrameworkElementFactory(typeof(ProgressBar));
-				fef.SetValue(ProgressBar.IsIndeterminateProperty, true);
-				fef.SetValue(ProgressBar.WidthProperty, 100d);
-				fef.SetValue(ProgressBar.HeightProperty, 5d);
+				// Remove the existing DataPendingOverlayBrush resource from the XamDataPresenter Resources dictionary.
+				if (this.dataPresenter1.Resources.Contains(DataPresenterBrushKeys.DataPendingOverlayBrushKey))
+					this.dataPresenter1.Resources.Remove(DataPresenterBrushKeys.DataPendingOverlayBrushKey);
 
-				DataTemplate customTemplate = new DataTemplate { VisualTree = fef };
-				this.dataPresenter1.FieldLayoutSettings.DynamicDataPendingContentTemplate = customTemplate;
+				// Add a new DataPendingOverlayBrush resource for the selected color to the XamDataPresenter Resources dictionary.
+				this.dataPresenter1.Resources.Add(DataPresenterBrushKeys.DataPendingOverlayBrushKey, new SolidColorBrush(e.NewColor.Value));
 			}
-			else
-				this.dataPresenter1.FieldLayoutSettings.DynamicDataPendingContentTemplate = null;
 		}
-		#endregion //chkShowCustomTemplate_Checked
+		#endregion //colorPicker_SelectedColorChanged
 
 		#region numDesiredPageSize_EditModeEnded
 		private void numDesiredPageSize_EditModeEnded(object sender, Infragistics.Windows.Editors.Events.EditModeEndedEventArgs e)
@@ -269,14 +274,6 @@ namespace DataPresenter.DataSources.OData.SampleApp
 				this.CurrentDataSource.MaximumCachedPages = this.MaximumCachedPages;
 		}
 		#endregion //numMaximumCachedPages_EditModeEnded
-
-		#region txtPendingMessage_TextChanged
-		private void txtPendingMessage_TextChanged(object sender, TextChangedEventArgs e)
-		{
-			// Update the dynamic resource string for the 'dynamic data pending' message.
-			Infragistics.Windows.DataPresenter.Resources.Customizer.SetCustomizedString("DynamicDataPendingMessage", ((TextBox)sender).Text);
-		}
-		#endregion //txtPendingMessage_TextChanged
 
 		#endregion //Event Handlers
 	}
