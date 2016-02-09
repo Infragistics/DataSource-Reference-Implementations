@@ -12,10 +12,6 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="MainWindow" Height="700" Width="1100">
-    <Window.Resources>
-        <local:ColorToBrushConverter x:Key="colorToBrushConverter"/>
-    </Window.Resources>
-    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5*"/>
@@ -108,8 +104,6 @@
                     <local:DataSourceConfigurationInfo BaseUri="http://data.scottsdaleaz.gov/Finance/BusinessLicenses.svc" EntitySet="BusinessLicenses"  Description="Scottsdale Business Licenses"/>
                     <local:DataSourceConfigurationInfo BaseUri="http://data.scottsdaleaz.gov/Purchasing/Solicitations.svc" EntitySet="Solicitations"  Description="Scottsdale Purchasing Solicitations"/>
                     <local:DataSourceConfigurationInfo BaseUri="http://packages.nuget.org/v1/FeedService.svc" EntitySet="Packages"  Description="NuGet Packages"/>
-                    <local:DataSourceConfigurationInfo BaseUri="http://odata.research.microsoft.com/odata.svc" EntitySet="Projects"  Description="Microsoft Research - Projects"/>
-                    <local:DataSourceConfigurationInfo BaseUri="http://odata.research.microsoft.com/odata.svc" EntitySet="Publications"  Description="Microsoft Research - Publications"/>
                 </ComboBox>
                 <CheckBox x:Name="chkNullOutDatasource" IsChecked="True" Style="{StaticResource CheckBoxText}">Null out datasource before setting new</CheckBox>
 
