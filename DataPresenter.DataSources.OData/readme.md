@@ -7,7 +7,7 @@
 
 ####This open source solution contains several projects: 
 
-1. A project that contains a reference implementation of an OData data source built on the functionality provided in the **AsyncPagingDataSourceBase** class shipped as part of **Infragistics NetAdvantage 16.1**.
+1. A project that contains a reference implementation of an OData data source built on the functionality provided in the **AsyncPagingDataSourceBase** class shipped as part of **Infragistics NetAdvantage 16.1**.  Note that this project references the source code in the _Shared Project_ at **..\ODataDataProvider**
 2. A sample application project that demonstrates how to use the OData data source with the XamDataPresenter _(shipped as part of Infragistics Netadvantage 16.1.)_  The sample app presents a UI that lets you explore the capability of the OData data source as well as the XamDataPresenter's handling of the asynchronous/paged data fetching implemented in the data source.  Several public accessible OData service Uris are built-in to the sample to enable browsing of data containing different data types and hosted on servers with varying performance characteristics.
 
 ####AsyncPagingDataSourceBase Class Notes
