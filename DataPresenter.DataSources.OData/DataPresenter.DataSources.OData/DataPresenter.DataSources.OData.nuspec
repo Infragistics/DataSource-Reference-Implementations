@@ -1,0 +1,27 @@
+﻿<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Infragistics.DataPresenter.DataSources.OData</id>
+    <title>OData DataSource Reference Implementation for Infragistics XamDataPresenter</title>
+    <version>1.0.0-beta</version>
+    <authors>Infragistics, Inc.</authors>
+    <owners>Infragistics, Inc</owners>
+    <description>Installs the DataPresenter.DataSources.OData.dll assembly which contains a reference implementation for an OData data source based on the AsyncPagingDataSourceBase class delivered in InfragisticsWPF4.DataPresenter.DataSources.Async.v16.1</description>
+    <projectUrl>https://github.com/Infragistics/DataSource-Reference-Implementations/tree/master/DataPresenter.DataSources.OData</projectUrl>
+    <licenseUrl>https://github.com/Infragistics/DataSource-Reference-Implementations/blob/master/LICENSE</licenseUrl>
+    <iconUrl>http://www.infragistics.com/tempicon.png</iconUrl>
+    <tags>OData DataSource Asynchronous Paging XamDataCards XamDataCarousel XamDataPresenter XamDataGrid Grid DataGrid Presenter Cards</tags>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="InfragisticsWPF4.DataPresenter.DataSources.Async.v$naVersionMajor$.$naVersionMinor$, Version=$naVersionFull$, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb"/>
+      <frameworkAssembly assemblyName="InfragisticsWPF4.DataVisualization.v$naVersionMajor$.$naVersionMinor$, Version=$naVersionFull$, Culture=neutral, PublicKeyToken=1102135f7483647e"/>
+      <frameworkAssembly assemblyName="InfragisticsWPF4.v$naVersionMajor$.$naVersionMinor$, Version=$naVersionFull$, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb"/>
+    </frameworkAssemblies>
+	<dependencies>
+		<dependency id="Simple.OData.Client" version="4.13.0"/>
+	</dependencies>
+  </metadata>
+  <files>
+    <file src="bin\$configuration$\DataPresenter.DataSources.OData.dll" target="lib"/>
+	<file src="readme.txt" target="" />
+  </files>
+</package>
