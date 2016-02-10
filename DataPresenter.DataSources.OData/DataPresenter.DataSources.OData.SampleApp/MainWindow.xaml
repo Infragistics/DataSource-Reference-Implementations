@@ -79,12 +79,6 @@
                 <!-- Dropdown list of publicly accessible ODATA SERVICES-->
                 <TextBlock Text="ODATA SERVICES" Style="{StaticResource HeaderText1}"/>
                 <ComboBox x:Name="cboOdataSources" SelectionChanged="cboOdataSources_SelectionChanged" Style="{StaticResource ComboBoxText}">
-                    <local:DataSourceConfigurationInfo BaseUri="http://services.odata.org/V4/Northwind/Northwind.svc" EntitySet="Orders" Description="Northwind Orders"/>
-                    <local:DataSourceConfigurationInfo BaseUri="http://services.odata.org/V4/Northwind/Northwind.svc" EntitySet="Employees" Description="Northwind Employees"/>
-                    <local:DataSourceConfigurationInfo BaseUri="http://services.odata.org/V4/Northwind/Northwind.svc" EntitySet="Suppliers" Description="Northwind Suppliers"/>
-                    <local:DataSourceConfigurationInfo BaseUri="http://services.odata.org/AdventureWorksV3/AdventureWorks.svc" EntitySet="CompanySales"  Description="AdventureWorks Company Sales"/>
-                    <local:DataSourceConfigurationInfo BaseUri="http://services.odata.org/AdventureWorksV3/AdventureWorks.svc" EntitySet="ProductCatalog"  Description="AdventureWorks Product Catalog"/>
-                    <local:DataSourceConfigurationInfo BaseUri="http://services.odata.org/AdventureWorksV3/AdventureWorks.svc" EntitySet="WorkOrderRouting"  Description="AdventureWorks Workorder Routing"/>
                     <local:DataSourceConfigurationInfo BaseUri="http://data.scottsdaleaz.gov/Planning/BuildingPermits.svc" EntitySet="BuildingPermits"  Description="Scottsdale Building Permits">
                         <!-- Limit the amount of data fetched from this OData service by setting the DesiredFIelds property.  Refer to
                         the cboOdataSources_SelectionChanged event handler code in MainWindow.xaml.cs to see how we apply these settings when
@@ -103,6 +97,12 @@
                     <local:DataSourceConfigurationInfo BaseUri="http://data.scottsdaleaz.gov/MunicipalServices/CapitalImprovementProjects.svc" EntitySet="Projects"  Description="Scottsdale Capital Improvement Projects"/>
                     <local:DataSourceConfigurationInfo BaseUri="http://data.scottsdaleaz.gov/Finance/BusinessLicenses.svc" EntitySet="BusinessLicenses"  Description="Scottsdale Business Licenses"/>
                     <local:DataSourceConfigurationInfo BaseUri="http://data.scottsdaleaz.gov/Purchasing/Solicitations.svc" EntitySet="Solicitations"  Description="Scottsdale Purchasing Solicitations"/>
+                    <local:DataSourceConfigurationInfo BaseUri="http://services.odata.org/V4/Northwind/Northwind.svc" EntitySet="Orders" Description="Northwind Orders"/>
+                    <local:DataSourceConfigurationInfo BaseUri="http://services.odata.org/V4/Northwind/Northwind.svc" EntitySet="Employees" Description="Northwind Employees"/>
+                    <local:DataSourceConfigurationInfo BaseUri="http://services.odata.org/V4/Northwind/Northwind.svc" EntitySet="Suppliers" Description="Northwind Suppliers"/>
+                    <local:DataSourceConfigurationInfo BaseUri="http://services.odata.org/AdventureWorksV3/AdventureWorks.svc" EntitySet="CompanySales"  Description="AdventureWorks Company Sales"/>
+                    <local:DataSourceConfigurationInfo BaseUri="http://services.odata.org/AdventureWorksV3/AdventureWorks.svc" EntitySet="ProductCatalog"  Description="AdventureWorks Product Catalog"/>
+                    <local:DataSourceConfigurationInfo BaseUri="http://services.odata.org/AdventureWorksV3/AdventureWorks.svc" EntitySet="WorkOrderRouting"  Description="AdventureWorks Workorder Routing"/>
                     <local:DataSourceConfigurationInfo BaseUri="http://packages.nuget.org/v1/FeedService.svc" EntitySet="Packages"  Description="NuGet Packages"/>
                 </ComboBox>
                 <CheckBox x:Name="chkNullOutDatasource" IsChecked="True" Style="{StaticResource CheckBoxText}">Null out datasource before setting new</CheckBox>
@@ -185,6 +185,7 @@
 
                     <Grid.RowDefinitions>
                         <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="VIEW" Style="{StaticResource LabelText}"/>
@@ -194,6 +195,9 @@
                         <sys:String>CarouselView</sys:String>
                         <sys:String>TreeView</sys:String>
                     </ComboBox>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="THEME" Style="{StaticResource LabelText}"/>
+                    <ComboBox x:Name="cboThemes" Grid.Row="1" Grid.Column="1" SelectionChanged="cboThemes_SelectionChanged" Margin="2" Style="{StaticResource ComboBoxText}"/>
                 </Grid>
 
             </StackPanel>
@@ -201,7 +205,7 @@
 
         <GridSplitter Grid.Column="1" Width="7" Margin="2,0" Background="#FFDDDDDD" ResizeBehavior="PreviousAndNext"/>
         
-        <igDP:XamDataPresenter x:Name="dataPresenter1" Grid.Column="2" Theme="Office2013" Margin="5,0,0,0">
+        <igDP:XamDataPresenter x:Name="dataPresenter1" Grid.Column="2" Theme="{Binding ElementName=cboThemes, Path=SelectedValue, Mode=OneWay}" Margin="5,0,0,0">
             <igDP:XamDataPresenter.FieldLayoutSettings>
                 <igDP:FieldLayoutSettings FilterEvaluationMode="UseCollectionView"/>
             </igDP:XamDataPresenter.FieldLayoutSettings>

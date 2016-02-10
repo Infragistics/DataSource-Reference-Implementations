@@ -44,13 +44,13 @@ namespace DataPresenter.DataSources.OData.SampleApp
 			this.cboDataPresenterView.SelectedIndex				= 0;
 			this.cboRecordFilterLogicalOperator.SelectedIndex	= 0;
 
-			// Initialize the color picker with the current DataPendingOverlayBrush.
-			if (this.dataPresenter1.Resources.Contains(DataPresenterBrushKeys.DataPendingOverlayBrushKey))
-			{
-				SolidColorBrush overlayBrush = this.dataPresenter1.Resources[DataPresenterBrushKeys.DataPendingOverlayBrushKey] as SolidColorBrush;
-				if (null != overlayBrush)
-					this.colorPicker.SelectedColor = overlayBrush.Color;
-			}
+			// Listen to the XamDataPresenter's ThemeChanged event so we can initialize the DataPendingOverlayBrush color picker when the Theme changes.
+			this.dataPresenter1.ThemeChanged += (s,e) => { this.Dispatcher.BeginInvoke(new Action(() => this.InitializeColorPicker()), System.Windows.Threading.DispatcherPriority.ApplicationIdle); };
+
+			// Initialize the list of themes and select 'Office2013'.
+			this.cboThemes.ItemsSource		= Infragistics.Windows.Themes.ThemeManager.GetThemes();
+			this.cboThemes.SelectedValue	= "Office2013";
+			
 		}
 		#endregion //Constructor
 
@@ -136,6 +136,23 @@ namespace DataPresenter.DataSources.OData.SampleApp
 		#endregion //TreeView
 
 		#endregion //Private Properties
+
+		#region Private Methods
+
+		#region InitializeColorPicker
+		private void InitializeColorPicker()
+		{
+			// Initialize the color picker with the current DataPendingOverlayBrush.
+			if (this.dataPresenter1.Resources.Contains(DataPresenterBrushKeys.DataPendingOverlayBrushKey))
+			{
+				SolidColorBrush overlayBrush = this.dataPresenter1.Resources[DataPresenterBrushKeys.DataPendingOverlayBrushKey] as SolidColorBrush;
+				if (null != overlayBrush && overlayBrush.Color != this.colorPicker.SelectedColor)
+					this.colorPicker.SelectedColor = overlayBrush.Color;
+			}
+		}
+		#endregion //InitializeColorPicker
+
+		#endregion //Private Methods
 
 		#region Event Handlers
 
@@ -244,17 +261,35 @@ namespace DataPresenter.DataSources.OData.SampleApp
 		}
 		#endregion //cboRecordFilterLogicalOperator_SelectionChanged
 
+		#region cboThemes_SelectionChanged
+		private void cboThemes_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			// Remove the existing DataPendingOverlayBrush resource (if any) from the XamDataPresenter Resources dictionary.
+			if (this.dataPresenter1.Resources.Contains(DataPresenterBrushKeys.DataPendingOverlayBrushKey))
+				this.dataPresenter1.Resources.Remove(DataPresenterBrushKeys.DataPendingOverlayBrushKey);
+		}
+		#endregion //cboThemes_SelectionChanged
+
 		#region colorPicker_SelectedColorChanged
 		private void colorPicker_SelectedColorChanged(object sender, Infragistics.Controls.Editors.SelectedColorChangedEventArgs e)
 		{
 			if (e.NewColor.HasValue)
 			{
-				// Remove the existing DataPendingOverlayBrush resource from the XamDataPresenter Resources dictionary.
+				// Remove the existing DataPendingOverlayBrush resource (if any) from the XamDataPresenter Resources dictionary.
 				if (this.dataPresenter1.Resources.Contains(DataPresenterBrushKeys.DataPendingOverlayBrushKey))
-					this.dataPresenter1.Resources.Remove(DataPresenterBrushKeys.DataPendingOverlayBrushKey);
+				{
+					SolidColorBrush brush = this.dataPresenter1.Resources[DataPresenterBrushKeys.DataPendingOverlayBrushKey] as SolidColorBrush;
+					if (brush.Color != e.NewColor.Value)
+					{
+						this.dataPresenter1.Resources.Remove(DataPresenterBrushKeys.DataPendingOverlayBrushKey);
 
-				// Add a new DataPendingOverlayBrush resource for the selected color to the XamDataPresenter Resources dictionary.
-				this.dataPresenter1.Resources.Add(DataPresenterBrushKeys.DataPendingOverlayBrushKey, new SolidColorBrush(e.NewColor.Value));
+						// Add a new DataPendingOverlayBrush resource for the selected color to the XamDataPresenter Resources dictionary.
+						this.dataPresenter1.Resources.Add(DataPresenterBrushKeys.DataPendingOverlayBrushKey, new SolidColorBrush(e.NewColor.Value));
+					}
+				}
+				else
+					// Add a new DataPendingOverlayBrush resource for the selected color to the XamDataPresenter Resources dictionary.
+					this.dataPresenter1.Resources.Add(DataPresenterBrushKeys.DataPendingOverlayBrushKey, new SolidColorBrush(e.NewColor.Value));
 			}
 		}
 		#endregion //colorPicker_SelectedColorChanged
