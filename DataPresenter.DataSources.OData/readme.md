@@ -7,8 +7,8 @@
 
 ####This open source solution contains several projects: 
 
-1. A project that contains a reference implementation of an OData data source built on the functionality provided in the **AsyncPagingDataSourceBase** class shipped as part of **Infragistics NetAdvantage 16.1**.  Note that this project references the source code in the _Shared Project_ at **..\ODataDataProvider**
-2. A sample application project that demonstrates how to use the OData data source with the XamDataPresenter _(shipped as part of Infragistics Netadvantage 16.1.)_  The sample app presents a UI that lets you explore the capability of the OData data source as well as the XamDataPresenter's handling of the asynchronous/paged data fetching implemented in the data source.  Several public accessible OData service Uris are built-in to the sample to enable browsing of data containing different data types and hosted on servers with varying performance characteristics.
+1. A project that contains a reference implementation of an OData data source built on the functionality provided in the **AsyncPagingDataSourceBase** class shipped as part of **Infragistics NetAdvantage 16.1**.  Note that this project references the source code in the _Shared Project_ at [**..\ODataDataProvider**](https://github.com/Infragistics/DataSource-Reference-Implementations/tree/master/ODataDataProvider)
+2. A sample application project that demonstrates how to use the OData data source with the XamDataPresenter _(shipped as part of Infragistics NetAdvantage 16.1.)_  The sample app presents a UI that lets you explore the capability of the OData data source as well as the XamDataPresenter's handling of the asynchronous/paged data fetching implemented in the data source.  Several public accessible OData service Uris are built-in to the sample to enable browsing of data containing different data types and hosted on servers with varying performance characteristics.
 
 ####AsyncPagingDataSourceBase Class Notes
 *	This library is shipped as part of NA 16.1.
@@ -26,7 +26,7 @@
 These properties can be used to tune the fetching and caching behavior of the APDSB to optimize performance for specific server scenarios.
 
 ####XamDataPresenter Notes
-The XamDataPresenter (XDP) has undergone some minor modifications for 16.1 to support using the APDSB as a data source.  For example, a  new property on the XDP's DataRecordCellArea class and a new DataPresenterBrushKeys to let the developer control what the XDP displays when data fetches are pending.  Here are some highlights:
+The XamDataPresenter (XDP) has undergone some minor modifications for 16.1 to support using the APDSB as a data source.  For example, a  new property on the XDP's **DataRecordCellArea** class and a new **DataPresenterBrushKey** let the developer control what the XDP displays when data fetches are pending.  Here are some highlights:
 *	The developer uses the APDSB with the XDP the same way that any other data source is used – i.e., by setting the XDP’s DataSource property to an instance of an APDSB-derived data source.  No other property settings are required to use the APDSB with the XDP.
 *	XDP performance can be improved when using the APDSB if you know the contents of the OData schema for the EntitySet whose data you are retrieving.  By defining a FieldLayout in the XDP with a subset of the schema fields, the APDSB will request and return less data over the server connection.   
 
@@ -60,5 +60,5 @@ _**NOTE:** The XDP can use the APDSP in all its views (GridView, CardView etc.) 
   * Grouping is not currently supported
   * Since the XDP optimizes filtering and sorting by delegating to the backend store via the APDSB, sorting and filtering is only supported for actual data values. Displayed values and unbound column values cannot be used to sort or filter.
   * New properties added to the XDP:
-    + **DataPresenterBrushKeys.DataPendingOverlayBrushKey** – Defines a ResourceKey used to identify a brush resource that is referenced by XDP templates as a DynamicResource and  used to color the cell area background when the data for the cell is pending – i.e., it has been requested but has not yet been delivered. 
-    + **DataRecordCellArea.IsDynamicDataPending** - Returns true when the data for the DataRecord has been requested but has not yet been delivered.
+    + **DataPresenterBrushKeys.DataPendingOverlayBrushKey** – Defines a _ResourceKey_ used to identify a brush resource that is referenced by XDP templates as a _DynamicResource_ and  used to color the cell area background when the data for the cell is pending – i.e., it has been requested but has not yet been delivered. 
+    + **DataRecordCellArea.IsDynamicDataPending** - Returns true when the data for a **DataRecord** has been requested but has not yet been delivered.
