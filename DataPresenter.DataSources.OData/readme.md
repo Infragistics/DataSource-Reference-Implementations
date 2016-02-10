@@ -7,8 +7,18 @@
 
 ####This open source solution contains several projects: 
 
-1. A project that contains a reference implementation of an OData data source built on the functionality provided in the **AsyncPagingDataSourceBase** class shipped as part of **Infragistics NetAdvantage 16.1**.  Note that this project references the source code in the _Shared Project_ at [**..\ODataDataProvider**](https://github.com/Infragistics/DataSource-Reference-Implementations/tree/master/ODataDataProvider)
-2. A sample application project that demonstrates how to use the OData data source with the XamDataPresenter _(shipped as part of Infragistics NetAdvantage 16.1.)_  The sample app presents a UI that lets you explore the capability of the OData data source as well as the XamDataPresenter's handling of the asynchronous/paged data fetching implemented in the data source.  Several public accessible OData service Uris are built-in to the sample to enable browsing of data containing different data types and hosted on servers with varying performance characteristics.
+1. [**ODataDataSource Component**](https://github.com/Infragistics/DataSource-Reference-Implementations/tree/master/DataPresenter.DataSources.OData/DataPresenter.DataSources.OData) - A reference implementation of an OData data source built on the functionality provided in the **AsyncPagingDataSourceBase** class shipped as part of **Infragistics NetAdvantage 16.1**.  Note that this project references the source code in the _Shared Project_ at [**..\ODataDataProvider**](https://github.com/Infragistics/DataSource-Reference-Implementations/tree/master/ODataDataProvider)
+2. [**Sample Application**](https://github.com/Infragistics/DataSource-Reference-Implementations/tree/master/DataPresenter.DataSources.OData/DataPresenter.DataSources.OData.SampleApp) - A sample application that demonstrates how to use the OData data source with the XamDataPresenter _(shipped as part of Infragistics NetAdvantage 16.1.)_  The sample app presents a UI that lets you explore the capability of the OData data source as well as the XamDataPresenter's handling of the asynchronous/paged data fetching implemented in the data source.  Several public accessible OData service Uris are built-in to the sample to enable browsing of data containing different data types and hosted on servers with varying performance characteristics.
+
+####ODataDataSource Component Notes
+* A reference implementation built on the functionality provided in the **AsyncPagingDataSourceBase** class shipped as part of **Infragistics NetAdvantage 16.1**
+* References the source code in the _Shared Project_ at [**..\ODataDataProvider**](https://github.com/Infragistics/DataSource-Reference-Implementations/tree/master/ODataDataProvider)
+* Exposes 3 public properties for configuring the data source:
+  +	**BaseUri** - Returns/sets the root uri of the OData service endpoint from which to retrieve data.
+  +	**EntitySet** - Returns/sets the desired entity set within the root OData API from which to retrieve data.
+  +	**TimeoutMilliseconds** - Returns/sets the desired timeout to use for requests made to the OData API.
+* Relies on the [**Simple.OData.Client**](https://www.nuget.org/packages/Simple.OData.Client/) library _(not authored by Infragistics)_ to make the actual REST queries to the backend OData service. 
+* As with the **AsyncPagingDataSourceBase** class it is derived from, this component is designed to be used with the XamDataPresenter family of controls _(shipped as part of Infragistics NetAdvantage 16.1)_ and is not compatible with other controls that are designed to work with _IEnumerable_ data sources.
 
 ####AsyncPagingDataSourceBase Class Notes
 *	This library is shipped as part of NA 16.1.
@@ -26,9 +36,9 @@
 These properties can be used to tune the fetching and caching behavior of the APDSB to optimize performance for specific server scenarios.
 
 ####XamDataPresenter Notes
-The XamDataPresenter (XDP) has undergone some minor modifications for 16.1 to support using the APDSB as a data source.  For example, a  new property on the XDP's **DataRecordCellArea** class and a new **DataPresenterBrushKey** let the developer control what the XDP displays when data fetches are pending.  Here are some highlights:
-*	The developer uses the APDSB with the XDP the same way that any other data source is used – i.e., by setting the XDP’s DataSource property to an instance of an APDSB-derived data source.  No other property settings are required to use the APDSB with the XDP.
-*	XDP performance can be improved when using the APDSB if you know the contents of the OData schema for the EntitySet whose data you are retrieving.  By defining a FieldLayout in the XDP with a subset of the schema fields, the APDSB will request and return less data over the server connection.   
+The XamDataPresenter (XDP) has undergone some minor modifications for 16.1 to support using the APDSB _(and derived implementations such as **ODataDataSource**)_ as a data source.  For example, a  new property on the XDP's **DataRecordCellArea** class and a new **DataPresenterBrushKey** let the developer control what the XDP displays when data fetches are pending.  Here are some highlights:
+*	The developer uses the APDSB with the XDP the same way that any other data source is used – i.e., by setting the XDP’s **DataSource** property to an instance of an APDSB-derived data source such as the **ODataDataSource**.  No other property settings are required to use the APDSB with the XDP.
+*	XDP performance can be improved when using the APDSB if you know the contents of the OData schema for the _EntitySet_ whose data you are retrieving.  By defining a _FieldLayout_ in the XDP with a subset of the schema fields, the APDSB will request and return less data over the server connection.   
 
   _**NOTE:** You can also limit the amount of data requested and returned by the APDSB by setting the APDSB’s DesiredFields property to a subset of the fields in the backend schema._
   
@@ -45,7 +55,7 @@ _**NOTE:** The XDP can use the APDSP in all its views (GridView, CardView etc.) 
   * Editing is not supported in the XamDataPresenter when using APDSB – the grid is read-only in this scenario.  Adding/removing records is also not supported.
   * The XDP’s filter dropdown does not include a list of unique data values from the associated column since the APDSB does not support the ability to query the backend for those unique values.  
   * A **FieldLayoutSettings.FilterUIType** of **LabelIcons** is not supported when the XDP is using an APDSB as its data source.  The **FilterUIType** will always resolve to **FilterUIType.FilterRecord** in this scenario since the unique data values that would normally be displayed in the filter dropdown when the Label icon is clicked are not available as described above.
-  * The following ComparisonOperators are not supported when filtering:
+  * The following **ComparisonOperators** are not supported when filtering:
     +	Match
     +	DoesNotMatch
     + Like
@@ -54,7 +64,7 @@ _**NOTE:** The XDP can use the APDSP in all its views (GridView, CardView etc.) 
     +	TopPercentile
     + Bottom
     + BottomPercentile
-  * The following SpecialFilterOperands are not supported:
+  * The following **SpecialFilterOperands** are not supported:
     + BlanksOperand 
     + AverageOperand
   * Grouping is not currently supported
