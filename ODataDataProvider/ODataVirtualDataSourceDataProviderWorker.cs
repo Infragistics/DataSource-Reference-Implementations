@@ -25,7 +25,7 @@ namespace Infragistics.Controls.DataSource
 
         public FilterExpressionCollection FilterExpressions { get; set; }
 
-        public string[] DesiredProperties { get; set; }
+        public string[] PropertiesRequested { get; set; }
     }
 
     
@@ -123,7 +123,7 @@ namespace Infragistics.Controls.DataSource
             _entitySet = settings.EntitySet;
             _sortDescriptions = settings.SortDescriptions;
             _filterExpressions = settings.FilterExpressions;
-            _desiredPropeties = settings.DesiredProperties;
+            _desiredPropeties = settings.PropertiesRequested;
             Task.Factory.StartNew(() => DoWork(), TaskCreationOptions.LongRunning);
         }        
       

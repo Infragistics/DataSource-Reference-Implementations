@@ -44,7 +44,7 @@ namespace Infragistics.Controls.DataSource
 
         public void AddPageRequest(int pageIndex, DataSourcePageRequestPriority priority)
         {
-            if (ShouldDeferAutoRefresh)
+            if (DeferAutoRefresh)
             {
                 return;
             }
@@ -103,13 +103,13 @@ namespace Infragistics.Controls.DataSource
             {
                 BaseUri = _baseUri,
                 EntitySet = _entitySet,
-                DesiredPageSize = _desiredPageSize,
+                PageSizeRequested = _pageSizeRequested,
                 TimeoutMilliseconds = _timeoutMilliseconds,
                 PageLoaded = _callback,
                 ExecutionContext = _executionContext,
                 SortDescriptions = _sortDescriptions,
                 FilterExpressions = _filterExpressions,
-                DesiredProperties = _desiredProperties
+                PropertiesRequested = _propertiesRequested
             };
         }
 
@@ -194,16 +194,16 @@ namespace Infragistics.Controls.DataSource
             }
         }
 
-        private int _desiredPageSize = 200;
-        public int DesiredPageSize
+        private int _pageSizeRequested = 200;
+        public int PageSizeRequested
         {
             get
             {
-                return _desiredPageSize;
+                return _pageSizeRequested;
             }
             set
             {
-                _desiredPageSize = value;
+                _pageSizeRequested = value;
                 QueueAutoRefresh();
             }
         }
@@ -222,7 +222,7 @@ namespace Infragistics.Controls.DataSource
                 if (oldValue != _baseUri)
                 {
                     QueueAutoRefresh();
-                    if (Valid() && ShouldDeferAutoRefresh)
+                    if (Valid() && DeferAutoRefresh)
                     {
                         QueueSchemaFetch();
                     }
@@ -244,7 +244,7 @@ namespace Infragistics.Controls.DataSource
                 if (oldValue != _entitySet)
                 {
                     QueueAutoRefresh();
-                    if (Valid() && ShouldDeferAutoRefresh)
+                    if (Valid() && DeferAutoRefresh)
                     {
                         QueueSchemaFetch();
                     }
@@ -283,14 +283,20 @@ namespace Infragistics.Controls.DataSource
         private int _currentFullCount = 0;
         private IDataSourceSchema _currentSchema;
 
-        public int GetCount()
+        public int ActualCount
         {
-            return _currentFullCount;
+            get
+            {
+                return _currentFullCount;
+            }
         }
 
-        public IDataSourceSchema GetSchema()
+        public IDataSourceSchema ActualSchema
         {
-            return _currentSchema;
+            get
+            {
+                return _currentSchema;
+            }
         }
 
         private IDataSourceExecutionContext _executionContext;
@@ -320,22 +326,22 @@ namespace Infragistics.Controls.DataSource
             }
         }
 
-        private bool _shouldDeferAutoRefresh = false;
-        public bool ShouldDeferAutoRefresh
+        private bool _deferAutoRefresh = false;
+        public bool DeferAutoRefresh
         {
             get
             {
-                return _shouldDeferAutoRefresh;
+                return _deferAutoRefresh;
             }
 
             set
             {
-                _shouldDeferAutoRefresh = value;
-                if (!_shouldDeferAutoRefresh)
+                _deferAutoRefresh = value;
+                if (!_deferAutoRefresh)
                 {
                     QueueAutoRefresh();
                 }
-                if (_shouldDeferAutoRefresh && Valid() && _currentSchema == null)
+                if (_deferAutoRefresh && Valid() && _currentSchema == null)
                 {
                     QueueSchemaFetch();
                 }
@@ -367,16 +373,16 @@ namespace Infragistics.Controls.DataSource
             }
         }
 
-        private string[] _desiredProperties;
-        public string[] DesiredProperties
+        private string[] _propertiesRequested;
+        public string[] PropertiesRequested
         {
             get
             {
-                return _desiredProperties;
+                return _propertiesRequested;
             }
             set
             {
-                _desiredProperties = value;
+                _propertiesRequested = value;
                 QueueAutoRefresh();
             }
         }
@@ -390,7 +396,7 @@ namespace Infragistics.Controls.DataSource
             }
         }
 
-        public bool AreSortingAndFilteringExternal
+        public bool NotifyUsingSourceIndexes
         {
             get
             {
@@ -478,7 +484,7 @@ namespace Infragistics.Controls.DataSource
 
         protected virtual void SchemaFetchInternalOverride()
         {
-            if (!ShouldDeferAutoRefresh)
+            if (!DeferAutoRefresh)
             {
                 return;
             }
@@ -500,7 +506,7 @@ namespace Infragistics.Controls.DataSource
         internal bool _autoRefreshQueued = false;
         public void QueueAutoRefresh()
         {
-            if (ShouldDeferAutoRefresh)
+            if (DeferAutoRefresh)
             {
                 return;
             }
@@ -518,7 +524,7 @@ namespace Infragistics.Controls.DataSource
 
         internal void DoRefreshInternal()
         {
-            if (ShouldDeferAutoRefresh)
+            if (DeferAutoRefresh)
             {
                 _autoRefreshQueued = false;
                 return;

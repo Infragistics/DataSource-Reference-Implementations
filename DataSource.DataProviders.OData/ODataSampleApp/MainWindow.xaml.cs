@@ -31,9 +31,9 @@ namespace ODataSampleApp
             {
                 BaseUri = "http://services.odata.org/V4/Northwind/Northwind.svc",
                 EntitySet = "Orders",
-                DesiredPageSize = 200
+                PageSizeRequested = 200
             };
-            source.ShouldDeferAutoRefresh = true;
+            //source.DeferAutoRefresh = true;
             source.SchemaChanged += Source_SchemaChanged;
 
             source.SortDescriptions.Add(new SortDescription("ShipName", ListSortDirection.Descending));
@@ -47,13 +47,13 @@ namespace ODataSampleApp
 
             grid1.ItemsSource = source;
 
-            Task.Delay(10000).ContinueWith((t) =>
-            {
-                Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    source.ShouldDeferAutoRefresh = false;
-                }));
-            });
+            //Task.Delay(10000).ContinueWith((t) =>
+            //{
+            //    Dispatcher.BeginInvoke(new Action(() =>
+            //    {
+            //        source.DeferAutoRefresh = false;
+            //    }));
+            //});
         }
 
         private void Source_SchemaChanged(object sender, DataSourceSchemaChangedEventArgs args)
