@@ -11,7 +11,11 @@
         xmlns:PresentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="1100">
+        Title="MainWindow" Height="800" Width="1100">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="boolToVisibility"/>
+    </Window.Resources>
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5*"/>
@@ -200,6 +204,33 @@
                     <ComboBox x:Name="cboThemes" Grid.Row="1" Grid.Column="1" SelectionChanged="cboThemes_SelectionChanged" Margin="2" Style="{StaticResource ComboBoxText}"/>
                 </Grid>
 
+                <!-- Separator -->
+                <Rectangle Height="1" HorizontalAlignment="Stretch" Fill="Gray" Margin="5,20,5,0"/>
+
+                <Rectangle Width="1" Height="20" Fill="Transparent"/>
+                <TextBlock Text="MISC SETTINGS" Style="{StaticResource HeaderText1}"/>
+
+                <!-- BusyIndicator Settings -->
+                <Rectangle Width="1" Height="5" Fill="Transparent"/>
+                <TextBlock Text="BUSY INDICATOR SETTINGS" Style="{StaticResource HeaderText2}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="SHOW BUSY INDICATOR" Style="{StaticResource LabelText}"/>
+                    <CheckBox x:Name="chkShowBusyIndicator" Grid.Row="0" Grid.Column="1" IsThreeState="False" IsChecked="True" Style="{StaticResource CheckBoxText}"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="BUSY INDICATOR ANIMATION" Style="{StaticResource LabelText}"/>
+                    <ComboBox x:Name="cboBusyIndicatorAnimations" Grid.Row="1" Grid.Column="1" Margin="2" Style="{StaticResource ComboBoxText}"/>
+                </Grid>
+
             </StackPanel>
         </StackPanel>
 
@@ -214,5 +245,14 @@
                 <igDP:FieldSettings LabelClickAction="SortByMultipleFieldsTriState" AllowRecordFiltering="True"/>
             </igDP:XamDataPresenter.FieldSettings>
         </igDP:XamDataPresenter>
+
+        <igControls:XamBusyIndicator Grid.Column="2" 
+                                     IsBusy="{Binding ElementName=dataPresenter1, Path=IsAsyncDataPending}"
+                                     Visibility="{Binding ElementName=chkShowBusyIndicator, Path=IsChecked, Converter={StaticResource boolToVisibility}}"
+                                     BusyContent="Fetching Data..."
+                                     Animation="{Binding ElementName=cboBusyIndicatorAnimations, Path=SelectedValue}"
+                                     DisplayAfter="0:0:00"
+                                     HorizontalAlignment="Center" 
+                                     VerticalAlignment="Center"/>
     </Grid>
 </Window>

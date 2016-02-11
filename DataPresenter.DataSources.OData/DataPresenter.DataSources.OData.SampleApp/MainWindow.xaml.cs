@@ -1,4 +1,5 @@
 ﻿using DataPresenter.DataSources.OData;
+using Infragistics.Controls.Interactions;
 using Infragistics.Windows.Controls;
 using Infragistics.Windows.DataPresenter;
 using Infragistics.Windows.Themes;
@@ -7,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -51,6 +53,9 @@ namespace DataPresenter.DataSources.OData.SampleApp
 			this.cboThemes.ItemsSource		= Infragistics.Windows.Themes.ThemeManager.GetThemes();
 			this.cboThemes.SelectedValue	= "Office2013";
 			
+			// Initialize the list of XamBusyIndicator Animations.
+			this.cboBusyIndicatorAnimations.ItemsSource		= typeof(BusyAnimations).GetFields(BindingFlags.Public | BindingFlags.Static).Select((prop) => prop.Name).ToArray();
+			this.cboBusyIndicatorAnimations.SelectedValue	= "Gears";
 		}
 		#endregion //Constructor
 
