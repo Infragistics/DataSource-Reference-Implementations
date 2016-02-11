@@ -38,8 +38,8 @@ namespace DataPresenter.DataSources.OData.SampleApp
         {
             InitializeComponent();
 
-			this.numDesiredPageSize.Value						= 200;
-			this.numMaximumCachedPages.Value					= 200;
+			this.numPageSizeRequested.Value						= 200;
+			this.numMaxCachedPages.Value						= 200;
 			this.cboOdataSources.SelectedIndex					= 0;
 			this.cboDataPresenterView.SelectedIndex				= 0;
 			this.cboRecordFilterLogicalOperator.SelectedIndex	= 0;
@@ -95,12 +95,12 @@ namespace DataPresenter.DataSources.OData.SampleApp
 		}
 		#endregion //CurrentDataSource
 
-		#region DesiredPageSize
-		private int DesiredPageSize
+		#region PageSizeRequested
+		private int PageSizeRequested
 		{
-			get { return Convert.ToInt32((double)this.numDesiredPageSize.Value); }
+			get { return Convert.ToInt32((double)this.numPageSizeRequested.Value); }
 		}
-		#endregion //DesiredPageSize
+		#endregion //PageSizeRequested
 
 		#region GridView
 		private Infragistics.Windows.DataPresenter.GridView GridView
@@ -115,12 +115,12 @@ namespace DataPresenter.DataSources.OData.SampleApp
 		}
 		#endregion //GridView
 
-		#region MaximumCachedPages
-		private int MaximumCachedPages
+		#region MaxCachedPages
+		private int MaxCachedPages
 		{
-			get { return Convert.ToInt32((double)this.numMaximumCachedPages.Value); }
+			get { return Convert.ToInt32((double)this.numMaxCachedPages.Value); }
 		}
-		#endregion //MaximumCachedPages
+		#endregion //MaxCachedPages
 
 		#region TreeView
 		private Infragistics.Windows.DataPresenter.TreeView TreeView
@@ -235,9 +235,9 @@ namespace DataPresenter.DataSources.OData.SampleApp
 				this.dataPresenter1.DataSource = 
 					new ODataDataSource {	BaseUri = dataSourceConfigInfo.BaseUri,
 											EntitySet = dataSourceConfigInfo.EntitySet,
-											DesiredFields = dataSourceConfigInfo.DesiredFields,
-											DesiredPageSize = this.DesiredPageSize,
-											MaximumCachedPages = this.MaximumCachedPages };
+											FieldsRequested = dataSourceConfigInfo.FieldsRequested,
+											PageSizeRequested = this.PageSizeRequested,
+											MaxCachedPages = this.MaxCachedPages };
 			}
 		}
 		#endregion //cboOdataSources_SelectionChanged
@@ -294,21 +294,21 @@ namespace DataPresenter.DataSources.OData.SampleApp
 		}
 		#endregion //colorPicker_SelectedColorChanged
 
-		#region numDesiredPageSize_EditModeEnded
-		private void numDesiredPageSize_EditModeEnded(object sender, Infragistics.Windows.Editors.Events.EditModeEndedEventArgs e)
+		#region numPageSizeRequested_EditModeEnded
+		private void numPageSizeRequested_EditModeEnded(object sender, Infragistics.Windows.Editors.Events.EditModeEndedEventArgs e)
 		{
 			if (null != this.CurrentDataSource)
-				this.CurrentDataSource.DesiredPageSize = this.DesiredPageSize;
+				this.CurrentDataSource.PageSizeRequested = this.PageSizeRequested;
 		}
-		#endregion //numDesiredPageSize_EditModeEnded
+		#endregion //numPageSizeRequested_EditModeEnded
 
-		#region numMaximumCachedPages_EditModeEnded
-		private void numMaximumCachedPages_EditModeEnded(object sender, Infragistics.Windows.Editors.Events.EditModeEndedEventArgs e)
+		#region numMaxCachedPages_EditModeEnded
+		private void numMaxCachedPages_EditModeEnded(object sender, Infragistics.Windows.Editors.Events.EditModeEndedEventArgs e)
 		{
 			if (null != this.CurrentDataSource)
-				this.CurrentDataSource.MaximumCachedPages = this.MaximumCachedPages;
+				this.CurrentDataSource.MaxCachedPages = this.MaxCachedPages;
 		}
-		#endregion //numMaximumCachedPages_EditModeEnded
+		#endregion //numMaxCachedPages_EditModeEnded
 
 		#endregion //Event Handlers
 	}
@@ -321,7 +321,7 @@ namespace DataPresenter.DataSources.OData.SampleApp
 		public string BaseUri { get; set; }
 		public string Description { get; set; }
 		public string EntitySet{ get; set; }
-		public string[] DesiredFields { get; set; }
+		public string[] FieldsRequested { get; set; }
 	}
 	#endregion //DataSourceConfigurationInfo Class
 }

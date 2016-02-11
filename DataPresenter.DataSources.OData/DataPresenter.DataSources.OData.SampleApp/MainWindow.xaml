@@ -80,10 +80,10 @@
                 <TextBlock Text="ODATA SERVICES" Style="{StaticResource HeaderText1}"/>
                 <ComboBox x:Name="cboOdataSources" SelectionChanged="cboOdataSources_SelectionChanged" Style="{StaticResource ComboBoxText}">
                     <local:DataSourceConfigurationInfo BaseUri="http://data.scottsdaleaz.gov/Planning/BuildingPermits.svc" EntitySet="BuildingPermits"  Description="Scottsdale Building Permits">
-                        <!-- Limit the amount of data fetched from this OData service by setting the DesiredFIelds property.  Refer to
+                        <!-- Limit the amount of data fetched from this OData service by setting the FieldsRequested property.  Refer to
                         the cboOdataSources_SelectionChanged event handler code in MainWindow.xaml.cs to see how we apply these settings when
                         we create a new ODataDataSource instance. -->
-                        <local:DataSourceConfigurationInfo.DesiredFields>
+                        <local:DataSourceConfigurationInfo.FieldsRequested>
                             <x:Array Type="sys:String">
                                 <sys:String>PermitNumber</sys:String>
                                 <sys:String>PermitStatus</sys:String>
@@ -91,7 +91,7 @@
                                 <sys:String>Address</sys:String>
                                 <sys:String>Zone</sys:String>
                             </x:Array>
-                        </local:DataSourceConfigurationInfo.DesiredFields>
+                        </local:DataSourceConfigurationInfo.FieldsRequested>
                     </local:DataSourceConfigurationInfo>
                     <local:DataSourceConfigurationInfo BaseUri="http://data.scottsdaleaz.gov/Planning/BuildingPermits.svc" EntitySet="BuildingInspections"  Description="Scottsdale Building Inspections"/>
                     <local:DataSourceConfigurationInfo BaseUri="http://data.scottsdaleaz.gov/MunicipalServices/CapitalImprovementProjects.svc" EntitySet="Projects"  Description="Scottsdale Capital Improvement Projects"/>
@@ -115,8 +115,8 @@
                 <TextBlock Text="DATASOURCE SETTINGS" Style="{StaticResource HeaderText1}"/>
                 
                 <!-- Desired Page Size -->
-                <TextBlock Text="DESIRED PAGE SIZE" Style="{StaticResource HeaderText2}"/>
-                <igEditors:XamNumericEditor x:Name="numDesiredPageSize" Width="100" HorizontalAlignment="Left" Mask="9999" EditModeEnded="numDesiredPageSize_EditModeEnded" SpinButtonDisplayMode="Always" SpinIncrement="10" Style="{StaticResource NumericEditorText}">
+                <TextBlock Text="PAGE SIZE REQUESTED" Style="{StaticResource HeaderText2}"/>
+                <igEditors:XamNumericEditor x:Name="numPageSizeRequested" Width="100" HorizontalAlignment="Left" Mask="9999" EditModeEnded="numPageSizeRequested_EditModeEnded" SpinButtonDisplayMode="Always" SpinIncrement="10" Style="{StaticResource NumericEditorText}">
                     <igEditors:XamNumericEditor.ValueConstraint>
                         <igEditors:ValueConstraint MinInclusive="5" MaxInclusive="1000"/>
                     </igEditors:XamNumericEditor.ValueConstraint>
@@ -125,7 +125,7 @@
                 <!-- Maximum number of cached pages -->
                 <Rectangle Width="1" Height="20" Fill="Transparent"/>
                 <TextBlock Text="MAX # CACHED PAGES" Style="{StaticResource HeaderText2}"/>
-                <igEditors:XamNumericEditor x:Name="numMaximumCachedPages" Width="100" HorizontalAlignment="Left" Mask="9999" EditModeEnded="numMaximumCachedPages_EditModeEnded" SpinButtonDisplayMode="Always" SpinIncrement="10" Style="{StaticResource NumericEditorText}">
+                <igEditors:XamNumericEditor x:Name="numMaxCachedPages" Width="100" HorizontalAlignment="Left" Mask="9999" EditModeEnded="numMaxCachedPages_EditModeEnded" SpinButtonDisplayMode="Always" SpinIncrement="10" Style="{StaticResource NumericEditorText}">
                     <igEditors:XamNumericEditor.ValueConstraint>
                         <igEditors:ValueConstraint MinInclusive="5" MaxInclusive="1000"/>
                     </igEditors:XamNumericEditor.ValueConstraint>
