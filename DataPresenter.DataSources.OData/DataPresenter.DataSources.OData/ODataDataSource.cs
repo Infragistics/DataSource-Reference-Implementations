@@ -95,14 +95,14 @@ namespace DataPresenter.DataSources.OData
         }
 		#endregion //CreateUnderlyingDataSource
 
-		#region OnEndDeferRefresh
+		#region OnEndDeferCollectionViewRefresh
 		/// <summary>
-		/// Called when <see cref="IsRefreshDeferred"/> changes to false and modifications to the data are allowed.
+		/// Called when <see cref="IsRefreshDeferred"/> changes to false and modifications to the data exposed via ICollectionView are allowed.
 		/// </summary>
-		protected override void OnEndDeferRefresh()
+		protected override void OnEndDeferCollectionViewRefresh()
 		{
 		}
-		#endregion //OnEndDeferRefresh
+		#endregion //OnEndDeferCollectionViewRefresh
 
 		#endregion //Base Class Overrides
 
@@ -128,10 +128,10 @@ namespace DataPresenter.DataSources.OData
             }
         }
 
-        /// <summary>
-        /// Returns/sets the root uri of the OData service endpoint that data should be fetched from.
-        /// </summary>
-        public string BaseUri
+		/// <summary>
+		/// Returns/sets the root uri of the OData service endpoint from which to retrieve data.
+		/// </summary>
+		public string BaseUri
         {
             get { return (string)GetValue(BaseUriProperty); }
             set { SetValue(BaseUriProperty, value); }
@@ -156,10 +156,10 @@ namespace DataPresenter.DataSources.OData
             }
         }
 
-        /// <summary>
-        /// Gets or sets the desired entity set within the root OData API from which to retrieve data.
-        /// </summary>
-        public string EntitySet
+		/// <summary>
+		/// Returns/sets the desired entity set within the root OData API from which to retrieve data.
+		/// </summary>
+		public string EntitySet
         {
             get { return (string)GetValue(EntitySetProperty); }
             set { SetValue(EntitySetProperty, value); }
@@ -184,10 +184,10 @@ namespace DataPresenter.DataSources.OData
             }
         }
 
-        /// <summary>
-        /// Gets or sets the desired timeout to use for requests of the OData API.
-        /// </summary>
-        public int TimeoutMilliseconds
+		/// <summary>
+		/// Returns/sets the desired timeout to use for requests made to the OData API.
+		/// </summary>
+		public int TimeoutMilliseconds
         {
             get { return (int)GetValue(TimeoutMillisecondsProperty); }
             set { SetValue(TimeoutMillisecondsProperty, value); }

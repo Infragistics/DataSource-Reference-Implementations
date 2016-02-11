@@ -43,6 +43,14 @@ namespace DataPresenter.DataSources.OData.SampleApp
 			this.cboOdataSources.SelectedIndex					= 0;
 			this.cboDataPresenterView.SelectedIndex				= 0;
 			this.cboRecordFilterLogicalOperator.SelectedIndex	= 0;
+
+			// Listen to the XamDataPresenter's ThemeChanged event so we can initialize the DataPendingOverlayBrush color picker when the Theme changes.
+			this.dataPresenter1.ThemeChanged += (s,e) => { this.Dispatcher.BeginInvoke(new Action(() => this.InitializeColorPicker()), System.Windows.Threading.DispatcherPriority.ApplicationIdle); };
+
+			// Initialize the list of themes and select 'Office2013'.
+			this.cboThemes.ItemsSource		= Infragistics.Windows.Themes.ThemeManager.GetThemes();
+			this.cboThemes.SelectedValue	= "Office2013";
+			
 		}
 		#endregion //Constructor
 
@@ -129,6 +137,23 @@ namespace DataPresenter.DataSources.OData.SampleApp
 
 		#endregion //Private Properties
 
+		#region Private Methods
+
+		#region InitializeColorPicker
+		private void InitializeColorPicker()
+		{
+			// Initialize the color picker with the current DataPendingOverlayBrush.
+			if (this.dataPresenter1.Resources.Contains(DataPresenterBrushKeys.DataPendingOverlayBrushKey))
+			{
+				SolidColorBrush overlayBrush = this.dataPresenter1.Resources[DataPresenterBrushKeys.DataPendingOverlayBrushKey] as SolidColorBrush;
+				if (null != overlayBrush && overlayBrush.Color != this.colorPicker.SelectedColor)
+					this.colorPicker.SelectedColor = overlayBrush.Color;
+			}
+		}
+		#endregion //InitializeColorPicker
+
+		#endregion //Private Methods
+
 		#region Event Handlers
 
 		#region cboDataPresenterView_SelectionChanged
@@ -159,15 +184,60 @@ namespace DataPresenter.DataSources.OData.SampleApp
 		#region cboOdataSources_SelectionChanged
 		private void cboOdataSources_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			ODataSourceListItem ods = this.cboOdataSources.SelectedItem as ODataSourceListItem;
-			if (null != ods)
+			// Establish the DataSourceConfigurationInfo combobox item that was selected.  Refer to the MainWindow.xaml file
+			// to see how these combobox items were defined.
+			DataSourceConfigurationInfo dataSourceConfigInfo = this.cboOdataSources.SelectedItem as DataSourceConfigurationInfo;
+			if (null != dataSourceConfigInfo)
 			{
 				// If requested, null out the grid's DataSource before setting the new one.
 				if (this.chkNullOutDatasource.IsChecked.HasValue && this.chkNullOutDatasource.IsChecked.Value == true)
 					this.dataPresenter1.DataSource = null;
 
-				// Set the grid's DataSource to an instance of an ODataDataSource for the selected Uri and EntitySet..
-				this.dataPresenter1.DataSource = new ODataDataSource { BaseUri = ods.BaseUri, EntitySet = ods.EntitySet, DesiredPageSize = this.DesiredPageSize, MaximumCachedPages = this.MaximumCachedPages };
+				// Reset some FieldLayout related fields and settings.
+				this.dataPresenter1.FieldLayouts.Clear();
+				this.dataPresenter1.DefaultFieldLayout = null;
+				this.dataPresenter1.FieldLayoutSettings.AutoGenerateFields = true;
+
+				// For demo purposes, define a subset of fields to display in the grid.
+				//
+				// For the Northwind Orders table let's limit the number of fields by defining a DefaultFieldLayout
+				// in the XamDataPresenter that includes a subset of all the fields in the Orders table.  Not only will this
+				// limit the number of fields that are displayed by the grid, but it will also improve response time by
+				// limiting which columns of data are requested from the backend and transmitted over the connection.
+				if (dataSourceConfigInfo.BaseUri == @"http://services.odata.org/V4/Northwind/Northwind.svc" && dataSourceConfigInfo.EntitySet == "Orders")
+				{
+					this.dataPresenter1.FieldLayoutSettings.AutoGenerateFields = false;
+					FieldLayout fieldLayout = new FieldLayout();
+					fieldLayout.Fields.Add(new Field("CustomerID", typeof(string)));
+					fieldLayout.Fields.Add(new Field("EmployeeID", typeof(int)));
+					fieldLayout.Fields.Add(new Field("ShipName", typeof(string)));
+					fieldLayout.Fields.Add(new Field("ShipAddress", typeof(string)));
+					fieldLayout.Fields.Add(new Field("ShipCity", typeof(string)));
+					fieldLayout.Fields.Add(new Field("ShipRegion", typeof(string)));
+					fieldLayout.Fields.Add(new Field("ShipPostalCode", typeof(string)));
+
+					this.dataPresenter1.FieldLayouts.Add(fieldLayout);
+					fieldLayout.IsDefault = true;
+				}
+
+
+				// ======================================================================================================
+				// Another way to limit the number of fields that are fetched from the backend to improve response time is to set 
+				// the DesiredFields property on the ODataDataSource. Refer to the MainWindow.xaml file to see how we have limited
+				// the number of fields requested and returned by the data source by setting the DesiredFields property of the 
+				// DataSourceConfigurationInfo combobox item.  We will use this configuration info below when we create the
+				// ODataDataSource instance.
+				// ======================================================================================================
+
+
+				// Set the grid's DataSource to an instance of an ODataDataSource created using the settings from the
+				// selected DataSourceConfigurationInfo.
+				this.dataPresenter1.DataSource = 
+					new ODataDataSource {	BaseUri = dataSourceConfigInfo.BaseUri,
+											EntitySet = dataSourceConfigInfo.EntitySet,
+											DesiredFields = dataSourceConfigInfo.DesiredFields,
+											DesiredPageSize = this.DesiredPageSize,
+											MaximumCachedPages = this.MaximumCachedPages };
 			}
 		}
 		#endregion //cboOdataSources_SelectionChanged
@@ -191,23 +261,38 @@ namespace DataPresenter.DataSources.OData.SampleApp
 		}
 		#endregion //cboRecordFilterLogicalOperator_SelectionChanged
 
-		#region chkShowCustomTemplate_Checked
-		private void chkShowCustomTemplate_Checked(object sender, RoutedEventArgs e)
+		#region cboThemes_SelectionChanged
+		private void cboThemes_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			if (this.chkShowCustomTemplate.IsChecked.Value)
-			{
-				FrameworkElementFactory fef = new FrameworkElementFactory(typeof(ProgressBar));
-				fef.SetValue(ProgressBar.IsIndeterminateProperty, true);
-				fef.SetValue(ProgressBar.WidthProperty, 100d);
-				fef.SetValue(ProgressBar.HeightProperty, 5d);
-
-				DataTemplate customTemplate = new DataTemplate { VisualTree = fef };
-				this.dataPresenter1.FieldLayoutSettings.DynamicDataPendingContentTemplate = customTemplate;
-			}
-			else
-				this.dataPresenter1.FieldLayoutSettings.DynamicDataPendingContentTemplate = null;
+			// Remove the existing DataPendingOverlayBrush resource (if any) from the XamDataPresenter Resources dictionary.
+			if (this.dataPresenter1.Resources.Contains(DataPresenterBrushKeys.DataPendingOverlayBrushKey))
+				this.dataPresenter1.Resources.Remove(DataPresenterBrushKeys.DataPendingOverlayBrushKey);
 		}
-		#endregion //chkShowCustomTemplate_Checked
+		#endregion //cboThemes_SelectionChanged
+
+		#region colorPicker_SelectedColorChanged
+		private void colorPicker_SelectedColorChanged(object sender, Infragistics.Controls.Editors.SelectedColorChangedEventArgs e)
+		{
+			if (e.NewColor.HasValue)
+			{
+				// Remove the existing DataPendingOverlayBrush resource (if any) from the XamDataPresenter Resources dictionary.
+				if (this.dataPresenter1.Resources.Contains(DataPresenterBrushKeys.DataPendingOverlayBrushKey))
+				{
+					SolidColorBrush brush = this.dataPresenter1.Resources[DataPresenterBrushKeys.DataPendingOverlayBrushKey] as SolidColorBrush;
+					if (brush.Color != e.NewColor.Value)
+					{
+						this.dataPresenter1.Resources.Remove(DataPresenterBrushKeys.DataPendingOverlayBrushKey);
+
+						// Add a new DataPendingOverlayBrush resource for the selected color to the XamDataPresenter Resources dictionary.
+						this.dataPresenter1.Resources.Add(DataPresenterBrushKeys.DataPendingOverlayBrushKey, new SolidColorBrush(e.NewColor.Value));
+					}
+				}
+				else
+					// Add a new DataPendingOverlayBrush resource for the selected color to the XamDataPresenter Resources dictionary.
+					this.dataPresenter1.Resources.Add(DataPresenterBrushKeys.DataPendingOverlayBrushKey, new SolidColorBrush(e.NewColor.Value));
+			}
+		}
+		#endregion //colorPicker_SelectedColorChanged
 
 		#region numDesiredPageSize_EditModeEnded
 		private void numDesiredPageSize_EditModeEnded(object sender, Infragistics.Windows.Editors.Events.EditModeEndedEventArgs e)
@@ -225,95 +310,18 @@ namespace DataPresenter.DataSources.OData.SampleApp
 		}
 		#endregion //numMaximumCachedPages_EditModeEnded
 
-		#region txtPendingMessage_TextChanged
-		private void txtPendingMessage_TextChanged(object sender, TextChangedEventArgs e)
-		{
-			// Update the dynamic resource string for the 'dynamic data pending' message.
-			Infragistics.Windows.DataPresenter.Resources.Customizer.SetCustomizedString("DynamicDataPendingMessage", ((TextBox)sender).Text);
-		}
-		#endregion //txtPendingMessage_TextChanged
-
 		#endregion //Event Handlers
 	}
 
-	#region ODataSourceListItem Class
-	public class ODataSourceListItem
+	#region DataSourceConfigurationInfo Class
+	public class DataSourceConfigurationInfo
 	{
 		public override string ToString() { return Description; }
 
 		public string BaseUri { get; set; }
 		public string Description { get; set; }
 		public string EntitySet{ get; set; }
+		public string[] DesiredFields { get; set; }
 	}
-	#endregion //ODataSourceListItem Class
-
-	#region ColorToBrushConverter Class
-	public class ColorToBrushConverter : IValueConverter
-	{
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			return Process(value, targetType, parameter, culture);
-		}
-
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			return Process(value, targetType, parameter, culture);
-		}
-
-		private static object Process(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			if (value is string)
-			{
-				Color color = Parse((string)value);
-
-				if (targetType == typeof(Brush) || targetType == typeof(SolidColorBrush))
-					return new SolidColorBrush(color);
-				else
-				if (targetType == typeof(Color) || targetType == typeof(Nullable<Color>))
-					return color;
-			}
-
-			if (value is SolidColorBrush)
-			{
-				if (targetType == typeof(Brush) || targetType == typeof(SolidColorBrush))
-					return value;
-				else
-				if (targetType == typeof(Color) || targetType == typeof(Nullable<Color>))
-					return ((SolidColorBrush)value).Color;
-			}
-
-			if (value == null)
-			{
-				if (targetType == typeof(Brush) || targetType == typeof(SolidColorBrush))
-					return new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
-				else
-				if (targetType == typeof(Color) || targetType == typeof(Nullable<Color>))
-					return Color.FromArgb(0, 0, 0, 0);
-			}
-
-			if (value is Color)
-			{
-				if (targetType == typeof(Brush) || targetType == typeof(SolidColorBrush))
-					return new SolidColorBrush((Color)value);
-				else
-				if (targetType == typeof(Color) || targetType == typeof(Nullable<Color>))
-					return value;
-			}
-
-			throw new NotSupportedException("ColorToBrushConverter cannot convert value!");
-		}
-
-		private static Color Parse(string color)
-		{
-			var offset = color.StartsWith("#") ? 1 : 0;
-
-			var a = Byte.Parse(color.Substring(0 + offset, 2), NumberStyles.HexNumber);
-			var r = Byte.Parse(color.Substring(2 + offset, 2), NumberStyles.HexNumber);
-			var g = Byte.Parse(color.Substring(4 + offset, 2), NumberStyles.HexNumber);
-			var b = Byte.Parse(color.Substring(6 + offset, 2), NumberStyles.HexNumber);
-
-			return Color.FromArgb(a, r, g, b);
-		}
-	}
-	#endregion //ColorToBrushConverter Class
+	#endregion //DataSourceConfigurationInfo Class
 }
