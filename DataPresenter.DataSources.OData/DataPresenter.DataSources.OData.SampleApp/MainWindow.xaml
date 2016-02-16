@@ -252,6 +252,7 @@
                                      BusyContent="Fetching Data..."
                                      Animation="{Binding ElementName=cboBusyIndicatorAnimations, Path=SelectedValue}"
                                      DisplayAfter="0:0:00"
+                                     Focusable="False"
                                      HorizontalAlignment="Center" 
                                      VerticalAlignment="Center"/>
     </Grid>
