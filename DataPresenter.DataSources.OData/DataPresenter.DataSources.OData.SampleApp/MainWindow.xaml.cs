@@ -215,6 +215,7 @@ namespace DataPresenter.DataSources.OData.SampleApp
 					FieldLayout fieldLayout = new FieldLayout();
 					fieldLayout.Fields.Add(new Field("CustomerID", typeof(string)));
 					fieldLayout.Fields.Add(new Field("EmployeeID", typeof(int)));
+					fieldLayout.Fields.Add(new Field("OrderDate", typeof(DateTime)));
 					fieldLayout.Fields.Add(new Field("ShipName", typeof(string)));
 					fieldLayout.Fields.Add(new Field("ShipAddress", typeof(string)));
 					fieldLayout.Fields.Add(new Field("ShipCity", typeof(string)));
