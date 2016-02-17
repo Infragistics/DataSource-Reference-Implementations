@@ -2,7 +2,7 @@
   <metadata>
     <id>Infragistics.DataPresenter.DataSources.OData</id>
     <title>OData DataSource Reference Implementation for Infragistics XamDataPresenter</title>
-    <version>1.0.0-beta</version>
+    <version>$naVersionMajor$.$naVersionMinor$.$naVersionRevision$</version>
     <authors>Infragistics, Inc.</authors>
     <owners>Infragistics, Inc</owners>
     <description>Installs the DataPresenter.DataSources.OData.dll assembly which contains a reference implementation for an OData data source based on the AsyncPagingDataSourceBase class delivered in InfragisticsWPF4.DataPresenter.DataSources.Async.v16.1</description>
