@@ -12,81 +12,96 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1100">
+    <Window.DataContext>
+        <local:SampleViewModel/>
+    </Window.DataContext>
+    
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="boolToVisibility"/>
+
+        <Style x:Key="HeaderText1" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#FF0052A6"/>
+            <Setter Property="Margin" Value="0,3"/>
+            <Setter Property="FontSize" Value="18"/>
+        </Style>
+
+        <Style x:Key="HeaderText2" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#FF0072C6"/>
+            <Setter Property="Margin" Value="0,3"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+
+        <Style x:Key="LabelText" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0,3"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="ColorPicker" TargetType="igControls:XamColorPicker">
+            <Setter Property="Margin" Value="0,3"/>
+        </Style>
+
+        <Style x:Key="TextBoxText" TargetType="TextBox">
+            <Setter Property="FontWeight" Value="Regular"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="0,3"/>
+        </Style>
+
+        <Style x:Key="NumericEditorText" TargetType="igEditors:XamNumericEditor">
+            <Setter Property="FontWeight" Value="Regular"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="0,2"/>
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="SpinButtonDisplayMode" Value="Always"/>
+            <Setter Property="SpinIncrement" Value="10"/>
+            <Setter Property="Mask" Value="9999"/>
+        </Style>
+
+        <Style x:Key="ComboBoxText" TargetType="ComboBox">
+            <Setter Property="FontWeight" Value="Regular"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="0,2"/>
+        </Style>
+
+        <Style x:Key="CheckBoxText" TargetType="CheckBox">
+            <Setter Property="FontWeight" Value="Regular"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="0,2"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
     </Window.Resources>
     
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5*"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="9*"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Column="0" Margin="6">
+        <StackPanel Grid.RowSpan="2" Grid.Column="0" Margin="6">
             <StackPanel>
-                <StackPanel.Resources>
-                    <Style x:Key="HeaderText1" TargetType="TextBlock">
-                        <Setter Property="FontWeight" Value="Bold"/>
-                        <Setter Property="Foreground" Value="#FF0052A6"/>
-                        <Setter Property="Margin" Value="0,3"/>
-                        <Setter Property="FontSize" Value="18"/>
-                    </Style>
-                    
-                    <Style x:Key="HeaderText2" TargetType="TextBlock">
-                        <Setter Property="FontWeight" Value="Bold"/>
-                        <Setter Property="Foreground" Value="#FF0072C6"/>
-                        <Setter Property="Margin" Value="0,3"/>
-                        <Setter Property="FontSize" Value="14"/>
-                    </Style>
-
-                    <Style x:Key="LabelText" TargetType="TextBlock">
-                        <Setter Property="FontWeight" Value="Bold"/>
-                        <Setter Property="Margin" Value="0,3"/>
-                        <Setter Property="VerticalAlignment" Value="Center"/>
-                    </Style>
-
-                    <Style x:Key="ColorPicker" TargetType="igControls:XamColorPicker">
-                        <Setter Property="Margin" Value="0,3"/>
-                    </Style>
-
-                    <Style x:Key="TextBoxText" TargetType="TextBox">
-                        <Setter Property="FontWeight" Value="Regular"/>
-                        <Setter Property="Foreground" Value="Black"/>
-                        <Setter Property="FontSize" Value="14"/>
-                        <Setter Property="Margin" Value="0,3"/>
-                    </Style>
-
-                    <Style x:Key="NumericEditorText" TargetType="igEditors:XamNumericEditor">
-                        <Setter Property="FontWeight" Value="Regular"/>
-                        <Setter Property="Foreground" Value="Black"/>
-                        <Setter Property="FontSize" Value="14"/>
-                        <Setter Property="Margin" Value="0,2"/>
-                    </Style>
-
-                    <Style x:Key="ComboBoxText" TargetType="ComboBox">
-                        <Setter Property="FontWeight" Value="Regular"/>
-                        <Setter Property="Foreground" Value="Black"/>
-                        <Setter Property="FontSize" Value="14"/>
-                        <Setter Property="Margin" Value="0,2"/>
-                    </Style>
-
-                    <Style x:Key="CheckBoxText" TargetType="CheckBox">
-                        <Setter Property="FontWeight" Value="Regular"/>
-                        <Setter Property="Foreground" Value="Black"/>
-                        <Setter Property="FontSize" Value="14"/>
-                        <Setter Property="Margin" Value="0,2"/>
-                        <Setter Property="VerticalAlignment" Value="Center"/>
-                    </Style>
-                </StackPanel.Resources>
-                
-                <!-- Dropdown list of publicly accessible ODATA SERVICES-->
+                <!-- A dropdown list of publicly accessible ODATA SERVICES-->
                 <TextBlock Text="ODATA SERVICES" Style="{StaticResource HeaderText1}"/>
-                <ComboBox x:Name="cboOdataSources" SelectionChanged="cboOdataSources_SelectionChanged" Style="{StaticResource ComboBoxText}">
+                <ComboBox x:Name="cboOdataSources"
+                          SelectedIndex="0"
+                          SelectedValue="{Binding CurrentDataSourceConfigurationInfo}" 
+                          Style="{StaticResource ComboBoxText}">
                     <local:DataSourceConfigurationInfo BaseUri="http://data.scottsdaleaz.gov/Planning/BuildingPermits.svc" EntitySet="BuildingPermits"  Description="Scottsdale Building Permits">
-                        <!-- Limit the amount of data fetched from this OData service by setting the FieldsRequested property.  Refer to
-                        the cboOdataSources_SelectionChanged event handler code in MainWindow.xaml.cs to see how we apply these settings when
-                        we create a new ODataDataSource instance. -->
+                        <!-- An example of how to improve data source responsiveness by limiting the amount of data fetched from this OData
+                        service.  We do this by setting the FieldsRequested property to a subset of all fields defined in the backend schema.
+                        Note that this requires knowledge of the field names defined in the backend schema.  -->
                         <local:DataSourceConfigurationInfo.FieldsRequested>
                             <x:Array Type="sys:String">
                                 <sys:String>PermitNumber</sys:String>
@@ -109,7 +124,6 @@
                     <local:DataSourceConfigurationInfo BaseUri="http://services.odata.org/AdventureWorksV3/AdventureWorks.svc" EntitySet="WorkOrderRouting"  Description="AdventureWorks Workorder Routing"/>
                     <local:DataSourceConfigurationInfo BaseUri="http://packages.nuget.org/v1/FeedService.svc" EntitySet="Packages"  Description="NuGet Packages"/>
                 </ComboBox>
-                <CheckBox x:Name="chkNullOutDatasource" IsChecked="True" Style="{StaticResource CheckBoxText}">Null out datasource before setting new</CheckBox>
 
                 <!-- Separator -->
                 <Rectangle Height="1" HorizontalAlignment="Stretch" Fill="Gray" Margin="5,20,5,0"/>
@@ -118,9 +132,9 @@
                 <Rectangle Width="1" Height="20" Fill="Transparent"/>
                 <TextBlock Text="DATASOURCE SETTINGS" Style="{StaticResource HeaderText1}"/>
                 
-                <!-- Desired Page Size -->
+                <!-- Page Size Requested -->
                 <TextBlock Text="PAGE SIZE REQUESTED" Style="{StaticResource HeaderText2}"/>
-                <igEditors:XamNumericEditor x:Name="numPageSizeRequested" Width="100" HorizontalAlignment="Left" Mask="9999" EditModeEnded="numPageSizeRequested_EditModeEnded" SpinButtonDisplayMode="Always" SpinIncrement="10" Style="{StaticResource NumericEditorText}">
+                <igEditors:XamNumericEditor x:Name="numPageSizeRequested" Value="{Binding PageSizeRequested}" ValueType="{x:Type sys:Int32}" Style="{StaticResource NumericEditorText}">
                     <igEditors:XamNumericEditor.ValueConstraint>
                         <igEditors:ValueConstraint MinInclusive="5" MaxInclusive="1000"/>
                     </igEditors:XamNumericEditor.ValueConstraint>
@@ -129,7 +143,7 @@
                 <!-- Maximum number of cached pages -->
                 <Rectangle Width="1" Height="20" Fill="Transparent"/>
                 <TextBlock Text="MAX # CACHED PAGES" Style="{StaticResource HeaderText2}"/>
-                <igEditors:XamNumericEditor x:Name="numMaxCachedPages" Width="100" HorizontalAlignment="Left" Mask="9999" EditModeEnded="numMaxCachedPages_EditModeEnded" SpinButtonDisplayMode="Always" SpinIncrement="10" Style="{StaticResource NumericEditorText}">
+                <igEditors:XamNumericEditor x:Name="numMaxCachedPages" Value="{Binding MaxCachedPages}" ValueType="{x:Type sys:Int32}" Style="{StaticResource NumericEditorText}">
                     <igEditors:XamNumericEditor.ValueConstraint>
                         <igEditors:ValueConstraint MinInclusive="5" MaxInclusive="1000"/>
                     </igEditors:XamNumericEditor.ValueConstraint>
@@ -172,7 +186,7 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="RECORD FILTER LOGICAL OPERATOR" Style="{StaticResource LabelText}"/>
-                    <ComboBox x:Name="cboRecordFilterLogicalOperator" Grid.Row="0" Grid.Column="1" SelectionChanged="cboRecordFilterLogicalOperator_SelectionChanged" Margin="2" Style="{StaticResource ComboBoxText}">
+                    <ComboBox x:Name="cboRecordFilterLogicalOperator" Grid.Row="0" Grid.Column="1" SelectedIndex="0" SelectionChanged="cboRecordFilterLogicalOperator_SelectionChanged" Margin="2" Style="{StaticResource ComboBoxText}">
                         <sys:String>And</sys:String>
                         <sys:String>Or</sys:String>
                     </ComboBox>
@@ -189,18 +203,9 @@
 
                     <Grid.RowDefinitions>
                         <RowDefinition />
-                        <RowDefinition />
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="VIEW" Style="{StaticResource LabelText}"/>
-                    <ComboBox x:Name="cboDataPresenterView" Grid.Row="0" Grid.Column="1" SelectionChanged="cboDataPresenterView_SelectionChanged" Margin="2" Style="{StaticResource ComboBoxText}">
-                        <sys:String>GridView</sys:String>
-                        <sys:String>CardView</sys:String>
-                        <sys:String>CarouselView</sys:String>
-                        <sys:String>TreeView</sys:String>
-                    </ComboBox>
-
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="THEME" Style="{StaticResource LabelText}"/>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="THEME" Style="{StaticResource LabelText}"/>
                     <ComboBox x:Name="cboThemes" Grid.Row="1" Grid.Column="1" SelectionChanged="cboThemes_SelectionChanged" Margin="2" Style="{StaticResource ComboBoxText}"/>
                 </Grid>
 
@@ -234,9 +239,52 @@
             </StackPanel>
         </StackPanel>
 
-        <GridSplitter Grid.Column="1" Width="7" Margin="2,0" Background="#FFDDDDDD" ResizeBehavior="PreviousAndNext"/>
+        <GridSplitter Grid.Column="1" Grid.RowSpan="2" Width="7" Margin="2,0" Background="#FFBBBBBB" ResizeBehavior="PreviousAndNext"/>
+
+        <!-- Summary info for the currently selected OData DataSource -->
+        <Grid Grid.Column="2" Margin="5,0,5,20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" BorderThickness="0,0,1,1" BorderBrush="DarkGray">
+                <TextBlock Text="DATA SOURCE URI" Style="{StaticResource HeaderText2}" Padding="3,0"/>
+            </Border>
+            <Border Grid.Column="1" BorderThickness="0,0,1,1" BorderBrush="DarkGray">
+                <TextBlock Text="ENTITYSET" Style="{StaticResource HeaderText2}" Padding="3,0"/>
+            </Border>
+            <Border Grid.Column="2" BorderThickness="0,0,0,1" BorderBrush="DarkGray">
+                <TextBlock Text="# RECORDS" Style="{StaticResource HeaderText2}" Padding="3,0"/>
+            </Border>
+
+            <Border Grid.Row="1" Grid.Column="0" Padding="0,0,6,0" BorderThickness="0,0,1,0" BorderBrush="DarkGray">
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding ElementName=cboOdataSources, Path=(SelectedItem).BaseUri}" Padding="3,0"/>
+            </Border>
+
+            <Border Grid.Row="1" Grid.Column="1" Padding="0,0,6,0" BorderThickness="0,0,1,0" BorderBrush="DarkGray">
+                <TextBlock Text="{Binding ElementName=cboOdataSources, Path=(SelectedItem).EntitySet}" Padding="3,0"/>
+            </Border>
+
+            <Border Grid.Row="1" Grid.Column="2" Padding="0,0,6,0">
+                <TextBlock Text="{Binding Path=CurrentDataSource.RecordCount, StringFormat=N0}" Padding="3,0"/>
+            </Border>
+        </Grid>
         
-        <igDP:XamDataPresenter x:Name="dataPresenter1" Grid.Column="2" Theme="{Binding ElementName=cboThemes, Path=SelectedValue, Mode=OneWay}" Margin="5,0,0,0">
+        <!-- XamDataPresenter -->
+        <igDP:XamDataPresenter x:Name="dataPresenter1" 
+                               Grid.Row="1" 
+                               Grid.Column="2" 
+                               DataSource="{Binding CurrentDataSource}"
+                               Theme="{Binding ElementName=cboThemes, Path=SelectedValue, Mode=OneWay}" 
+                               Margin="5" 
+                               GroupByAreaLocation="None">
             <igDP:XamDataPresenter.FieldLayoutSettings>
                 <igDP:FieldLayoutSettings FilterEvaluationMode="UseCollectionView"/>
             </igDP:XamDataPresenter.FieldLayoutSettings>
@@ -246,7 +294,9 @@
             </igDP:XamDataPresenter.FieldSettings>
         </igDP:XamDataPresenter>
 
-        <igControls:XamBusyIndicator Grid.Column="2" 
+        <!-- XamBusyIndicator -->
+        <igControls:XamBusyIndicator Grid.Row="1"
+                                     Grid.Column="2"
                                      IsBusy="{Binding ElementName=dataPresenter1, Path=IsAsyncDataPending}"
                                      Visibility="{Binding ElementName=chkShowBusyIndicator, Path=IsChecked, Converter={StaticResource boolToVisibility}}"
                                      BusyContent="Fetching Data..."
