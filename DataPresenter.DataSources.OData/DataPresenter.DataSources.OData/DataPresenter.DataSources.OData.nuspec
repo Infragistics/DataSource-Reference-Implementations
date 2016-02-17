@@ -5,7 +5,7 @@
     <version>$naVersionMajor$.$naVersionMinor$.$naVersionRevision$</version>
     <authors>Infragistics, Inc.</authors>
     <owners>Infragistics, Inc</owners>
-    <description>Installs the DataPresenter.DataSources.OData.dll assembly which contains a reference implementation for an OData data source based on the AsyncPagingDataSourceBase class delivered in InfragisticsWPF4.DataPresenter.DataSources.Async.v16.1</description>
+    <description>Installs the DataPresenter.DataSources.OData.dll assembly which contains a reference implementation for an OData data source based on the AsyncPagingDataSourceBase class delivered in InfragisticsWPF4.DataPresenter.DataSources.Async.v$naVersionMajor$.$naVersionMinor$</description>
     <projectUrl>https://github.com/Infragistics/DataSource-Reference-Implementations/tree/master/DataPresenter.DataSources.OData</projectUrl>
     <licenseUrl>https://github.com/Infragistics/DataSource-Reference-Implementations/blob/master/LICENSE</licenseUrl>
     <iconUrl>http://www.infragistics.com/tempicon.png</iconUrl>
