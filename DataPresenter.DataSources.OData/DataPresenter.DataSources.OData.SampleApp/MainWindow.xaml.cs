@@ -26,7 +26,7 @@ namespace DataPresenter.DataSources.OData.SampleApp
 
 			// Initialize the list of themes and select 'Office2013'.
 			this.cboThemes.ItemsSource		= Infragistics.Windows.Themes.ThemeManager.GetThemes();
-			this.cboThemes.SelectedValue	= "RoyalDark";
+			this.cboThemes.SelectedValue	= "Office2013";
 			
 			// Initialize the list of XamBusyIndicator Animations.
 			this.cboBusyIndicatorAnimations.ItemsSource		= typeof(BusyAnimations).GetFields(BindingFlags.Public | BindingFlags.Static).Select((prop) => prop.Name).ToArray();
