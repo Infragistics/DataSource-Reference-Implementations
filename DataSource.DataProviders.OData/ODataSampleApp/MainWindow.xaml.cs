@@ -38,14 +38,12 @@ namespace ODataSampleApp
 
             source.SortDescriptions.Add(new SortDescription("ShipName", ListSortDirection.Descending));
 
-            source.FilterExpressions.Add(
-                FilterFactory.Build((f) =>
-                {
-                    return f.Property("ShipName").ToUpper().IsLessThan("G")
-                    .Or(f.Property("ShipName").ToUpper().IsGreaterThan("U"));
-                }));
+            grid1.SelectionMode = GridSelectionMode.SingleRow;
 
             grid1.ItemsSource = source;
+            
+
+            //grid1.SelectedItemsChanged += Grid1_SelectedItemsChanged;
 
             //Task.Delay(10000).ContinueWith((t) =>
             //{
@@ -54,6 +52,22 @@ namespace ODataSampleApp
             //        source.DeferAutoRefresh = false;
             //    }));
             //});
+        }
+
+        private void Grid1_SelectedItemsChanged(object sender, GridSelectedItemsChangedEventArgs args)
+        {
+            if (grid1.FilterExpressions.Count == 0)
+            {
+                grid1.FilterExpressions.Add(
+                FilterFactory.Build((f) =>
+                {
+                    return f.Property("ShipName").ToUpper().StartsWith("ALF");
+                }));
+            }
+            else
+            {
+                grid1.FilterExpressions.Clear();
+            }
         }
 
         private void Source_SchemaChanged(object sender, DataSourceSchemaChangedEventArgs args)

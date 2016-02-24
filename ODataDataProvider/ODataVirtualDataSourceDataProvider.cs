@@ -194,7 +194,7 @@ namespace Infragistics.Controls.DataSource
             }
         }
 
-        private int _pageSizeRequested = 200;
+        private int _pageSizeRequested = 50;
         public int PageSizeRequested
         {
             get
