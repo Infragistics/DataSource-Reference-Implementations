@@ -286,7 +286,14 @@
                                Margin="5" 
                                GroupByAreaLocation="None">
             <igDP:XamDataPresenter.FieldLayoutSettings>
-                <igDP:FieldLayoutSettings FilterEvaluationMode="UseCollectionView"/>
+                <igDP:FieldLayoutSettings FilterEvaluationMode="UseCollectionView" RecordSelectorNumberType="RecordIndex">
+                    <igDP:FieldLayoutSettings.HeaderPrefixAreaStyle>
+                        <Style TargetType="igDP:RecordPrefixArea">
+                            <Setter Property="Content" Value="Rec #"/>
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                        </Style>
+                    </igDP:FieldLayoutSettings.HeaderPrefixAreaStyle>
+                </igDP:FieldLayoutSettings>
             </igDP:XamDataPresenter.FieldLayoutSettings>
 
             <igDP:XamDataPresenter.FieldSettings>

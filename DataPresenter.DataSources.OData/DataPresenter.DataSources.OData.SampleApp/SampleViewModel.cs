@@ -81,8 +81,8 @@ namespace DataPresenter.DataSources.OData.SampleApp
 							BaseUri				= this._currentDataSourceConfigurationInfo.BaseUri,
 							EntitySet			= this._currentDataSourceConfigurationInfo.EntitySet,
 							FieldsRequested		= this._currentDataSourceConfigurationInfo.FieldsRequested,
-							PageSizeRequested	= Convert.ToInt32(this.PageSizeRequested),
-							MaxCachedPages		= Convert.ToInt32(this.MaxCachedPages)
+							PageSizeRequested	= this.PageSizeRequested,
+							MaxCachedPages		= this.MaxCachedPages
 						};
 				}
 			}
