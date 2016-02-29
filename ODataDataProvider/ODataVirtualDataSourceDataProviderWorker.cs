@@ -263,7 +263,7 @@ namespace Infragistics.Controls.DataSource
             var t = this._client.GetMetadataDocumentAsync();
             t.Wait();
             var metadataDocument = t.Result;
-            SchemaProvider sp = new SchemaProvider(metadataDocument);
+            ODataSchemaProvider sp = new ODataSchemaProvider(metadataDocument);
 			return sp.GetODataDataSourceSchema(this._entitySet);
         }
 
