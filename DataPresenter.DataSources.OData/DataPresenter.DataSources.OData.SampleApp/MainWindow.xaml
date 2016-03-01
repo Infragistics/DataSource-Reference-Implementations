@@ -60,6 +60,35 @@
             <Setter Property="SpinButtonDisplayMode" Value="Always"/>
             <Setter Property="SpinIncrement" Value="10"/>
             <Setter Property="Mask" Value="9999"/>
+            <Setter Property="Validation.ErrorTemplate">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <DockPanel>
+                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center">
+                                <TextBlock Text="(Valid Range: "
+                                           Foreground="Red"
+                                           Margin="2,0,0,0"/>
+                                <TextBlock Foreground="Red" 
+                                           Margin="2,0,0,0" 
+                                           Text="{Binding ElementName=ErrorAdorner, Path=AdornedElement.ValueConstraint.MinInclusive}"/>
+                                <TextBlock Text=" to "
+                                           Foreground="Red"
+                                           Margin="2,0,0,0"/>
+                                <TextBlock Foreground="Red" 
+                                           Margin="2,0,0,0" 
+                                           Text="{Binding ElementName=ErrorAdorner, Path=AdornedElement.ValueConstraint.MaxInclusive}"/>
+                                <TextBlock Text=")"
+                                           Foreground="Red"
+                                           Margin="2,0,0,0"/>
+                            </StackPanel>
+                            
+                            <Border BorderThickness="1" BorderBrush="Red">
+                                <AdornedElementPlaceholder x:Name="ErrorAdorner"/>
+                            </Border>
+                        </DockPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style x:Key="ComboBoxText" TargetType="ComboBox">
@@ -134,7 +163,11 @@
                 
                 <!-- Page Size Requested -->
                 <TextBlock Text="PAGE SIZE REQUESTED" Style="{StaticResource HeaderText2}"/>
-                <igEditors:XamNumericEditor x:Name="numPageSizeRequested" Value="{Binding PageSizeRequested}" ValueType="{x:Type sys:Int32}" Style="{StaticResource NumericEditorText}">
+                <igEditors:XamNumericEditor x:Name="numPageSizeRequested"
+                                            Value="{Binding PageSizeRequested, UpdateSourceTrigger=LostFocus, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}"
+                                            ValueType="{x:Type sys:Int32}" 
+                                            Style="{StaticResource NumericEditorText}">
+                    
                     <igEditors:XamNumericEditor.ValueConstraint>
                         <igEditors:ValueConstraint MinInclusive="5" MaxInclusive="1000"/>
                     </igEditors:XamNumericEditor.ValueConstraint>
@@ -143,7 +176,10 @@
                 <!-- Maximum number of cached pages -->
                 <Rectangle Width="1" Height="20" Fill="Transparent"/>
                 <TextBlock Text="MAX # CACHED PAGES" Style="{StaticResource HeaderText2}"/>
-                <igEditors:XamNumericEditor x:Name="numMaxCachedPages" Value="{Binding MaxCachedPages}" ValueType="{x:Type sys:Int32}" Style="{StaticResource NumericEditorText}">
+                <igEditors:XamNumericEditor x:Name="numMaxCachedPages" 
+                                            Value="{Binding MaxCachedPages, UpdateSourceTrigger=LostFocus, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}" 
+                                            ValueType="{x:Type sys:Int32}" 
+                                            Style="{StaticResource NumericEditorText}">
                     <igEditors:XamNumericEditor.ValueConstraint>
                         <igEditors:ValueConstraint MinInclusive="5" MaxInclusive="1000"/>
                     </igEditors:XamNumericEditor.ValueConstraint>
