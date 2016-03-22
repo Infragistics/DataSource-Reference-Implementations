@@ -13,7 +13,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="InfragisticsWPF4.DataPresenter.DataSources.Async.v$naVersionMajor$.$naVersionMinor$, Version=$naVersionFull$, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb"/>
-      <frameworkAssembly assemblyName="InfragisticsWPF4.DataVisualization.v$naVersionMajor$.$naVersionMinor$, Version=$naVersionFull$, Culture=neutral, PublicKeyToken=1102135f7483647e"/>
+      <frameworkAssembly assemblyName="InfragisticsWPF4.DataVisualization.v$naVersionMajor$.$naVersionMinor$, Version=$naVersionFull$, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb"/>
       <frameworkAssembly assemblyName="InfragisticsWPF4.v$naVersionMajor$.$naVersionMinor$, Version=$naVersionFull$, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb"/>
     </frameworkAssemblies>
 	<dependencies>
