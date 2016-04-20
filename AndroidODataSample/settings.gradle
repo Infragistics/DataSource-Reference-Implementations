@@ -1,0 +1,3 @@
+include ':app'
+include ':AndroidOdata'
+project(':AndroidOdata').projectDir = new File('../AndroidOdata/ODataVirtualDataSource')

@@ -1,0 +1,26 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+    useLibrary 'org.apache.http.legacy'
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+}
+
+dependencies {
+    provided fileTree(dir: 'libs', include: ['*.jar'])
+    provided fileTree(dir: 'c:/InfragisticsDependencies', include: ['**/*.jar'])
+    compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'org.apache.olingo:odata-client-android:4.2.0'
+}
