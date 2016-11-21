@@ -327,7 +327,13 @@ namespace Infragistics.Controls.DataSource
                 {
                     foreach (var sort in SortDescriptions)
                     {
-                        if (sort.Direction == System.ComponentModel.ListSortDirection.Descending)
+                        if (sort.Direction ==
+#if PCL
+							ListSortDirection.Descending
+#else
+							System.ComponentModel.ListSortDirection.Descending
+#endif
+							)
                         {
                             client = client.OrderByDescending(sort.PropertyName);
                         }
