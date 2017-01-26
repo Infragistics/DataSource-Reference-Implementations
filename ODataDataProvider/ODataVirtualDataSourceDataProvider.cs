@@ -8,7 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Simple.OData.Client;
 using System.Diagnostics;
+#if !PCL
 using Infragistics.Controls.DataSource;
+#endif
+
+#if PCL
+using Infragistics.Core.Controls.DataSource;
+#endif
 
 #if DATA_PRESENTER
 namespace Reference.DataSources.OData

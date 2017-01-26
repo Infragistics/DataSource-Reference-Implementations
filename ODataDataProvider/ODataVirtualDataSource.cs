@@ -9,7 +9,10 @@ using System.Threading.Tasks;
 using Simple.OData.Client;
 using System.Diagnostics;
 using System.Windows;
+
+#if !PCL
 using Infragistics.Controls.DataSource;
+#endif
 #if PCL
 using Infragistics.Core.Controls.DataSource;
 #endif
