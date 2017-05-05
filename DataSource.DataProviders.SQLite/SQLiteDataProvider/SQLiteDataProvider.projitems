@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>86e04275-b6dc-4cbb-8827-3a0f6d61ac4d</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>SQLiteDataProvider</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)SQLiteDataSourceFilterExpressionVisitor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SQLiteDataSourcePage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SQLiteVirtualDataSource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SQLiteVirtualDataSourceDataProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SQLiteVirtualDataSourceDataProviderWorker.cs" />
+  </ItemGroup>
+</Project>
