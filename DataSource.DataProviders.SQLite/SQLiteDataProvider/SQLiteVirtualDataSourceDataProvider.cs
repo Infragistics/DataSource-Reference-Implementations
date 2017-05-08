@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using SQLite;
+using System.Reflection;
 #if !PCL
 using Infragistics.Controls.DataSource;
 #endif
@@ -324,17 +325,25 @@ namespace Infragistics.Controls.DataSource
             }
         }
 
+        Dictionary<string, PropertyInfo> _getters = new Dictionary<string, PropertyInfo>();
+
         public object GetItemValue(object item, string valueName)
         {
-            var dic = (IDictionary<string, object>)item;
-            if (dic.ContainsKey(valueName))
+            PropertyInfo getter;
+            if (!_getters.TryGetValue(valueName, out getter))
             {
-                return dic[valueName];
+                getter = item.GetType().GetTypeInfo().GetDeclaredProperty(valueName);
+                if (getter != null)
+                {
+                    _getters.Add(valueName, getter);
+                }
             }
-            else
+            if (getter == null)
             {
-                return null; 
+                return null;
             }
+
+            return getter.GetValue(item);
         }
 
         public event DataSourceDataProviderSchemaChangedHandler SchemaChanged;

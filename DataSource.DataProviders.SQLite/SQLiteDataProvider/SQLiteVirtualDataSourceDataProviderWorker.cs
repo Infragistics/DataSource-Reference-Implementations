@@ -15,6 +15,7 @@ using Infragistics.Core.Controls.DataSource;
 using SQLite;
 using System.Collections;
 using System.Reflection;
+using System.Collections.Concurrent;
 #endif
 
 #if DATA_PRESENTER
@@ -38,7 +39,7 @@ namespace Infragistics.Controls.DataSource
         public string[] PropertiesRequested { get; set; }
     }
 
-    
+
 
 
     internal class SQLiteVirtualDataSourceProviderTaskDataHolder
@@ -47,7 +48,7 @@ namespace Infragistics.Controls.DataSource
         public int FullCount { get; set; }
     }
 
-    
+
     internal class SQLiteVirtualDataSourceDataProviderWorker
         : AsyncVirtualDataSourceProviderWorker
     {
@@ -114,8 +115,10 @@ namespace Infragistics.Controls.DataSource
             base.GetTasksData(holder);
         }
 
+        private TableMapping _propertyMappings = null;
+
         public SQLiteVirtualDataSourceDataProviderWorker(SQLiteVirtualDataSourceDataProviderWorkerSettings settings)
-            :base(settings)
+            : base(settings)
         {
             _tableExpression = settings.TableExpression;
             _projectionType = settings.ProjectionType;
@@ -124,9 +127,17 @@ namespace Infragistics.Controls.DataSource
             _sortDescriptions = settings.SortDescriptions;
             _filterExpressions = settings.FilterExpressions;
             _desiredPropeties = settings.PropertiesRequested;
+            _propertyMappings = ResolvePropertyMappings();
+            ActualSchema = ResolveSchema();
+
             Task.Factory.StartNew(() => DoWork(), TaskCreationOptions.LongRunning);
-        }        
-      
+        }
+
+        private TableMapping ResolvePropertyMappings()
+        {
+            return _connection.GetConnection().GetMapping(_projectionType);
+        }
+
         protected override void ProcessCompletedTask(AsyncDataSourcePageTaskHolder completedTask, int currentDelay, int pageIndex, AsyncVirtualDataSourceProviderTaskDataHolder taskDataHolder)
         {
             SQLiteVirtualDataSourceProviderTaskDataHolder h = (SQLiteVirtualDataSourceProviderTaskDataHolder)taskDataHolder;
@@ -147,7 +158,7 @@ namespace Infragistics.Controls.DataSource
                     Task<SQLiteDataSourceQueryResult> task = (Task<SQLiteDataSourceQueryResult>)completedTask.Task;
 
                     result = task.Result;
-                }                
+                }
             }
             catch (AggregateException e)
             {
@@ -199,7 +210,7 @@ namespace Infragistics.Controls.DataSource
             }
 
             lock (SyncLock)
-            {                
+            {
                 ActualSchema = schema;
                 executionContext = ExecutionContext;
                 pageLoaded = PageLoaded;
@@ -237,7 +248,7 @@ namespace Infragistics.Controls.DataSource
                     executionContext.Execute(() =>
                         {
                             pageLoaded(page, ActualCount, ActualPageSize);
-                        });              
+                        });
                 }
                 else
                 {
@@ -267,7 +278,12 @@ namespace Infragistics.Controls.DataSource
 
 
             var actualPrimaryKey = schema.PrimaryKey;
-            //TODO: get primary key;
+
+            var pkCol = _propertyMappings.PK;
+            if (pkCol != null)
+            {
+                actualPrimaryKey = new string[1] { pkCol.Name };
+            }
 
             var actualSchema = new DefaultDataSourceSchema(
                 schema.PropertyNames, schema.PropertyTypes, actualPrimaryKey, schema.PropertyDataIntents);
@@ -296,7 +312,7 @@ namespace Infragistics.Controls.DataSource
 
             lock (SyncLock)
             {
-                
+
                 if (_selectedString == null)
                 {
                     StringBuilder selectBuilder = new StringBuilder();
@@ -307,15 +323,61 @@ namespace Infragistics.Controls.DataSource
                     }
                     else
                     {
-                        if (DesiredProperties != null && DesiredProperties.Length > 0)
+                        var actualProperties = new List<string>();
+                        var propertySet = new HashSet<string>();
+                        if (DesiredProperties != null)
                         {
                             for (var i = 0; i < DesiredProperties.Length; i++)
+                            {
+                                actualProperties.Add(DesiredProperties[i]);
+                                if (!propertySet.Contains(DesiredProperties[i]))
+                                {
+                                    propertySet.Add(DesiredProperties[i]);
+                                }
+                            }
+                            string[] pk = null;
+                            if (ActualSchema != null && ActualSchema.PrimaryKey != null &&
+                                ActualSchema.PrimaryKey.Length > 0)
+                            {
+                                pk = ActualSchema.PrimaryKey;
+                            }
+                            if (pk != null)
+                            {
+                                for (var i = 0; i < pk.Length; i++)
+                                {
+                                    if (!propertySet.Contains(pk[i]))
+                                    {
+                                        propertySet.Add(pk[i]);
+                                        actualProperties.Add(pk[i]);
+                                    }
+                                }
+                            }
+                        }
+
+                        if (actualProperties.Count > 0)
+                        {
+                            for (var i = 0; i < actualProperties.Count; i++)
                             {
                                 if (i > 0)
                                 {
                                     selectBuilder.Append(", ");
                                 }
-                                selectBuilder.Append(DesiredProperties[i]);
+                                var col = _propertyMappings.FindColumnWithPropertyName(actualProperties[i]);
+                                if (col != null)
+                                {
+                                    if (col.Name.Contains("__"))
+                                    {
+                                        selectBuilder.Append(col.Name.Replace("__", ".") + " AS " + col.Name);
+                                    }
+                                    else
+                                    {
+                                        selectBuilder.Append(col.Name);
+                                    }
+                                }
+                                else
+                                {
+                                    selectBuilder.Append(actualProperties[i]);
+                                }
                             }
                         }
                         else
@@ -350,7 +412,7 @@ namespace Infragistics.Controls.DataSource
                             filterBuilder.Append(" AND ");
                         }
 
-                        SQLiteDataSourceFilterExpressionVisitor visitor = new SQLiteDataSourceFilterExpressionVisitor();
+                        SQLiteDataSourceFilterExpressionVisitor visitor = new SQLiteDataSourceFilterExpressionVisitor(_propertyMappings);
 
                         visitor.Visit(expr);
 
@@ -385,19 +447,26 @@ namespace Infragistics.Controls.DataSource
                             sb.Append(", ");
                         }
 
+                        var propertyName = sort.PropertyName;
+                        var col = _propertyMappings.FindColumnWithPropertyName(propertyName);
+                        if (col != null)
+                        {
+                            propertyName = col.Name;
+                        }
+
                         if (sort.Direction ==
 #if PCL
-							ListSortDirection.Descending
+                            ListSortDirection.Descending
 #else
 							System.ComponentModel.ListSortDirection.Descending
 #endif
-							)
+                            )
                         {
-                            sb.Append(sort.PropertyName + " DESC");
+                            sb.Append(propertyName + " DESC");
                         }
                         else
                         {
-                            sb.Append(sort.PropertyName + " ASC");
+                            sb.Append(propertyName + " ASC");
                         }
                     }
                 }
@@ -419,7 +488,7 @@ namespace Infragistics.Controls.DataSource
                 if (_specific == null)
                 {
                     var queryAsync = _connection.GetType().GetTypeInfo().GetDeclaredMethod("QueryAsync");
-                    
+
                     var specific = queryAsync.MakeGenericMethod(_projectionType);
                     _specific = specific;
                 }
@@ -442,7 +511,7 @@ namespace Infragistics.Controls.DataSource
             return await Task.Run(async () =>
             {
                 SQLiteDataSourceQueryResult res = new SQLiteDataSourceQueryResult();
-                
+
                 var count = await _connection.ExecuteScalarAsync<int>("SELECT count(*) FROM " + _tableExpression);
                 res.FullCount = count;
 

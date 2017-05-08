@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using SQLite;
 
 #if !PORTABLE
 using System.Runtime.CompilerServices;
@@ -136,12 +137,14 @@ namespace Infragistics.Controls.DataSource
     {
         private StringBuilder _sb;
         private ISQLiteLiteralEmitter _literalEmitter;
+        private TableMapping _mappings;
 
-		/// <summary>
-		/// Constructs an SQLiteDataSourceFilterExpressionVisitor.
-		/// </summary>
-        public SQLiteDataSourceFilterExpressionVisitor()
+        /// <summary>
+        /// Constructs an SQLiteDataSourceFilterExpressionVisitor.
+        /// </summary>
+        public SQLiteDataSourceFilterExpressionVisitor(TableMapping mappings)
         {
+            _mappings = mappings;
             _literalEmitter = new DefaultSQLiteLiteralEmitter();
             _sb = new StringBuilder();
         }
@@ -150,8 +153,8 @@ namespace Infragistics.Controls.DataSource
 		/// Constructs an SQLiteDataSourceFilterExpressionVisitor providing an alternative literal emitter.
 		/// </summary>
 		/// <param name="literalEmitter">An alternative literal emitter to use.</param>
-        public SQLiteDataSourceFilterExpressionVisitor(ISQLiteLiteralEmitter literalEmitter)
-            : this()
+        public SQLiteDataSourceFilterExpressionVisitor(TableMapping mappings, ISQLiteLiteralEmitter literalEmitter)
+            : this(mappings)
         {
             _literalEmitter = literalEmitter;
         }
@@ -423,7 +426,15 @@ namespace Infragistics.Controls.DataSource
 
         private void RenderPropertyReference(string propertyReference)
         {
-            _sb.Append(propertyReference);
+            var col = _mappings.FindColumnWithPropertyName(propertyReference);
+            if (col != null)
+            {
+                _sb.Append(col.Name);
+            }
+            else
+            {
+                _sb.Append(propertyReference);
+            }
         }
     }
      
