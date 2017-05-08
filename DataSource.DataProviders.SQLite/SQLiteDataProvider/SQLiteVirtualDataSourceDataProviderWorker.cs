@@ -512,7 +512,16 @@ namespace Infragistics.Controls.DataSource
             {
                 SQLiteDataSourceQueryResult res = new SQLiteDataSourceQueryResult();
 
-                var count = await _connection.ExecuteScalarAsync<int>("SELECT count(*) FROM " + _tableExpression);
+                var filter = _filterString;
+                if (filter == null)
+                {
+                    filter = "";
+                }
+                else
+                {
+                    filter = " WHERE " + filter;
+                }
+                var count = await _connection.ExecuteScalarAsync<int>("SELECT count(*) FROM " + _tableExpression + filter);
                 res.FullCount = count;
 
                 t.Wait();

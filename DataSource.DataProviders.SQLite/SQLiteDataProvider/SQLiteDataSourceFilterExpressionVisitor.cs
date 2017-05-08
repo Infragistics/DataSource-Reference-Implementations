@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using SQLite;
+using System.Collections.Generic;
 
 #if !PORTABLE
 using System.Runtime.CompilerServices;
@@ -275,6 +276,7 @@ namespace Infragistics.Controls.DataSource
             string prefix = null;
             string between = null;
             string postfix = null;
+            bool unquote = false;
 
             switch (expression.FunctionType)
             {
@@ -286,6 +288,7 @@ namespace Infragistics.Controls.DataSource
                     between = " || ";
                     break;
                 case FilterExpressionFunctionType.Contains:
+                    unquote = true;
                     between = " LIKE '%";
                     postfix = "%'";
                     break;
@@ -293,6 +296,7 @@ namespace Infragistics.Controls.DataSource
                     throw new NotImplementedException();
                     break;
 				case FilterExpressionFunctionType.EndsWith:
+                    unquote = true;
                     between = " LIKE '%";
                     postfix = "'";
                     break;
@@ -324,6 +328,7 @@ namespace Infragistics.Controls.DataSource
                     throw new NotImplementedException();
                     break;
                 case FilterExpressionFunctionType.StartsWith:
+                    unquote = true;
                     between = " LIKE '";
                     postfix = "%'";
                     break;
@@ -351,7 +356,6 @@ namespace Infragistics.Controls.DataSource
             }
             if (prefix != null)
             {
-                _sb.Append("(");
                 _sb.Append(prefix);
             }
             bool first = true;
@@ -373,7 +377,10 @@ namespace Infragistics.Controls.DataSource
                         _sb.Append(", ");
                     }
                 }
+
+                SuppressQuotes(true);
                 Visit(expression.FunctionArguments[i]);
+                UnsuppressQuotes();
             }
 
             if (functionName != null)
@@ -383,14 +390,34 @@ namespace Infragistics.Controls.DataSource
             if (postfix != null)
             {
                 _sb.Append(postfix);
-                _sb.Append(")");
             }
         }
 
-		/// <summary>
-		/// Visits a literal expression.
-		/// </summary>
-		/// <param name="expression">The literal expression to visit.</param>
+        private Stack<bool> _quotesSuppressed = new Stack<bool>();
+        private void UnsuppressQuotes()
+        {
+            _quotesSuppressed.Pop();
+        }
+
+        private void SuppressQuotes(bool suppress)
+        {
+            _quotesSuppressed.Push(suppress);
+        }
+
+        private bool AreQuotesSuppressed()
+        {
+            if (_quotesSuppressed.Count == 0 || !_quotesSuppressed.Peek())
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Visits a literal expression.
+        /// </summary>
+        /// <param name="expression">The literal expression to visit.</param>
         public override void VisitLiteralExpression(LiteralFilterExpression expression)
         {
             RenderLiteral(expression, expression.LiteralValue);
@@ -400,11 +427,25 @@ namespace Infragistics.Controls.DataSource
         {
             var value = _literalEmitter.EmitLiteral(literalValue, expression.LeaveUnquoted);
 
+            if (AreQuotesSuppressed() && value is string)
+            {
+                if (value.StartsWith("'") && value.EndsWith("'"))
+                {
+                    value = value.Substring(1, value.Length - 2);
+                }
+            }
+            if (AreQuotesSuppressed() && value is string)
+            {
+                if (value.StartsWith("\"") && value.EndsWith("\""))
+                {
+                    value = value.Substring(1, value.Length - 2);
+                }
+            }
             //TODO: need to do special stuff here for dates etc.
 
-			// JM 02-01-2016 - Graham: Please review this
-			//if (literalValue is DateTime || literalValue is DateTimeOffset)
-			//	value = "datetime'" + value + "'";
+            // JM 02-01-2016 - Graham: Please review this
+            //if (literalValue is DateTime || literalValue is DateTimeOffset)
+            //	value = "datetime'" + value + "'";
 
             _sb.Append(value);
         }
