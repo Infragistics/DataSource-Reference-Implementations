@@ -33,7 +33,9 @@ namespace Infragistics.Controls.DataSource
         public ODataVirtualDataSourceDataProvider()
         {
             _sortDescriptions = new SortDescriptionCollection();
+            _groupDescriptions = new SortDescriptionCollection();
             _sortDescriptions.CollectionChanged += SortDescriptions_CollectionChanged;
+            _groupDescriptions.CollectionChanged += GroupDescriptions_CollectionChanged;
             _filterExpressions = new FilterExpressionCollection();
             _filterExpressions.CollectionChanged += FilterExpressions_CollectionChanged;
         }
@@ -44,6 +46,11 @@ namespace Infragistics.Controls.DataSource
         }
 
         private void SortDescriptions_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            QueueAutoRefresh();
+        }
+
+        private void GroupDescriptions_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             QueueAutoRefresh();
         }
@@ -423,6 +430,23 @@ namespace Infragistics.Controls.DataSource
             get
             {
                 return false;
+            }
+        }
+
+        public bool IsGroupingSupported
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        private SortDescriptionCollection _groupDescriptions;
+        public SortDescriptionCollection GroupDescriptions
+        {
+            get
+            {
+                return _groupDescriptions;
             }
         }
 

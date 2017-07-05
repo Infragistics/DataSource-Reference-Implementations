@@ -6,9 +6,9 @@
         xmlns:local="clr-namespace:ODataSampleApp"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525"
-        xmlns:grid="clr-namespace:Infragistics.Controls;assembly=InfragisticsWPF4.Controls.Grids.XGrid.v16.1">
+        xmlns:grid="clr-namespace:Infragistics.Controls;assembly=InfragisticsWPF4.Controls.Grids.XGrid.v17.2">
     <Grid>
-        <grid:XGrid
+        <grid:XamDataGrid
                     Grid.Row="1"
                     Name="grid1"
                     RowHeight="50"
@@ -16,12 +16,12 @@
                     AutoGenerateColumns="False"
                     >
 
-            <grid:XGrid.Columns>
-                <grid:TextColumn Key="CustomerID" Title="Customer ID" />
-                <grid:TextColumn Key="ShipName" Title="Ship Name" />
-                <grid:NumericColumn Key="OrderID" Title="Order ID" />
-                <grid:TextColumn Key="ShipCountry" Title="Ship Country" />
-            </grid:XGrid.Columns>
-        </grid:XGrid>
+            <grid:XamDataGrid.Columns>
+                <grid:TextColumn PropertyPath="CustomerID" HeaderText="Customer ID" />
+                <grid:TextColumn PropertyPath="ShipName" HeaderText="Ship Name" />
+                <grid:NumericColumn PropertyPath="OrderID" HeaderText="Order ID" />
+                <grid:TextColumn PropertyPath="ShipCountry" HeaderText="Ship Country" />
+            </grid:XamDataGrid.Columns>
+        </grid:XamDataGrid>
     </Grid>
 </Window>

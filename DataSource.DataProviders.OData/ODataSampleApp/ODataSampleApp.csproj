@@ -37,17 +37,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="InfragisticsWPF4.Controls.Grids.XGrid.v16.1, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1102135f7483647e, processorArchitecture=MSIL">
+    <Reference Include="InfragisticsWPF4.Controls.Grids.XGrid.v17.2, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1102135f7483647e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\XAML\2016.1\Source\Build\InfragisticsWPF4.Controls.Grids.XGrid.v16.1.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\XAML\2017.2\Source\Build\InfragisticsWPF4.Controls.Grids.XGrid.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="InfragisticsWPF4.DataVisualization.v16.1, Version=16.1.0.9000, Culture=neutral, PublicKeyToken=1102135f7483647e, processorArchitecture=MSIL">
+    <Reference Include="InfragisticsWPF4.DataVisualization.v17.2, Version=17.2.0.9000, Culture=neutral, PublicKeyToken=1102135f7483647e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\XAML\2016.1\Source\Build\InfragisticsWPF4.DataVisualization.v16.1.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\XAML\2017.2\Source\Build\InfragisticsWPF4.DataVisualization.v17.2.dll</HintPath>
     </Reference>
-    <Reference Include="InfragisticsWPF4.v16.1, Version=16.1.0.9000, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+    <Reference Include="InfragisticsWPF4.v17.2, Version=17.2.0.9000, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\XAML\2016.1\Source\Build\InfragisticsWPF4.v16.1.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\XAML\2017.2\Source\Build\InfragisticsWPF4.v17.2.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Data.Edm, Version=5.6.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Data.Edm.5.6.4\lib\net40\Microsoft.Data.Edm.dll</HintPath>

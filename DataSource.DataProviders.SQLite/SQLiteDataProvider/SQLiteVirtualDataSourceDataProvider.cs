@@ -35,6 +35,8 @@ namespace Infragistics.Controls.DataSource
         {
             _sortDescriptions = new SortDescriptionCollection();
             _sortDescriptions.CollectionChanged += SortDescriptions_CollectionChanged;
+            _groupDescriptions = new SortDescriptionCollection();
+            _groupDescriptions.CollectionChanged += GroupDescriptions_CollectionChanged;
             _filterExpressions = new FilterExpressionCollection();
             _filterExpressions.CollectionChanged += FilterExpressions_CollectionChanged;
         }
@@ -45,6 +47,11 @@ namespace Infragistics.Controls.DataSource
         }
 
         private void SortDescriptions_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            QueueAutoRefresh();
+        }
+
+        private void GroupDescriptions_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             QueueAutoRefresh();
         }
@@ -423,6 +430,14 @@ namespace Infragistics.Controls.DataSource
             }
         }
 
+        public bool IsGroupingSupported
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         public bool IsFilteringSupported
         {
             get
@@ -437,6 +452,15 @@ namespace Infragistics.Controls.DataSource
             get
             {
                 return _sortDescriptions;
+            }
+        }
+
+        private SortDescriptionCollection _groupDescriptions;
+        public SortDescriptionCollection GroupDescriptions
+        {
+            get
+            {
+                return _groupDescriptions;
             }
         }
 
