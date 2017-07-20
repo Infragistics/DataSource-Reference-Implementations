@@ -220,7 +220,7 @@ namespace Infragistics.Controls.DataSource
 
             if (result != null)
             {
-                page = new SQLiteDataSourcePage(result, schema, pageIndex);
+                page = new SQLiteDataSourcePage(result, schema, null, pageIndex);
                 lock (SyncLock)
                 {
                     if (!IsLastPage(pageIndex) && page.Count() > 0 && !PopulatedActualPageSize)
@@ -232,7 +232,7 @@ namespace Infragistics.Controls.DataSource
             }
             else
             {
-                page = new SQLiteDataSourcePage(null, schema, pageIndex);
+                page = new SQLiteDataSourcePage(null, schema, null, pageIndex);
             }
 
             if (PageLoaded != null)
