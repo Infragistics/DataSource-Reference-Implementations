@@ -31,8 +31,9 @@ namespace Infragistics.Controls.DataSource
         IDictionary<string, object>[] _actualData;
         private IDataSourceSchema _schema;
         private int _pageIndex;
+        private IGroupInformation[] _groupInfromation;
 
-        public ODataDataSourcePage(IEnumerable<IDictionary<string, object>> sourceData, IDataSourceSchema schema, int pageIndex)
+        public ODataDataSourcePage(IEnumerable<IDictionary<string, object>> sourceData, IDataSourceSchema schema, IGroupInformation[] groupInformation, int pageIndex)
         {
             if (sourceData == null)
             {
@@ -43,6 +44,7 @@ namespace Infragistics.Controls.DataSource
                 _actualData = sourceData.ToArray();
             }
             _schema = schema;
+            _groupInfromation = groupInformation;
             _pageIndex = pageIndex;
         }
 
@@ -97,6 +99,15 @@ namespace Infragistics.Controls.DataSource
         public IDataSourceSchema Schema()
         {
             return _schema;
+        }
+
+        /// <summary>
+        /// Information about group boundaries, if available. Not required if unchanged or not yet available.
+        /// </summary>
+        /// <returns>An array of information about the group boundaries, in order, if available, otherwise null.</returns>
+        public IGroupInformation[] GetGroupInformation()
+        {
+            return _groupInfromation;
         }
     }
 }

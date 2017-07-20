@@ -32,6 +32,8 @@ namespace Infragistics.Controls.DataSource
         public FilterExpressionCollection FilterExpressions { get; set; }
 
         public string[] PropertiesRequested { get; set; }
+        public SortDescriptionCollection GroupDescriptions { get; internal set; }
+        public bool IsAggregationSupportedByServer { get; internal set; }
     }
 
     
@@ -88,7 +90,10 @@ namespace Infragistics.Controls.DataSource
 
             lock (SyncLock)
             {
-                _client = new ODataClient(_baseUri);
+                _client = new ODataClient(new ODataClientSettings(_baseUri)
+                {
+                    IgnoreUnmappedProperties = true
+                });
             }
         }
 
@@ -130,6 +135,21 @@ namespace Infragistics.Controls.DataSource
             _sortDescriptions = settings.SortDescriptions;
             _filterExpressions = settings.FilterExpressions;
             _desiredPropeties = settings.PropertiesRequested;
+            _groupDescriptions = settings.GroupDescriptions;
+            if (_groupDescriptions != null && _groupDescriptions.Count > 0)
+            {
+                _sortDescriptions = new SortDescriptionCollection();
+                foreach (var sd in settings.SortDescriptions)
+                {
+                    _sortDescriptions.Add(sd);
+                }
+
+                for (var i = 0; i < _groupDescriptions.Count; i++)
+                {
+                    _sortDescriptions.Insert(i, _groupDescriptions[i]);
+                }
+            }
+            _isAggregationSupportedByServer = settings.IsAggregationSupportedByServer;
             Task.Factory.StartNew(() => DoWork(), TaskCreationOptions.LongRunning);
         }        
       
@@ -138,7 +158,10 @@ namespace Infragistics.Controls.DataSource
             ODataVirtualDataSourceProviderTaskDataHolder h = (ODataVirtualDataSourceProviderTaskDataHolder)taskDataHolder;
             IDataSourceSchema schema = null;
             IEnumerable<IDictionary<string, object>> result = null;
+            IGroupInformation[] groupInformation = null;
             int schemaFetchCount = -1;
+            bool isAggregationSupportedByServer = false;
+            bool isGrouping = false;
 
             try
             {
@@ -185,6 +208,7 @@ namespace Infragistics.Controls.DataSource
 
             IDataSourceExecutionContext executionContext;
             DataSourcePageLoadedCallback pageLoaded;
+            
             lock (SyncLock)
             {
                 if (schemaFetchCount >= 0)
@@ -200,17 +224,26 @@ namespace Infragistics.Controls.DataSource
                     }
                 }
 
+                groupInformation = _groupInformation;
+                isAggregationSupportedByServer = _isAggregationSupportedByServer;
                 schema = ActualSchema;
+                isGrouping = _groupDescriptions != null && _groupDescriptions.Count > 0;
             }
 
             if (schema == null)
             {
                 schema = ResolveSchema();
             }
+            if (isGrouping && isAggregationSupportedByServer &&
+                groupInformation == null)
+            {
+                groupInformation = ResolveGroupInformation();
+            }
 
             lock (SyncLock)
             {                
                 ActualSchema = schema;
+                _groupInformation = groupInformation;
                 executionContext = ExecutionContext;
                 pageLoaded = PageLoaded;
             }
@@ -219,7 +252,7 @@ namespace Infragistics.Controls.DataSource
 
             if (result != null)
             {
-                page = new ODataDataSourcePage(result, schema, pageIndex);
+                page = new ODataDataSourcePage(result, schema, groupInformation, pageIndex);
                 lock (SyncLock)
                 {
                     if (!IsLastPage(pageIndex) && page.Count() > 0 && !PopulatedActualPageSize)
@@ -231,7 +264,7 @@ namespace Infragistics.Controls.DataSource
             }
             else
             {
-                page = new ODataDataSourcePage(null, schema, pageIndex);
+                page = new ODataDataSourcePage(null, schema, groupInformation, pageIndex);
             }
 
             if (PageLoaded != null)
@@ -272,10 +305,161 @@ namespace Infragistics.Controls.DataSource
             ODataSchemaProvider sp = new ODataSchemaProvider(metadataDocument);
 			return sp.GetODataDataSourceSchema(this._entitySet);
         }
+        private IGroupInformation[] ResolveGroupInformation()
+        {
+            //TODO: both this and the schema fetch should 
+            //be async, and we may just hold up page delivery until present.
+            //Rather than doing a sync wait.
+            string orderBy = null;
+            string groupBy = null;
+            string filter = null;
+            lock (SyncLock)
+            {
+                if (_groupDescriptions == null ||
+                    _groupDescriptions.Count == 0)
+                {
+                    return null;
+                }
+                filter = _filterString;
+                UpdateFilterString();
+
+                StringBuilder sb = new StringBuilder();
+                if (SortDescriptions != null)
+                {
+                    bool first = true;
+                    foreach (var sort in SortDescriptions)
+                    {
+                        if (first)
+                        {
+                            first = false;
+                        }
+                        else
+                        {
+                            sb.Append(", ");
+                        }
+                        if (sort.Direction ==
+#if PCL
+							ListSortDirection.Descending
+#else
+                            System.ComponentModel.ListSortDirection.Descending
+#endif
+                            )
+                        {
+                            sb.Append(sort.PropertyName + " desc");
+                        }
+                        else
+                        {
+                            sb.Append(sort.PropertyName + " asc");
+                        }
+                    }
+                }
+
+                orderBy = sb.ToString();
+
+                StringBuilder gsb = new StringBuilder();
+                if (_groupDescriptions != null)
+                {
+                    bool first = true;
+                    foreach (var group in _groupDescriptions)
+                    {
+                        if (first)
+                        {
+                            first = false;
+                        }
+                        else
+                        {
+                            sb.Append(", ");
+                        }
+                        gsb.Append(group.PropertyName);
+                    }
+                }
+
+                groupBy = gsb.ToString();
+
+            }
+
+            var commandText = _entitySet + "?$orderby=" + orderBy + "&$apply=";
+            if (!String.IsNullOrEmpty(filter))
+            {
+                commandText += "filter(" + filter + ")/";
+            }
+            commandText += "groupby((" + groupBy + "), aggregate($count as $__count))";
+
+            lock (SyncLock)
+            {
+                try
+                {
+                    var annotations = new ODataFeedAnnotations();
+                    var t = _client.FindEntriesAsync(commandText, annotations);
+                    t.Wait();
+                    var res = t.Result;
+                    List<IGroupInformation> groupInformation = new List<IGroupInformation>();
+                    List<string> groupNames = new List<string>();
+
+                    foreach (var group in _groupDescriptions)
+                    {
+                        groupNames.Add(group.PropertyName);
+                    }
+                    var groupNamesArray = groupNames.ToArray();
+                    int currentIndex = 0;
+                    foreach (var group in res)
+                    {
+                        AddGroup(groupInformation, groupNames, 
+                            groupNamesArray, currentIndex, 
+                            group);
+                    }
+                    while (annotations.NextPageLink != null)
+                    {
+                        var link = _entitySet + "?" + annotations.NextPageLink.Query;
+                        var t2 = _client.FindEntriesAsync(link, annotations);
+                        t2.Wait();
+                        var res2 = t2.Result;
+                        foreach (var group in res2)
+                        {
+                            AddGroup(groupInformation, groupNames,
+                                groupNamesArray, currentIndex,
+                                group);
+                        }
+                    }
+
+                    return groupInformation.ToArray();
+                }
+                catch (Exception e)
+                {
+                    return null;
+                }
+            }
+        }
+
+        private static void AddGroup(List<IGroupInformation> groupInformation, List<string> groupNames, string[] groupNamesArray, int currentIndex, IDictionary<string, object> group)
+        {
+            List<object> groupValues = new List<object>();
+            foreach (var name in groupNames)
+            {
+                if (group.ContainsKey(name))
+                {
+                    groupValues.Add(group[name]);
+                }
+            }
+            var groupCount = 0;
+            if (group.ContainsKey("$__count"))
+            {
+                groupCount = Convert.ToInt32(group["$__count"]);
+            }
+            DefaultGroupInformation groupInfo = new DefaultGroupInformation(
+                currentIndex,
+                currentIndex + (groupCount - 1),
+                groupNamesArray,
+                groupValues.ToArray());
+            groupInformation.Add(groupInfo);
+        }
 
         private string _filterString = null;
         private string _selectedString = null;
         public const int SchemaRequestIndex = -1;
+        private SortDescriptionCollection _groupDescriptions;
+        private bool _isAggregationSupportedByServer = false;
+        private IGroupInformation[] _groupInformation = null;
 
         protected override void MakeTaskForRequest(AsyncDataSourcePageRequest request, int retryDelay)
         {
@@ -293,36 +477,7 @@ namespace Infragistics.Controls.DataSource
 
             lock (SyncLock)
             {
-                if (FilterExpressions != null &&
-                    FilterExpressions.Count > 0 &&
-                    _filterString == null)
-                {
-                    StringBuilder sb = new StringBuilder();
-                    bool first = true;
-                    foreach (var expr in FilterExpressions)
-                    {
-                        if (first)
-                        {
-                            first = false;
-                        }
-                        else
-                        {
-                            sb.Append(" AND ");
-                        }
-
-                        ODataDataSourceFilterExpressionVisitor visitor = new ODataDataSourceFilterExpressionVisitor();
-
-                        visitor.Visit(expr);
-
-                        var txt = visitor.ToString();
-                        if (FilterExpressions.Count > 1)
-                        {
-                            txt = "(" + txt + ")";
-                        }
-                        sb.Append(txt);
-                    }
-                    _filterString = sb.ToString();
-                }
+                UpdateFilterString();
 
                 if (_filterString != null)
                 {
@@ -337,9 +492,9 @@ namespace Infragistics.Controls.DataSource
 #if PCL
 							ListSortDirection.Descending
 #else
-							System.ComponentModel.ListSortDirection.Descending
+                            System.ComponentModel.ListSortDirection.Descending
 #endif
-							)
+                            )
                         {
                             client = client.OrderByDescending(sort.PropertyName);
                         }
@@ -352,7 +507,7 @@ namespace Infragistics.Controls.DataSource
 
                 if (DesiredProperties != null && DesiredProperties.Length > 0)
                 {
-                    client = client.Select(DesiredProperties);   
+                    client = client.Select(DesiredProperties);
                 }
             }
 
@@ -378,6 +533,40 @@ namespace Infragistics.Controls.DataSource
             {
                 Tasks.Add(request);
                 _annotations.Add(annotations);
+            }
+        }
+
+        private void UpdateFilterString()
+        {
+            if (FilterExpressions != null &&
+                                FilterExpressions.Count > 0 &&
+                                _filterString == null)
+            {
+                StringBuilder sb = new StringBuilder();
+                bool first = true;
+                foreach (var expr in FilterExpressions)
+                {
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        sb.Append(" AND ");
+                    }
+
+                    ODataDataSourceFilterExpressionVisitor visitor = new ODataDataSourceFilterExpressionVisitor();
+
+                    visitor.Visit(expr);
+
+                    var txt = visitor.ToString();
+                    if (FilterExpressions.Count > 1)
+                    {
+                        txt = "(" + txt + ")";
+                    }
+                    sb.Append(txt);
+                }
+                _filterString = sb.ToString();
             }
         }
     }

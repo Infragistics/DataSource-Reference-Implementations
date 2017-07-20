@@ -122,7 +122,9 @@ namespace Infragistics.Controls.DataSource
                 ExecutionContext = _executionContext,
                 SortDescriptions = _sortDescriptions,
                 FilterExpressions = _filterExpressions,
-                PropertiesRequested = _propertiesRequested
+                PropertiesRequested = _propertiesRequested,
+                GroupDescriptions = _groupDescriptions,
+                IsAggregationSupportedByServer = _isAggregationSupportedByServer
             };
         }
 
@@ -275,6 +277,24 @@ namespace Infragistics.Controls.DataSource
             set
             {
                 _timeoutMilliseconds = value;
+                QueueAutoRefresh();
+            }
+        }
+
+        private bool _isAggregationSupportedByServer = false;
+        /// <summary>
+        /// Gets or sets whether the server supports aggregation query options required for grouping.
+        /// </summary>
+        public bool IsAggregationSupportedByServer
+        {
+            get
+            {
+                return _isAggregationSupportedByServer;
+            }
+            set
+            {
+                var oldValue = _isAggregationSupportedByServer;
+                _isAggregationSupportedByServer = value;
                 QueueAutoRefresh();
             }
         }

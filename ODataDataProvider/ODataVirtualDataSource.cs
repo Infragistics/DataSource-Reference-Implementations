@@ -43,6 +43,30 @@ namespace Infragistics.Controls.DataSource
             return new ODataVirtualDataSourceDataProvider();
         }
 
+        protected override bool IsFilteringSupportedOverride
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        protected override bool IsSortingSupportedOverride
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        protected override bool IsGroupingSupportedOverride
+        {
+            get
+            {
+                return IsAggregationSupportedByServer;
+            }
+        }
+
 #if PCL
 		private void OnBaseUriChanged(string oldValue, string newValue)
 		{
@@ -132,8 +156,37 @@ namespace Infragistics.Controls.DataSource
 				}
 			}
 		}
+
+        private void OnIsAggregationSupportedByServerChanged(bool oldValue, bool newValue)
+		{
+			if (ActualDataProvider is ODataVirtualDataSourceDataProvider)
+			{
+				((ODataVirtualDataSourceDataProvider)ActualDataProvider).IsAggregationSupportedByServer = IsAggregationSupportedByServer;
+			}
+		}
+
+        private bool _isAggregationSupportedByServer = false;
+		/// <summary>
+		/// Gets or sets whether the server supports aggregation query options required for grouping.
+		/// </summary>
+		public bool IsAggregationSupportedByServer
+		{
+			get
+			{
+				return _isAggregationSupportedByServer;
+			}
+			set
+			{
+				var oldValue = _isAggregationSupportedByServer;
+				_isAggregationSupportedByServer = value;
+				if (oldValue != _isAggregationSupportedByServer)
+				{
+					OnIsAggregationSupportedByServerChanged(oldValue, _isAggregationSupportedByServer);
+				}
+			}
+		}
 #else
-		public static readonly DependencyProperty BaseUriProperty = DependencyProperty.Register("BaseUri",
+        public static readonly DependencyProperty BaseUriProperty = DependencyProperty.Register("BaseUri",
         typeof(string), typeof(ODataVirtualDataSource), new PropertyMetadata(default(string), (sender, e) =>
         {
             ((ODataVirtualDataSource)sender).OnBaseUriChanged((string)e.OldValue, (string)e.NewValue);
@@ -196,10 +249,10 @@ namespace Infragistics.Controls.DataSource
         public static readonly DependencyProperty TimeoutMillisecondsProperty = DependencyProperty.Register("TimeoutMilliseconds",
         typeof(int), typeof(ODataVirtualDataSource), new PropertyMetadata(10000, (sender, e) =>
         {
-            ((ODataVirtualDataSource)sender).OnTimeoutMillisecondsChanged((string)e.OldValue, (string)e.NewValue);
+            ((ODataVirtualDataSource)sender).OnTimeoutMillisecondsChanged((int)e.OldValue, (int)e.NewValue);
         }));
 
-        private void OnTimeoutMillisecondsChanged(string oldValue, string newValue)
+        private void OnTimeoutMillisecondsChanged(int oldValue, int newValue)
         {
             if (ActualDataProvider is ODataVirtualDataSourceDataProvider)
             {
@@ -221,7 +274,36 @@ namespace Infragistics.Controls.DataSource
                 SetValue(TimeoutMillisecondsProperty, value);
             }
         }
+
+        private void OnIsAggregationSupportedByServerChanged(bool oldValue, bool newValue)
+        {
+            if (ActualDataProvider is ODataVirtualDataSourceDataProvider)
+            {
+                ((ODataVirtualDataSourceDataProvider)ActualDataProvider).IsAggregationSupportedByServer = IsAggregationSupportedByServer;
+            }
+        }
+
+        public static readonly DependencyProperty IsAggregationSupportedByServerProperty = DependencyProperty.Register("IsAggregationSupportedByServer",
+        typeof(bool), typeof(ODataVirtualDataSource), new PropertyMetadata(false, (sender, e) =>
+        {
+            ((ODataVirtualDataSource)sender).OnIsAggregationSupportedByServerChanged((bool)e.OldValue, (bool)e.NewValue);
+        }));
+
+        /// <summary>
+		/// Gets or sets whether the server supports aggregation query options required for grouping.
+		/// </summary>
+        public bool IsAggregationSupportedByServer
+        {
+            get
+            {
+                return (bool)GetValue(IsAggregationSupportedByServerProperty);
+            }
+            set
+            {
+                SetValue(IsAggregationSupportedByServerProperty, value);
+            }
+        }
 #endif
-	}
+    }
 
 }
