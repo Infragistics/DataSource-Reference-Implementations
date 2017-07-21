@@ -158,7 +158,7 @@ namespace Infragistics.Controls.DataSource
             ODataVirtualDataSourceProviderTaskDataHolder h = (ODataVirtualDataSourceProviderTaskDataHolder)taskDataHolder;
             IDataSourceSchema schema = null;
             IEnumerable<IDictionary<string, object>> result = null;
-            IGroupInformation[] groupInformation = null;
+            ISectionInformation[] groupInformation = null;
             int schemaFetchCount = -1;
             bool isAggregationSupportedByServer = false;
             bool isGrouping = false;
@@ -305,7 +305,7 @@ namespace Infragistics.Controls.DataSource
             ODataSchemaProvider sp = new ODataSchemaProvider(metadataDocument);
 			return sp.GetODataDataSourceSchema(this._entitySet);
         }
-        private IGroupInformation[] ResolveGroupInformation()
+        private ISectionInformation[] ResolveGroupInformation()
         {
             //TODO: both this and the schema fetch should 
             //be async, and we may just hold up page delivery until present.
@@ -393,7 +393,7 @@ namespace Infragistics.Controls.DataSource
                     var t = _client.FindEntriesAsync(commandText, annotations);
                     t.Wait();
                     var res = t.Result;
-                    List<IGroupInformation> groupInformation = new List<IGroupInformation>();
+                    List<ISectionInformation> groupInformation = new List<ISectionInformation>();
                     List<string> groupNames = new List<string>();
 
                     foreach (var group in _groupDescriptions)
@@ -431,7 +431,7 @@ namespace Infragistics.Controls.DataSource
             }
         }
 
-        private static void AddGroup(List<IGroupInformation> groupInformation, List<string> groupNames, string[] groupNamesArray, int currentIndex, IDictionary<string, object> group)
+        private static void AddGroup(List<ISectionInformation> groupInformation, List<string> groupNames, string[] groupNamesArray, int currentIndex, IDictionary<string, object> group)
         {
             List<object> groupValues = new List<object>();
             foreach (var name in groupNames)
@@ -446,7 +446,7 @@ namespace Infragistics.Controls.DataSource
             {
                 groupCount = Convert.ToInt32(group["$__count"]);
             }
-            DefaultGroupInformation groupInfo = new DefaultGroupInformation(
+            DefaultSectionInformation groupInfo = new DefaultSectionInformation(
                 currentIndex,
                 currentIndex + (groupCount - 1),
                 groupNamesArray,
@@ -459,7 +459,7 @@ namespace Infragistics.Controls.DataSource
         public const int SchemaRequestIndex = -1;
         private SortDescriptionCollection _groupDescriptions;
         private bool _isAggregationSupportedByServer = false;
-        private IGroupInformation[] _groupInformation = null;
+        private ISectionInformation[] _groupInformation = null;
 
         protected override void MakeTaskForRequest(AsyncDataSourcePageRequest request, int retryDelay)
         {
