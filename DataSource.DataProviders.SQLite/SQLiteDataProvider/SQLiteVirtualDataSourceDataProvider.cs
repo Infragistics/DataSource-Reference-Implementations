@@ -123,6 +123,8 @@ namespace Infragistics.Controls.DataSource
                 PageLoaded = _callback,
                 ExecutionContext = _executionContext,
                 SortDescriptions = _sortDescriptions,
+                GroupingColumn = _groupingColumn,
+                GroupDescriptions = _groupDescriptions,
                 FilterExpressions = _filterExpressions,
                 PropertiesRequested = _propertiesRequested
             };
@@ -235,6 +237,28 @@ namespace Infragistics.Controls.DataSource
                 var oldValue = _tableExpression;
                 _tableExpression = value;
                 if (oldValue != _tableExpression)
+                {
+                    QueueAutoRefresh();
+                    if (Valid() && DeferAutoRefresh)
+                    {
+                        QueueSchemaFetch();
+                    }
+                }
+            }
+        }
+
+        private string _groupingColumn = null;
+        public string GroupingColumn
+        {
+            get
+            {
+                return _groupingColumn;
+            }
+            set
+            {
+                var oldValue = _groupingColumn;
+                _groupingColumn = value;
+                if (oldValue != _groupingColumn)
                 {
                     QueueAutoRefresh();
                     if (Valid() && DeferAutoRefresh)

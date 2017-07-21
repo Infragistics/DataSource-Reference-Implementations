@@ -7,8 +7,11 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SQLiteDataProvider", "SQLit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSource.DataProviders.SQLite.Core", "DataSource.DataProviders.SQLite.Core\DataSource.DataProviders.SQLite.Core.csproj", "{E812EADD-A2C6-4575-9BD7-984F5ED5CB08}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSource.DataProviders.SQLite", "DataSource.DataProviders.SQLite\DataSource.DataProviders.SQLite.csproj", "{6C2837D2-340D-47A9-A7E7-CB384A0EF92F}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		SQLiteDataProvider\SQLiteDataProvider.projitems*{6c2837d2-340d-47a9-a7e7-cb384a0ef92f}*SharedItemsImports = 4
 		SQLiteDataProvider\SQLiteDataProvider.projitems*{86e04275-b6dc-4cbb-8827-3a0f6d61ac4d}*SharedItemsImports = 13
 		SQLiteDataProvider\SQLiteDataProvider.projitems*{e812eadd-a2c6-4575-9bd7-984f5ed5cb08}*SharedItemsImports = 4
 	EndGlobalSection
@@ -21,6 +24,10 @@ Global
 		{E812EADD-A2C6-4575-9BD7-984F5ED5CB08}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E812EADD-A2C6-4575-9BD7-984F5ED5CB08}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E812EADD-A2C6-4575-9BD7-984F5ED5CB08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C2837D2-340D-47A9-A7E7-CB384A0EF92F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C2837D2-340D-47A9-A7E7-CB384A0EF92F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C2837D2-340D-47A9-A7E7-CB384A0EF92F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C2837D2-340D-47A9-A7E7-CB384A0EF92F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -52,7 +52,31 @@ namespace Infragistics.Controls.DataSource
 			QueueAutoRefresh();
 		}
 
-		private string _tableExpression = null;
+        protected override bool IsSortingSupportedOverride
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        protected override bool IsFilteringSupportedOverride
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        protected override bool IsGroupingSupportedOverride
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        private string _tableExpression = null;
 		/// <summary>
 		/// Gets or sets the table expression to pull data from.
 		/// </summary>
@@ -72,6 +96,36 @@ namespace Infragistics.Controls.DataSource
 				}
 			}
 		}
+
+        private void OnGroupingColumnChanged(string oldValue, string newValue)
+        {
+            if (ActualDataProvider is SQLiteVirtualDataSourceDataProvider)
+            {
+                ((SQLiteVirtualDataSourceDataProvider)ActualDataProvider).GroupingColumn = GroupingColumn;
+            }
+            QueueAutoRefresh();
+        }
+
+        private string _groupingColumn = null;
+        /// <summary>
+        /// Gets or sets column to use for storing the count when counting group sizes.
+        /// </summary>
+        public string GroupingColumn
+        {
+            get
+            {
+                return _groupingColumn;
+            }
+            set
+            {
+                var oldValue = _groupingColumn;
+                _groupingColumn = value;
+                if (oldValue != _groupingColumn)
+                {
+                    OnGroupingColumnChanged(oldValue, _groupingColumn);
+                }
+            }
+        }
 
         private void OnConnectionChanged(SQLiteAsyncConnection oldValue, SQLiteAsyncConnection newValue)
         {

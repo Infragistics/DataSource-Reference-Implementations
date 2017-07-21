@@ -7,15 +7,16 @@ using System.Linq;
 using GridODataTest;
 #endif
 
+using SQLite;
 using System.Xml;
 using Infragistics.Controls.DataSource;
 using System.Text;
-#if PCL
-using Infragistics.Core.Controls.DataSource;
-using SQLite;
 using System.Collections;
 using System.Reflection;
 using System.Collections.Concurrent;
+
+#if PCL
+using Infragistics.Core.Controls.DataSource;
 #endif
 
 #if DATA_PRESENTER
@@ -37,6 +38,8 @@ namespace Infragistics.Controls.DataSource
         public FilterExpressionCollection FilterExpressions { get; set; }
 
         public string[] PropertiesRequested { get; set; }
+        public SortDescriptionCollection GroupDescriptions { get; internal set; }
+        public string GroupingColumn { get; internal set; }
     }
 
 
@@ -125,12 +128,184 @@ namespace Infragistics.Controls.DataSource
             _selectExpressionOverride = settings.SelectExpressionOverride;
             _connection = settings.Connection;
             _sortDescriptions = settings.SortDescriptions;
+            _groupDescriptions = settings.GroupDescriptions;
+            _groupingField = settings.GroupingColumn;
+
+            if (_groupDescriptions != null && _groupDescriptions.Count > 0)
+            {
+                _sortDescriptions = new SortDescriptionCollection();
+                foreach (var sd in settings.SortDescriptions)
+                {
+                    _sortDescriptions.Add(sd);
+                }
+
+                for (var i = 0; i < _groupDescriptions.Count; i++)
+                {
+                    _sortDescriptions.Insert(i, _groupDescriptions[i]);
+                }
+            }
             _filterExpressions = settings.FilterExpressions;
             _desiredPropeties = settings.PropertiesRequested;
             _propertyMappings = ResolvePropertyMappings();
             ActualSchema = ResolveSchema();
+            if (_groupDescriptions != null && _groupDescriptions.Count > 0)
+            {
+                _groupInformation = ResolveGroupInformation();
+            }
 
             Task.Factory.StartNew(() => DoWork(), TaskCreationOptions.LongRunning);
+        }
+
+        private ISectionInformation[] ResolveGroupInformation()
+        {
+            UpdateSelect();
+            UpdateFilterClause();
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SELECT ");
+            for (var i = 0; i < _groupDescriptions.Count; i++)
+            {
+                if (i > 0)
+                {
+                    sb.Append(", ");
+                }
+                var propertyName = _groupDescriptions[i].PropertyName;
+                var col = _propertyMappings.FindColumnWithPropertyName(propertyName);
+                if (col != null)
+                {
+                    propertyName = col.Name;
+                }
+                sb.Append(propertyName);
+            }
+
+            var groupingField = _groupingField;
+            if (groupingField == null)
+            {
+                if (ActualSchema != null &&
+                    ActualSchema.PrimaryKey != null &&
+                    ActualSchema.PrimaryKey.Length > 0)
+                {
+                    groupingField = ActualSchema.PrimaryKey[0];
+
+                    int index = -1;
+                    for (var i = 0; i < ActualSchema.PropertyNames.Length; i++)
+                    {
+                        if (ActualSchema.PropertyNames[i] == groupingField)
+                        {
+                            index = i;
+                            break;
+                        }
+                    }
+
+                    if (index == -1 || !IsIntegral(ActualSchema.PropertyTypes[index]))
+                    {
+                        groupingField = null;
+                    }
+                }
+            }
+
+            if (groupingField == null)
+            {
+                throw new NotSupportedException("You must specify a valid grouping column to use to accumulate the count of groups for the target table.");
+            }
+
+            sb.Append(", COUNT(" + groupingField + ") as " + groupingField);
+            AddTableExpression(sb);
+            AddFilterClause(sb);           
+
+            sb.Append(" GROUP BY ");
+            for (var i = 0; i < _groupDescriptions.Count; i++)
+            {
+                if (i > 0)
+                {
+                    sb.Append(", ");
+                }
+                var propertyName = _groupDescriptions[i].PropertyName;
+                var col = _propertyMappings.FindColumnWithPropertyName(propertyName);
+                if (col != null)
+                {
+                    propertyName = col.Name;
+                }
+                sb.Append(propertyName);
+            }
+
+            AddOrderByClause(sb);
+
+            EnsureSpecific();
+            var t = (Task)_specific.Invoke(_connection, new object[] { sb.ToString(), new object[] { } });
+            t.Wait();
+            var resultProp = t.GetType().GetTypeInfo().GetDeclaredProperty("Result");
+            var data = (IList)resultProp.GetValue(t);
+
+            
+            List<ISectionInformation> groupInformation = new List<ISectionInformation>();
+            List<string> groupNames = new List<string>();
+
+            foreach (var group in _groupDescriptions)
+            {
+                groupNames.Add(group.PropertyName);
+            }
+            
+            var groupNamesArray = groupNames.ToArray();
+            int currentIndex = 0;
+            foreach (var group in data)
+            {
+                AddGroup(groupInformation, groupNames,
+                    groupNamesArray, currentIndex,
+                    group, groupingField);
+            }
+
+            return groupInformation.ToArray();
+        }
+
+        Dictionary<string, FastReflectionHelper> _groupHelpers = new Dictionary<string, FastReflectionHelper>();
+
+        private void AddGroup(
+            List<ISectionInformation> groupInformation, 
+            List<string> groupNames, string[] groupNamesArray, 
+            int currentIndex, object group, string groupingField)
+        {
+            List<object> groupValues = new List<object>();
+            foreach (var name in groupNames)
+            {
+                FastReflectionHelper helper;
+                if (!_groupHelpers.TryGetValue(name, out helper))
+                {
+                    helper = new FastReflectionHelper();
+                    helper.PropertyName = name;
+                    _groupHelpers[name] = helper;
+                }
+
+                var val = helper.GetPropertyValue(group);
+                groupValues.Add(val);
+            }
+            var groupCount = 0;
+
+            FastReflectionHelper countHelper;
+            if (!_groupHelpers.TryGetValue(groupingField, out countHelper))
+            {
+                countHelper = new FastReflectionHelper();
+                countHelper.PropertyName = groupingField;
+                _groupHelpers[groupingField] = countHelper;
+            }
+
+            var countVal = countHelper.GetPropertyValue(group);
+            if (countVal != null)
+            {
+                groupCount = Convert.ToInt32(countVal);
+            }
+            DefaultSectionInformation groupInfo = new DefaultSectionInformation(
+                currentIndex,
+                currentIndex + (groupCount - 1),
+                groupNamesArray,
+                groupValues.ToArray());
+            groupInformation.Add(groupInfo);
+        }
+
+        private bool IsIntegral(DataSourceSchemaPropertyType type)
+        {
+            return type == DataSourceSchemaPropertyType.IntValue ||
+                type == DataSourceSchemaPropertyType.LongValue;
         }
 
         private TableMapping ResolvePropertyMappings()
@@ -190,6 +365,8 @@ namespace Infragistics.Controls.DataSource
 
             IDataSourceExecutionContext executionContext;
             DataSourcePageLoadedCallback pageLoaded;
+            ISectionInformation[] groupInformation = null;
+
             lock (SyncLock)
             {
                 if (schemaFetchCount >= 0)
@@ -202,6 +379,7 @@ namespace Infragistics.Controls.DataSource
                 }
 
                 schema = ActualSchema;
+                groupInformation = _groupInformation;
             }
 
             if (schema == null)
@@ -220,7 +398,7 @@ namespace Infragistics.Controls.DataSource
 
             if (result != null)
             {
-                page = new SQLiteDataSourcePage(result, schema, null, pageIndex);
+                page = new SQLiteDataSourcePage(result, schema, groupInformation, pageIndex);
                 lock (SyncLock)
                 {
                     if (!IsLastPage(pageIndex) && page.Count() > 0 && !PopulatedActualPageSize)
@@ -232,7 +410,7 @@ namespace Infragistics.Controls.DataSource
             }
             else
             {
-                page = new SQLiteDataSourcePage(null, schema, null, pageIndex);
+                page = new SQLiteDataSourcePage(null, schema, groupInformation, pageIndex);
             }
 
             if (PageLoaded != null)
@@ -295,6 +473,9 @@ namespace Infragistics.Controls.DataSource
         private string _selectedString = null;
         public const int SchemaRequestIndex = -1;
         private MethodInfo _specific;
+        private SortDescriptionCollection _groupDescriptions;
+        private ISectionInformation[] _groupInformation;
+        private string _groupingField;
 
         protected override void MakeTaskForRequest(AsyncDataSourcePageRequest request, int retryDelay)
         {
@@ -312,164 +493,12 @@ namespace Infragistics.Controls.DataSource
 
             lock (SyncLock)
             {
-
-                if (_selectedString == null)
-                {
-                    StringBuilder selectBuilder = new StringBuilder();
-
-                    if (_selectExpressionOverride != null)
-                    {
-                        selectBuilder.Append(_selectExpressionOverride);
-                    }
-                    else
-                    {
-                        var actualProperties = new List<string>();
-                        var propertySet = new HashSet<string>();
-                        if (DesiredProperties != null)
-                        {
-                            for (var i = 0; i < DesiredProperties.Length; i++)
-                            {
-                                actualProperties.Add(DesiredProperties[i]);
-                                if (!propertySet.Contains(DesiredProperties[i]))
-                                {
-                                    propertySet.Add(DesiredProperties[i]);
-                                }
-                            }
-                            string[] pk = null;
-                            if (ActualSchema != null && ActualSchema.PrimaryKey != null &&
-                                ActualSchema.PrimaryKey.Length > 0)
-                            {
-                                pk = ActualSchema.PrimaryKey;
-                            }
-                            if (pk != null)
-                            {
-                                for (var i = 0; i < pk.Length; i++)
-                                {
-                                    if (!propertySet.Contains(pk[i]))
-                                    {
-                                        propertySet.Add(pk[i]);
-                                        actualProperties.Add(pk[i]);
-                                    }
-                                }
-                            }
-                        }
-
-                        if (actualProperties.Count > 0)
-                        {
-                            for (var i = 0; i < actualProperties.Count; i++)
-                            {
-                                if (i > 0)
-                                {
-                                    selectBuilder.Append(", ");
-                                }
-                                var col = _propertyMappings.FindColumnWithPropertyName(actualProperties[i]);
-                                if (col != null)
-                                {
-                                    if (col.Name.Contains("__"))
-                                    {
-                                        selectBuilder.Append(col.Name.Replace("__", ".") + " AS " + col.Name);
-                                    }
-                                    else
-                                    {
-                                        selectBuilder.Append(col.Name);
-                                    }
-                                }
-                                else
-                                {
-                                    selectBuilder.Append(actualProperties[i]);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            selectBuilder.Append("*");
-                        }
-                    }
-                    _selectedString = selectBuilder.ToString();
-                }
-
-                sb.Append(_selectedString);
-
-                sb.Append(" FROM ");
-                sb.Append(_tableExpression);
-                sb.Append(" ");
-
-                if (FilterExpressions != null &&
-                    FilterExpressions.Count > 0 &&
-                    _filterString == null)
-                {
-                    StringBuilder filterBuilder = new StringBuilder();
-
-                    bool first = true;
-                    foreach (var expr in FilterExpressions)
-                    {
-                        if (first)
-                        {
-                            first = false;
-                        }
-                        else
-                        {
-                            filterBuilder.Append(" AND ");
-                        }
-
-                        SQLiteDataSourceFilterExpressionVisitor visitor = new SQLiteDataSourceFilterExpressionVisitor(_propertyMappings);
-
-                        visitor.Visit(expr);
-
-                        var txt = visitor.ToString();
-                        if (FilterExpressions.Count > 1)
-                        {
-                            txt = "(" + txt + ")";
-                        }
-                        filterBuilder.Append(txt);
-                    }
-                    _filterString = filterBuilder.ToString();
-                }
-
-                if (_filterString != null)
-                {
-                    sb.Append(" WHERE ");
-                    sb.Append(_filterString);
-                }
-
-                if (SortDescriptions != null && SortDescriptions.Count > 0)
-                {
-                    sb.Append(" ORDER BY ");
-                    bool first = true;
-                    foreach (var sort in SortDescriptions)
-                    {
-                        if (first)
-                        {
-                            first = false;
-                        }
-                        else
-                        {
-                            sb.Append(", ");
-                        }
-
-                        var propertyName = sort.PropertyName;
-                        var col = _propertyMappings.FindColumnWithPropertyName(propertyName);
-                        if (col != null)
-                        {
-                            propertyName = col.Name;
-                        }
-
-                        if (sort.Direction ==
-#if PCL
-                            ListSortDirection.Descending
-#else
-							System.ComponentModel.ListSortDirection.Descending
-#endif
-                            )
-                        {
-                            sb.Append(propertyName + " DESC");
-                        }
-                        else
-                        {
-                            sb.Append(propertyName + " ASC");
-                        }
-                    }
-                }
+                UpdateSelect();
+                AddSelect(sb);
+                AddTableExpression(sb);
+                UpdateFilterClause();
+                AddFilterClause(sb);
+                AddOrderByClause(sb);
             }
 
             Task task = null;
@@ -484,16 +513,9 @@ namespace Infragistics.Controls.DataSource
                 sb.Append(" LIMIT " + actualPageSize + " OFFSET " + request.Index * actualPageSize);
 
                 var query = sb.ToString();
+                EnsureSpecific();
 
-                if (_specific == null)
-                {
-                    var queryAsync = _connection.GetType().GetTypeInfo().GetDeclaredMethod("QueryAsync");
-
-                    var specific = queryAsync.MakeGenericMethod(_projectionType);
-                    _specific = specific;
-                }
-
-                task = GetResult(query, _specific);
+                task = GetResult(query, _specific, true);
             }
 
             request.TaskHolder = new AsyncDataSourcePageTaskHolder();
@@ -505,24 +527,214 @@ namespace Infragistics.Controls.DataSource
             }
         }
 
-        private async Task<SQLiteDataSourceQueryResult> GetResult(string query, MethodInfo specific)
+        private void EnsureSpecific()
+        {
+            if (_specific == null)
+            {
+                var queryAsync = _connection.GetType().GetTypeInfo().GetDeclaredMethod("QueryAsync");
+
+                var specific = queryAsync.MakeGenericMethod(_projectionType);
+                _specific = specific;
+            }
+        }
+
+        private void AddSelect(StringBuilder sb)
+        {
+            sb.Append(_selectedString);
+        }
+
+        private void AddTableExpression(StringBuilder sb)
+        {
+            sb.Append(" FROM ");
+            sb.Append(_tableExpression);
+            sb.Append(" ");
+        }
+
+        private void AddFilterClause(StringBuilder sb)
+        {
+            if (_filterString != null)
+            {
+                sb.Append(" WHERE ");
+                sb.Append(_filterString);
+            }
+        }
+
+        private void AddOrderByClause(StringBuilder sb)
+        {
+            if (SortDescriptions != null && SortDescriptions.Count > 0)
+            {
+                sb.Append(" ORDER BY ");
+                bool first = true;
+                foreach (var sort in SortDescriptions)
+                {
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        sb.Append(", ");
+                    }
+
+                    var propertyName = sort.PropertyName;
+                    var col = _propertyMappings.FindColumnWithPropertyName(propertyName);
+                    if (col != null)
+                    {
+                        propertyName = col.Name;
+                    }
+
+                    if (sort.Direction ==
+#if PCL
+                            ListSortDirection.Descending
+#else
+                            System.ComponentModel.ListSortDirection.Descending
+#endif
+                            )
+                    {
+                        sb.Append(propertyName + " DESC");
+                    }
+                    else
+                    {
+                        sb.Append(propertyName + " ASC");
+                    }
+                }
+            }
+        }
+
+        private void UpdateFilterClause()
+        {
+            if (FilterExpressions != null &&
+                                FilterExpressions.Count > 0 &&
+                                _filterString == null)
+            {
+                StringBuilder filterBuilder = new StringBuilder();
+
+                bool first = true;
+                foreach (var expr in FilterExpressions)
+                {
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        filterBuilder.Append(" AND ");
+                    }
+
+                    SQLiteDataSourceFilterExpressionVisitor visitor = new SQLiteDataSourceFilterExpressionVisitor(_propertyMappings);
+
+                    visitor.Visit(expr);
+
+                    var txt = visitor.ToString();
+                    if (FilterExpressions.Count > 1)
+                    {
+                        txt = "(" + txt + ")";
+                    }
+                    filterBuilder.Append(txt);
+                }
+                _filterString = filterBuilder.ToString();
+            }
+        }
+
+        private void UpdateSelect()
+        {
+            if (_selectedString == null)
+            {
+                StringBuilder selectBuilder = new StringBuilder();
+
+                if (_selectExpressionOverride != null)
+                {
+                    selectBuilder.Append(_selectExpressionOverride);
+                }
+                else
+                {
+                    var actualProperties = new List<string>();
+                    var propertySet = new HashSet<string>();
+                    if (DesiredProperties != null)
+                    {
+                        for (var i = 0; i < DesiredProperties.Length; i++)
+                        {
+                            actualProperties.Add(DesiredProperties[i]);
+                            if (!propertySet.Contains(DesiredProperties[i]))
+                            {
+                                propertySet.Add(DesiredProperties[i]);
+                            }
+                        }
+                        string[] pk = null;
+                        if (ActualSchema != null && ActualSchema.PrimaryKey != null &&
+                            ActualSchema.PrimaryKey.Length > 0)
+                        {
+                            pk = ActualSchema.PrimaryKey;
+                        }
+                        if (pk != null)
+                        {
+                            for (var i = 0; i < pk.Length; i++)
+                            {
+                                if (!propertySet.Contains(pk[i]))
+                                {
+                                    propertySet.Add(pk[i]);
+                                    actualProperties.Add(pk[i]);
+                                }
+                            }
+                        }
+                    }
+
+                    if (actualProperties.Count > 0)
+                    {
+                        for (var i = 0; i < actualProperties.Count; i++)
+                        {
+                            if (i > 0)
+                            {
+                                selectBuilder.Append(", ");
+                            }
+                            var col = _propertyMappings.FindColumnWithPropertyName(actualProperties[i]);
+                            if (col != null)
+                            {
+                                if (col.Name.Contains("__"))
+                                {
+                                    selectBuilder.Append(col.Name.Replace("__", ".") + " AS " + col.Name);
+                                }
+                                else
+                                {
+                                    selectBuilder.Append(col.Name);
+                                }
+                            }
+                            else
+                            {
+                                selectBuilder.Append(actualProperties[i]);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        selectBuilder.Append("*");
+                    }
+                }
+                _selectedString = selectBuilder.ToString();
+            }
+        }
+
+        private async Task<SQLiteDataSourceQueryResult> GetResult(string query, MethodInfo specific, bool getCount)
         {
             var t = (Task)specific.Invoke(_connection, new object[] { query, new object[] { } });
             return await Task.Run(async () =>
             {
                 SQLiteDataSourceQueryResult res = new SQLiteDataSourceQueryResult();
 
-                var filter = _filterString;
-                if (filter == null)
+                if (getCount)
                 {
-                    filter = "";
+                    var filter = _filterString;
+                    if (filter == null)
+                    {
+                        filter = "";
+                    }
+                    else
+                    {
+                        filter = " WHERE " + filter;
+                    }
+                    var count = await _connection.ExecuteScalarAsync<int>("SELECT count(*) FROM " + _tableExpression + filter);
+                    res.FullCount = count;
                 }
-                else
-                {
-                    filter = " WHERE " + filter;
-                }
-                var count = await _connection.ExecuteScalarAsync<int>("SELECT count(*) FROM " + _tableExpression + filter);
-                res.FullCount = count;
 
                 t.Wait();
                 var resultProp = t.GetType().GetTypeInfo().GetDeclaredProperty("Result");
