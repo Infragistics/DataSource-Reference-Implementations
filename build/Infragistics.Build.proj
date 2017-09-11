@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="DesktopBuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\TeamBuild\Microsoft.TeamFoundation.Build.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Infragistics\Infragistics.TeamFoundation.Build.Common.Targets" />
+  <Import Project="Infragistics.Build.Properties.targets" />
+
+  <PropertyGroup>
+    <RoslynInputProperties>OutDir=$(BinariesRoot)\$(Configuration)\__ApiGeneratorLocation=$(BinariesRoot)\$(Configuration)__PostBuildEvent=__IsTfsTeamBuild=True__AssemblyOriginatorKeyFile=$(igPublicStrongNameKey)</RoslynInputProperties>
+    <RoslynInputProperties_FixedVersion>OutDir=$(BinariesRoot)\$(Configuration)_FixedVersion\__ApiGeneratorLocation=$(BinariesRoot)\$(Configuration)__PostBuildEvent=__IsTfsTeamBuild=True__AssemblyOriginatorKeyFile=$(igPublicStrongNameKey)</RoslynInputProperties_FixedVersion>
+  </PropertyGroup>
+
+  <!-- The list of solutions to build -->
+  <ItemGroup>
+    <SolutionToBuild Include="$(SrcRoot)\XAML\$(VolumeReleaseNumber)\Source\DataSourceRefImp\DataPresenter.DataSources.OData\DataPresenter.DataSources.OData.sln" Condition=" '$(BuildODataReferenceProject)' == 'True' ">
+      <Properties>OutDir=bin\$(Configuration)\;ReferencePath=$(ReferencePath);$(BinariesRoot)\$(Configuration)</Properties>
+    </SolutionToBuild>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ConfigurationToBuild Include="Trial|Any CPU">
+      <FlavorToBuild>Trial</FlavorToBuild>
+      <PlatformToBuild>Any CPU</PlatformToBuild>
+    </ConfigurationToBuild>
+    <ConfigurationToBuild Include="Release|Any CPU">
+      <FlavorToBuild>Release</FlavorToBuild>
+      <PlatformToBuild>Any CPU</PlatformToBuild>
+    </ConfigurationToBuild>
+  </ItemGroup>
+
+  <!-- Additional Reference Paths -->
+  <ItemGroup>
+    <AdditionalReferencePath Include="$(SrcRoot)\..\Binaries\$(Configuration)" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <RetrieveInfragisticsDependenciesDependsOn>
+      RetrieveWPFInfragisticsDependencies;
+	  RetrieveXamarinInfragisticsDependencies;
+    </RetrieveInfragisticsDependenciesDependsOn>
+  </PropertyGroup>
+
+  <Target Name="RetrieveInfragisticsDependencies" DependsOnTargets="$(RetrieveInfragisticsDependenciesDependsOn)" />
+  
+  <Target Name="RetrieveWPFInfragisticsDependencies">
+
+    <IgGetLastSuccessfulBuildInformation BuildDefinitionName="$(WPF_BuildDefinitionName)" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(WPF_TeamProject)" Condition=" '$(WPF_BuildFolder)'=='' " ContinueOnError="true">
+      <Output TaskParameter="DropFolderLocation" PropertyName="WPF_BuildFolder" />
+    </IgGetLastSuccessfulBuildInformation>
+
+    <ShowCustomBuildStep BuildStepMessage="WPF build used: $(WPF_BuildFolder)" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" BuildUri="$(BuildUri)" IsUsingTfsBuildReport="$(isUsingTfsBuildReport)" LoggingLevel="$(igLoggingLevel)" BuildStepName="WPFBuildUsed" Condition=" '$(WPF_BuildFolder)' != '' " ContinueOnError="true"/>
+
+    <CreateItem Include="$(WPF_BuildFolder.Replace('$(igBgServer)', '$(igUsServer)'))\Release\*.zip;">
+      <Output TaskParameter="Include" ItemName="WPFFiles" />
+    </CreateItem>
+
+    <Copy SourceFiles="@(WPFFiles)" DestinationFiles="@(WPFFiles -&gt;'$(SrcRoot)\References\WPF\%(Filename)%(Extension)')" />
+
+	<Unzip ZipFileName="$(SrcRoot)\References\WPF\WPF_ReleaseFiles.zip" TargetDirectory="$(SrcRoot)\References\WPF\" />
+	
+  </Target>
+  
+  <Target Name="RetrieveXamarinInfragisticsDependencies">
+
+    <IgGetLastSuccessfulBuildInformation BuildDefinitionName="$(Xamarin_BuildDefinitionName)" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" TeamProject="$(Xamarin_TeamProject)" Condition=" '$(Xamarin_BuildFolder)'=='' " ContinueOnError="true">
+      <Output TaskParameter="DropFolderLocation" PropertyName="Xamarin_BuildFolder" />
+    </IgGetLastSuccessfulBuildInformation>
+
+    <ShowCustomBuildStep BuildStepMessage="Xamarin build used: $(Xamarin_BuildFolder)" TeamFoundationServerUrl="$(TeamFoundationServerUrl)" BuildUri="$(BuildUri)" IsUsingTfsBuildReport="$(isUsingTfsBuildReport)" LoggingLevel="$(igLoggingLevel)" BuildStepName="XamarinBuildUsed" Condition=" '$(Xamarin_BuildFolder)' != '' " ContinueOnError="true"/>
+
+    <CreateItem Include="$(Xamarin_BuildFolder)\Release\*.zip;">
+      <Output TaskParameter="Include" ItemName="XamarinFiles" />
+    </CreateItem>
+
+    <Copy SourceFiles="@(XamarinFiles)" DestinationFiles="@(XamarinFiles -&gt;'$(SrcRoot)\References\Xamarin\%(Filename)%(Extension)')" />
+
+	<Unzip ZipFileName="$(SrcRoot)\References\Xamarin\Xamarin_ReleaseFiles.zip" TargetDirectory="$(SrcRoot)\References\Xamarin\" />
+	
+  </Target>
+  
+  
+</Project>
