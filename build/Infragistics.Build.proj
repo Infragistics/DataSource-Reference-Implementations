@@ -78,5 +78,15 @@
 	
   </Target>
   
+  <Target Name="UpdateIGReferences">
+  
+	<CreateItem Include="$(SrcRoot)\DataPresenter.DataSources.OData\**\*.csproj">
+      <Output TaskParameter="Include" ItemName="ReferenceAppProjectFiles" />
+    </CreateItem>
+
+    <IgFileUpdate LoggingLevel="$(igLoggingLevel)" Files="@(ReferenceAppProjectFiles)" Regex="\.v\d\d\.\d" ReplacementText=".v$(Major).$(Minor)" Encoding="ASCII" />
+  
+  </Target>
+  
   
 </Project>
