@@ -258,8 +258,6 @@ namespace Infragistics.Controls.DataSource
             return groupInformation.ToArray();
         }
 
-        Dictionary<string, FastReflectionHelper> _groupHelpers = new Dictionary<string, FastReflectionHelper>();
-
         private void AddGroup(
             List<ISectionInformation> groupInformation, 
             List<string> groupNames, string[] groupNamesArray, 
@@ -268,28 +266,12 @@ namespace Infragistics.Controls.DataSource
             List<object> groupValues = new List<object>();
             foreach (var name in groupNames)
             {
-                FastReflectionHelper helper;
-                if (!_groupHelpers.TryGetValue(name, out helper))
-                {
-                    helper = new FastReflectionHelper();
-                    helper.PropertyName = name;
-                    _groupHelpers[name] = helper;
-                }
-
-                var val = helper.GetPropertyValue(group);
+                var val = group.GetPropertyValue(name);
                 groupValues.Add(val);
             }
             var groupCount = 0;
 
-            FastReflectionHelper countHelper;
-            if (!_groupHelpers.TryGetValue(groupingField, out countHelper))
-            {
-                countHelper = new FastReflectionHelper();
-                countHelper.PropertyName = groupingField;
-                _groupHelpers[groupingField] = countHelper;
-            }
-
-            var countVal = countHelper.GetPropertyValue(group);
+            var countVal = group.GetPropertyValue(groupingField);
             if (countVal != null)
             {
                 groupCount = Convert.ToInt32(countVal);
