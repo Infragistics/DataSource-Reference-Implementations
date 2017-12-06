@@ -620,6 +620,23 @@ namespace Infragistics.Controls.DataSource
         {
             return -1;
         }
+        
+        public DataSourceSchemaPropertyType ResolveSchemaPropertyType(string propertyPath)
+		{
+			var propertiesInPath = propertyPath.Split('.');
+			if (propertiesInPath.Length == 1 && this.ActualSchema != null)
+			{
+				for (int i = 0; i < this.ActualSchema.PropertyNames.Length; i++)
+				{
+					if (this.ActualSchema.PropertyNames[i] == propertiesInPath[0])
+					{
+						return this.ActualSchema.PropertyTypes[i];
+					}
+				}
+			}
+
+			return DataSourceSchemaPropertyType.ObjectValue;
+		}
     }
 
    
