@@ -1,6 +1,6 @@
 ﻿<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>Infragistics.DataPresenter.DataSources.OData</id>
+    <id>Infragistics.WPF.DataGrids.OData</id>
     <title>OData DataSource Reference Implementation for Infragistics XamDataPresenter</title>
     <version>$naVersionMajor$.$naVersionMinor$.$naVersionRevision$</version>
     <authors>Infragistics, Inc.</authors>
