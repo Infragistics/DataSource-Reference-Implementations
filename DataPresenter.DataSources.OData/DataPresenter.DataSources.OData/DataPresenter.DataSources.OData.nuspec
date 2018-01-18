@@ -11,13 +11,11 @@
     <iconUrl>http://www.infragistics.com/tempicon.png</iconUrl>
     <tags>OData DataSource Asynchronous Paging XamDataCards XamDataCarousel XamDataPresenter XamDataGrid Grid DataGrid Presenter Cards</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="InfragisticsWPF4.DataPresenter.DataSources.Async.v$naVersionMajor$.$naVersionMinor$, Version=$naVersionFull$, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb"/>
-      <frameworkAssembly assemblyName="InfragisticsWPF4.DataVisualization.v$naVersionMajor$.$naVersionMinor$, Version=$naVersionFull$, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb"/>
-      <frameworkAssembly assemblyName="InfragisticsWPF4.v$naVersionMajor$.$naVersionMinor$, Version=$naVersionFull$, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb"/>
-    </frameworkAssemblies>
 	<dependencies>
 		<dependency id="Simple.OData.Client" version="4.13.0"/>
+		<dependency id="Infragistics.WPF" version="[$naVersionMajor$.$naVersionMinor$.$naVersionRevision$]" />
+		<dependency id="Infragistics.WPF.DataVisualization" version="[$naVersionMajor$.$naVersionMinor$.$naVersionRevision$]" />
+		<dependency id="Infragistics.WPF.DataGrids.Async" version="[$naVersionMajor$.$naVersionMinor$.$naVersionRevision$]" />
 	</dependencies>
   </metadata>
   <files>
