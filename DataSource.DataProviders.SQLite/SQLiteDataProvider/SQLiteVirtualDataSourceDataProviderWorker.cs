@@ -33,13 +33,16 @@ namespace Infragistics.Controls.DataSource
         public string SelectExpressionOverride { get; set; }
         public SQLiteAsyncConnection Connection { get; set; }
 
-        public SortDescriptionCollection SortDescriptions { get; set; }
+        public SortDescriptionCollection SortDescriptions { get; internal set; }
 
-        public FilterExpressionCollection FilterExpressions { get; set; }
+        public FilterExpressionCollection FilterExpressions { get; internal set; }
 
         public string[] PropertiesRequested { get; set; }
         public SortDescriptionCollection GroupDescriptions { get; internal set; }
         public string GroupingColumn { get; internal set; }
+
+        public SummaryDescriptionCollection SummaryDescriptions { get; internal set; }
+        public DataSourceSummaryScope SummaryScope { get; internal set; }
     }
 
 
@@ -60,8 +63,11 @@ namespace Infragistics.Controls.DataSource
         private Type _projectionType;
         private SQLiteAsyncConnection _connection;
         private SortDescriptionCollection _sortDescriptions;
+        private SortDescriptionCollection _groupDescriptions;
+        private SummaryDescriptionCollection _summaryDescriptions;
         private FilterExpressionCollection _filterExpressions;
         private string[] _desiredPropeties;
+        private DataSourceSummaryScope _summaryScope;
 
         protected SortDescriptionCollection SortDescriptions
         {
@@ -71,11 +77,35 @@ namespace Infragistics.Controls.DataSource
             }
         }
 
+        protected SortDescriptionCollection GroupDescriptions
+        {
+            get
+            {
+                return _groupDescriptions;
+            }
+        }
+
+        protected SummaryDescriptionCollection SummaryDescriptions
+        {
+            get
+            {
+                return _summaryDescriptions;
+            }
+        }
+
         protected FilterExpressionCollection FilterExpressions
         {
             get
             {
                 return _filterExpressions;
+            }
+        }
+
+        protected DataSourceSummaryScope SummaryScope
+        {
+            get
+            {
+                return _summaryScope;
             }
         }
 
@@ -129,6 +159,8 @@ namespace Infragistics.Controls.DataSource
             _connection = settings.Connection;
             _sortDescriptions = settings.SortDescriptions;
             _groupDescriptions = settings.GroupDescriptions;
+            _summaryDescriptions = settings.SummaryDescriptions;
+            _summaryScope = settings.SummaryScope;
             _groupingField = settings.GroupingColumn;
 
             if (_groupDescriptions != null && _groupDescriptions.Count > 0)
@@ -151,6 +183,14 @@ namespace Infragistics.Controls.DataSource
             if (_groupDescriptions != null && _groupDescriptions.Count > 0)
             {
                 _groupInformation = ResolveGroupInformation();
+            }
+
+            if (SummaryScope == DataSourceSummaryScope.Both || SummaryScope == DataSourceSummaryScope.Root)
+            {
+                if (SummaryDescriptions != null && SummaryDescriptions.Count > 0)
+                {
+                    _summaryInformation = ResolveSummaryInformation();
+                }
             }
 
             Task.Factory.StartNew(() => DoWork(), TaskCreationOptions.LongRunning);
@@ -209,9 +249,19 @@ namespace Infragistics.Controls.DataSource
                 throw new NotSupportedException("You must specify a valid grouping column to use to accumulate the count of groups for the target table.");
             }
 
+            if (SummaryDescriptions.Count > 0 &&
+                (SummaryScope == DataSourceSummaryScope.Both || SummaryScope == DataSourceSummaryScope.Sections))
+            {
+                sb.Append(", ");
+
+                // add summaries, ignoring any COUNT summaries
+                AddSummaries(sb, groupingField, true);
+            }
+
             sb.Append(", COUNT(" + groupingField + ") as " + groupingField);
+
             AddTableExpression(sb);
-            AddFilterClause(sb);           
+            AddFilterClause(sb);
 
             sb.Append(" GROUP BY ");
             for (var i = 0; i < _groupDescriptions.Count; i++)
@@ -257,31 +307,140 @@ namespace Infragistics.Controls.DataSource
 
             return groupInformation.ToArray();
         }
+        /// <summary>
+        /// Returns summary information for the entire table.
+        /// </summary>
+        private ISummaryResult[] ResolveSummaryInformation()
+        {
+            UpdateSelect();
+            UpdateFilterClause();
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SELECT ");
+
+            var groupingField = GetGroupingField();
+            if (groupingField == null)
+            {
+                throw new NotSupportedException("You must specify a valid grouping column to use to accumulate the count of groups for the target table.");
+            }
+
+            AddSummaries(sb, groupingField, false);
+
+            AddTableExpression(sb);
+            AddFilterClause(sb);
+            
+            EnsureSpecific();
+            var t = (Task)_specific.Invoke(_connection, new object[] { sb.ToString(), new object[] { } });
+            t.Wait();
+            var resultProp = t.GetType().GetTypeInfo().GetDeclaredProperty("Result");
+            var data = (IList)resultProp.GetValue(t);
+
+            return CreateSummaryResults(data[0], groupingField);
+        }
+
+        private string GetGroupingField()
+        {
+            var groupingField = _groupingField;
+            if (groupingField == null)
+            {
+                if (ActualSchema != null &&
+                    ActualSchema.PrimaryKey != null &&
+                    ActualSchema.PrimaryKey.Length > 0)
+                {
+                    groupingField = ActualSchema.PrimaryKey[0];
+
+                    int index = -1;
+                    for (var i = 0; i < ActualSchema.PropertyNames.Length; i++)
+                    {
+                        if (ActualSchema.PropertyNames[i] == groupingField)
+                        {
+                            index = i;
+                            break;
+                        }
+                    }
+
+                    if (index == -1 || !IsIntegral(ActualSchema.PropertyTypes[index]))
+                    {
+                        groupingField = null;
+                    }
+                }
+            }
+            return groupingField;
+        }
 
         private void AddGroup(
             List<ISectionInformation> groupInformation, 
             List<string> groupNames, string[] groupNamesArray, 
             int currentIndex, object group, string groupingField)
         {
+            
             List<object> groupValues = new List<object>();
+
+            var groupType = group.GetType();
+
             foreach (var name in groupNames)
             {
-                var val = group.GetPropertyValue(name);
-                groupValues.Add(val);
+                var groupProperty = groupType.GetProperty(name);
+                if (groupProperty != null)
+                {
+                    var val = groupProperty.GetValue(group);
+                    groupValues.Add(val);
+                }
             }
             var groupCount = 0;
 
-            var countVal = group.GetPropertyValue(groupingField);
-            if (countVal != null)
+            var groupingFieldProperty = groupType.GetProperty(groupingField);
+            if (groupingFieldProperty != null)
             {
-                groupCount = Convert.ToInt32(countVal);
+                var countVal = groupingFieldProperty.GetValue(group);
+                if (countVal != null)
+                {
+                    groupCount = Convert.ToInt32(countVal);
+                }
             }
+            
+            var summaryResults = CreateSummaryResults(group, groupingField);
+
             DefaultSectionInformation groupInfo = new DefaultSectionInformation(
                 currentIndex,
                 currentIndex + (groupCount - 1),
                 groupNamesArray,
-                groupValues.ToArray());
+                groupValues.ToArray(),
+                summaryResults);
             groupInformation.Add(groupInfo);
+        }
+
+        private ISummaryResult[] CreateSummaryResults(object queryResults, string groupingField)
+        {
+            DefaultSummaryResult[] summaryResults = new DefaultSummaryResult[SummaryDescriptions.Count];
+            var schema = ResolveSchema();
+
+            var summariesType = queryResults.GetType();
+            var groupingFieldProperty = summariesType.GetProperty(groupingField);
+
+            for (var i = 0; i < SummaryDescriptions.Count; i++)
+            {
+                object summaryValue = null;
+                if (SummaryDescriptions[i].Operand == SummaryOperand.Count)
+                {
+                    if (groupingFieldProperty != null)
+                    {
+                        summaryValue = groupingFieldProperty.GetValue(queryResults);
+                    }
+                }
+                else
+                {
+                    var summaryProperty = summariesType.GetProperty(SummaryDescriptions[i].PropertyName);
+                    if (summaryProperty != null)
+                    {
+                        summaryValue = summaryProperty.GetValue(queryResults);
+                    }
+                }
+
+                var summaryResult = new DefaultSummaryResult(SummaryDescriptions[i].PropertyName, SummaryDescriptions[i].Operand, summaryValue);
+                summaryResults[i] = summaryResult;
+            }
+            return summaryResults;
         }
 
         private bool IsIntegral(DataSourceSchemaPropertyType type)
@@ -348,6 +507,7 @@ namespace Infragistics.Controls.DataSource
             IDataSourceExecutionContext executionContext;
             DataSourcePageLoadedCallback pageLoaded;
             ISectionInformation[] groupInformation = null;
+            ISummaryResult[] summaryInformation = null;
 
             lock (SyncLock)
             {
@@ -362,6 +522,7 @@ namespace Infragistics.Controls.DataSource
 
                 schema = ActualSchema;
                 groupInformation = _groupInformation;
+                summaryInformation = _summaryInformation;
             }
 
             if (schema == null)
@@ -380,7 +541,7 @@ namespace Infragistics.Controls.DataSource
 
             if (result != null)
             {
-                page = new SQLiteDataSourcePage(result, schema, groupInformation, pageIndex);
+                page = new SQLiteDataSourcePage(result, schema, groupInformation, summaryInformation, pageIndex);
                 lock (SyncLock)
                 {
                     if (!IsLastPage(pageIndex) && page.Count() > 0 && !PopulatedActualPageSize)
@@ -392,7 +553,7 @@ namespace Infragistics.Controls.DataSource
             }
             else
             {
-                page = new SQLiteDataSourcePage(null, schema, groupInformation, pageIndex);
+                page = new SQLiteDataSourcePage(null, schema, groupInformation, summaryInformation, pageIndex);
             }
 
             if (PageLoaded != null)
@@ -455,7 +616,8 @@ namespace Infragistics.Controls.DataSource
         private string _selectedString = null;
         public const int SchemaRequestIndex = -1;
         private MethodInfo _specific;
-        private SortDescriptionCollection _groupDescriptions;
+
+        private ISummaryResult[] _summaryInformation;
         private ISectionInformation[] _groupInformation;
         private string _groupingField;
 
@@ -513,7 +675,7 @@ namespace Infragistics.Controls.DataSource
         {
             if (_specific == null)
             {
-                var queryAsync = _connection.GetType().GetTypeInfo().GetDeclaredMethod("QueryAsync");
+                var queryAsync = _connection.GetType().GetTypeInfo().GetMethod("QueryAsync", new Type[] { typeof(string), typeof(object[]) });
 
                 var specific = queryAsync.MakeGenericMethod(_projectionType);
                 _specific = specific;
@@ -538,6 +700,47 @@ namespace Infragistics.Controls.DataSource
             {
                 sb.Append(" WHERE ");
                 sb.Append(_filterString);
+            }
+        }
+
+        private void AddSummaries(StringBuilder sb, string groupingField, bool ignoreCount)
+        {
+            bool first = true;
+            bool countExists = false;
+            for (var i = 0; i < SummaryDescriptions.Count; i++)
+            {
+                if (SummaryDescriptions[i].Operand == SummaryOperand.Count && (ignoreCount || countExists))
+                {
+                    continue;
+                }
+
+                if (!first)
+                {
+                    sb.Append(", ");
+                }
+                
+                var summaryFormat = "{0}({1}) as {1}";
+                switch (SummaryDescriptions[i].Operand)
+                {
+                    case SummaryOperand.Sum:
+                        sb.Append(string.Format(summaryFormat, "SUM", SummaryDescriptions[i].PropertyName));
+                        break;
+                    case SummaryOperand.Average:
+                        sb.Append(string.Format(summaryFormat, "AVG", SummaryDescriptions[i].PropertyName));
+                        break;
+                    case SummaryOperand.Min:
+                        sb.Append(string.Format(summaryFormat, "MIN", SummaryDescriptions[i].PropertyName));
+                        break;
+                    case SummaryOperand.Max:
+                        sb.Append(string.Format(summaryFormat, "MAX", SummaryDescriptions[i].PropertyName));
+                        break;
+                    case SummaryOperand.Count:
+                        sb.Append("COUNT(" + groupingField + ") as " + groupingField);
+                        countExists = true;
+                        break;
+                }
+
+                first = false;
             }
         }
 

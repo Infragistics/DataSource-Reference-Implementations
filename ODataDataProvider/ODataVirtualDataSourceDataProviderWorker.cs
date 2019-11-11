@@ -34,6 +34,9 @@ namespace Infragistics.Controls.DataSource
         public string[] PropertiesRequested { get; set; }
         public SortDescriptionCollection GroupDescriptions { get; internal set; }
         public bool IsAggregationSupportedByServer { get; internal set; }
+
+        public SummaryDescriptionCollection SummaryDescriptions { get; set; }
+        public DataSourceSummaryScope SummaryScope { get; set; }
     }
 
     
@@ -55,6 +58,7 @@ namespace Infragistics.Controls.DataSource
         private string _entitySet;
         private SortDescriptionCollection _sortDescriptions;
         private FilterExpressionCollection _filterExpressions;
+        private SummaryDescriptionCollection _summaryDescriptions;
         private string[] _desiredPropeties;
 
         protected SortDescriptionCollection SortDescriptions
@@ -136,6 +140,8 @@ namespace Infragistics.Controls.DataSource
             _filterExpressions = settings.FilterExpressions;
             _desiredPropeties = settings.PropertiesRequested;
             _groupDescriptions = settings.GroupDescriptions;
+            _summaryDescriptions = settings.SummaryDescriptions;
+            _summaryScope = settings.SummaryScope;
             if (_groupDescriptions != null && _groupDescriptions.Count > 0)
             {
                 _sortDescriptions = new SortDescriptionCollection();
@@ -159,6 +165,7 @@ namespace Infragistics.Controls.DataSource
             IDataSourceSchema schema = null;
             IEnumerable<IDictionary<string, object>> result = null;
             ISectionInformation[] groupInformation = null;
+            ISummaryResult[] summaryInformation = null;
             int schemaFetchCount = -1;
             bool isAggregationSupportedByServer = false;
             bool isGrouping = false;
@@ -225,6 +232,7 @@ namespace Infragistics.Controls.DataSource
                 }
 
                 groupInformation = _groupInformation;
+                summaryInformation = _summaryInformation;
                 isAggregationSupportedByServer = _isAggregationSupportedByServer;
                 schema = ActualSchema;
                 isGrouping = _groupDescriptions != null && _groupDescriptions.Count > 0;
@@ -234,16 +242,23 @@ namespace Infragistics.Controls.DataSource
             {
                 schema = ResolveSchema();
             }
-            if (isGrouping && isAggregationSupportedByServer &&
-                groupInformation == null)
+            if (isAggregationSupportedByServer)
             {
-                groupInformation = ResolveGroupInformation();
-            }
+                if (isGrouping && groupInformation == null)
+                {
+                    groupInformation = ResolveGroupInformation();
+                }
+                if (_summaryScope == DataSourceSummaryScope.Both || _summaryScope == DataSourceSummaryScope.Root)
+                {
+                    summaryInformation = ResolveSummaryInformation();
+                }
+            }    
 
             lock (SyncLock)
             {                
                 ActualSchema = schema;
                 _groupInformation = groupInformation;
+                _summaryInformation = summaryInformation;
                 executionContext = ExecutionContext;
                 pageLoaded = PageLoaded;
             }
@@ -252,7 +267,7 @@ namespace Infragistics.Controls.DataSource
 
             if (result != null)
             {
-                page = new ODataDataSourcePage(result, schema, groupInformation, pageIndex);
+                page = new ODataDataSourcePage(result, schema, groupInformation, summaryInformation, pageIndex);
                 lock (SyncLock)
                 {
                     if (!IsLastPage(pageIndex) && page.Count() > 0 && !PopulatedActualPageSize)
@@ -264,7 +279,7 @@ namespace Infragistics.Controls.DataSource
             }
             else
             {
-                page = new ODataDataSourcePage(null, schema, groupInformation, pageIndex);
+                page = new ODataDataSourcePage(null, schema, groupInformation, summaryInformation, pageIndex);
             }
 
             if (PageLoaded != null)
@@ -313,6 +328,7 @@ namespace Infragistics.Controls.DataSource
             string orderBy = null;
             string groupBy = null;
             string filter = null;
+            string summary = null;
             lock (SyncLock)
             {
                 if (_groupDescriptions == null ||
@@ -320,41 +336,9 @@ namespace Infragistics.Controls.DataSource
                 {
                     return null;
                 }
+
                 filter = _filterString;
                 UpdateFilterString();
-
-                StringBuilder sb = new StringBuilder();
-                if (SortDescriptions != null)
-                {
-                    bool first = true;
-                    foreach (var sort in SortDescriptions)
-                    {
-                        if (first)
-                        {
-                            first = false;
-                        }
-                        else
-                        {
-                            sb.Append(", ");
-                        }
-                        if (sort.Direction ==
-#if PCL
-							ListSortDirection.Descending
-#else
-                            System.ComponentModel.ListSortDirection.Descending
-#endif
-                            )
-                        {
-                            sb.Append(sort.PropertyName + " desc");
-                        }
-                        else
-                        {
-                            sb.Append(sort.PropertyName + " asc");
-                        }
-                    }
-                }
-
-                orderBy = sb.ToString();
 
                 StringBuilder gsb = new StringBuilder();
                 if (_groupDescriptions != null)
@@ -368,14 +352,37 @@ namespace Infragistics.Controls.DataSource
                         }
                         else
                         {
-                            sb.Append(", ");
+                            orderBy += ", ";
+                            groupBy += ", ";
                         }
-                        gsb.Append(group.PropertyName);
+
+                        groupBy += group.PropertyName;
+
+                        if (group.Direction ==
+#if PCL
+                            Infragistics.Core.Controls.DataSource.ListSortDirection.Descending
+#else
+                            System.ComponentModel.ListSortDirection.Descending
+#endif
+                            )
+                        {
+                            orderBy += group.PropertyName + " desc";
+                        }
+                        else
+                        {
+                            orderBy += group.PropertyName + " asc";
+                        }
                     }
                 }
 
-                groupBy = gsb.ToString();
-
+                if (_summaryScope == DataSourceSummaryScope.Both || _summaryScope == DataSourceSummaryScope.Sections)
+                {
+                    var summaryQuery = GetSummaryQueryParameters(true);
+                    if (!string.IsNullOrEmpty(summaryQuery))
+                    {
+                        summary = ", " + summaryQuery;
+                    }
+                }
             }
 
             var commandText = _entitySet + "?$orderby=" + orderBy + "&$apply=";
@@ -383,7 +390,7 @@ namespace Infragistics.Controls.DataSource
             {
                 commandText += "filter(" + filter + ")/";
             }
-            commandText += "groupby((" + groupBy + "), aggregate($count as $__count))";
+            commandText += "groupby((" + groupBy + "), aggregate($count as $__count" + summary + "))";
 
             lock (SyncLock)
             {
@@ -431,7 +438,7 @@ namespace Infragistics.Controls.DataSource
             }
         }
 
-        private static void AddGroup(List<ISectionInformation> groupInformation, List<string> groupNames, string[] groupNamesArray, int currentIndex, IDictionary<string, object> group)
+        private void AddGroup(List<ISectionInformation> groupInformation, List<string> groupNames, string[] groupNamesArray, int currentIndex, IDictionary<string, object> group)
         {
             List<object> groupValues = new List<object>();
             foreach (var name in groupNames)
@@ -446,12 +453,155 @@ namespace Infragistics.Controls.DataSource
             {
                 groupCount = Convert.ToInt32(group["$__count"]);
             }
+
+            ISummaryResult[] summaryResults = null;
+            if (_summaryScope == DataSourceSummaryScope.Both || _summaryScope == DataSourceSummaryScope.Sections)
+            {
+                summaryResults = CreateSummaryResults(group);
+            }
+
             DefaultSectionInformation groupInfo = new DefaultSectionInformation(
                 currentIndex,
                 currentIndex + (groupCount - 1),
                 groupNamesArray,
-                groupValues.ToArray());
+                groupValues.ToArray(),
+                summaryResults);
             groupInformation.Add(groupInfo);
+        }
+
+        private ISummaryResult[] ResolveSummaryInformation()
+        {
+            string filter = null;
+            string summary = null;
+            lock (SyncLock)
+            {
+                if (_summaryDescriptions == null ||
+                    _summaryDescriptions.Count == 0 ||
+                    _summaryScope == DataSourceSummaryScope.Sections ||
+                    _summaryScope == DataSourceSummaryScope.None)
+                {
+                    return null;
+                }
+
+                filter = _filterString;
+                UpdateFilterString();
+
+                summary = GetSummaryQueryParameters(false);
+            }
+
+            var commandText = _entitySet + "&$apply=";
+            if (!String.IsNullOrEmpty(filter))
+            {
+                commandText += "filter(" + filter + ")/";
+            }
+            commandText += "aggregate(" + summary + ")";
+
+            lock (SyncLock)
+            {
+                try
+                {
+                    var annotations = new ODataFeedAnnotations();
+                    var t = _client.FindEntriesAsync(commandText, annotations);
+                    t.Wait();
+                    var res = t.Result;
+
+                    var summaryData = res.FirstOrDefault();
+                    if (summaryData == null)
+                    {
+                        return null;
+                    }
+
+                    return CreateSummaryResults(summaryData);
+                }
+                catch (Exception e)
+                {
+                    return null;
+                }
+            }
+        }
+
+        private string GetSummaryQueryParameters(bool ignoreCount)
+        {
+            var query = "";
+            if (_summaryDescriptions != null && _summaryDescriptions.Count > 0)
+            {
+                var first = true;
+                var countExists = false;
+                for (var i = 0; i < _summaryDescriptions.Count; i++)
+                {
+                    var summary = _summaryDescriptions[i];
+                    if (summary.Operand == SummaryOperand.Count && (ignoreCount || countExists))
+                    {
+                        continue;
+                    }
+
+                    if (!first)
+                    {
+                        query += ", ";
+                    }
+
+                    switch (summary.Operand)
+                    {
+                        case SummaryOperand.Average:
+                            query += summary.PropertyName + " with average as " + summary.PropertyName + "Average";
+                            break;
+                        case SummaryOperand.Min:
+                            query += summary.PropertyName + " with min as " + summary.PropertyName + "Min";
+                            break;
+                        case SummaryOperand.Max:
+                            query += summary.PropertyName + " with max as " + summary.PropertyName + "Max";
+                            break;
+                        case SummaryOperand.Sum:
+                            query += summary.PropertyName + " with sum as " + summary.PropertyName + "Sum";
+                            break;
+                        case SummaryOperand.Count:
+                            query += "$count as $__count";
+                            countExists = true;
+                            break;
+                    }
+
+                    first = false;
+                }
+            }
+            return query;
+        }
+
+        private ISummaryResult[] CreateSummaryResults(IDictionary<string, object> data)
+        {
+            var summaryResults = new List<ISummaryResult>();
+            for (var i = 0; i < _summaryDescriptions.Count; i++)
+            {
+                var summary = _summaryDescriptions[i];
+                var summaryName = _summaryDescriptions[i].PropertyName;
+                switch (summary.Operand)
+                {
+                    case SummaryOperand.Average:
+                        summaryName += "Average";
+                        break;
+                    case SummaryOperand.Min:
+                        summaryName += "Min";
+                        break;
+                    case SummaryOperand.Max:
+                        summaryName += "Max";
+                        break;
+                    case SummaryOperand.Sum:
+                        summaryName += "Sum";
+                        break;
+                    case SummaryOperand.Count:
+                        summaryName += "$__count";
+                        break;
+                }
+
+                if (!data.ContainsKey(summaryName))
+                {
+                    break;
+                }
+
+                var summaryValue = data[summaryName];
+                summaryResults.Add(new DefaultSummaryResult(summary.PropertyName, summary.Operand, summaryValue));
+            }
+
+            return summaryResults.ToArray();
         }
 
         private string _filterString = null;
@@ -460,6 +610,8 @@ namespace Infragistics.Controls.DataSource
         private SortDescriptionCollection _groupDescriptions;
         private bool _isAggregationSupportedByServer = false;
         private ISectionInformation[] _groupInformation = null;
+        private ISummaryResult[] _summaryInformation = null;
+        private DataSourceSummaryScope _summaryScope = DataSourceSummaryScope.None;
 
         protected override void MakeTaskForRequest(AsyncDataSourcePageRequest request, int retryDelay)
         {
@@ -490,7 +642,7 @@ namespace Infragistics.Controls.DataSource
                     {
                         if (sort.Direction ==
 #if PCL
-							ListSortDirection.Descending
+							Infragistics.Core.Controls.DataSource.ListSortDirection.Descending
 #else
                             System.ComponentModel.ListSortDirection.Descending
 #endif

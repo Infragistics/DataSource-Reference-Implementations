@@ -1,20 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.705
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSource.DataProviders.OData", "DataSource.DataProviders.OData\DataSource.DataProviders.OData.csproj", "{4CB59ADF-F59D-4310-9EB9-0BCDFD4CECE2}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ODataDataProvider", "..\ODataDataProvider\ODataDataProvider.shproj", "{15C5CA79-0CDA-4D3D-833D-48EBD0F31915}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ODataSampleApp", "ODataSampleApp\ODataSampleApp.csproj", "{16509F04-894A-4ABB-9821-8A1ED93D266C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ODataSampleApp", "ODataSampleApp\ODataSampleApp.csproj", "{391831F9-A5FC-4D6A-B28F-F3B0425DACC9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSource.DataProviders.OData.Core", "DataSource.DataProviders.OData.Core\DataSource.DataProviders.OData.Core.csproj", "{2D978939-4120-4ABF-B13D-84D63075E61A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ODataSampleWebService", "ODataSampleWebService\ODataSampleWebService.csproj", "{85649AA6-A500-4875-82CA-F7BF34F02A5D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSource.DataProviders.OData.Core", "DataSource.DataProviders.OData.Core\DataSource.DataProviders.OData.Core.csproj", "{C455A840-2FE1-4273-8DB7-C605EB1299B3}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\ODataDataProvider\ODataDataProvider.projitems*{15c5ca79-0cda-4d3d-833d-48ebd0f31915}*SharedItemsImports = 13
-		..\ODataDataProvider\ODataDataProvider.projitems*{2d978939-4120-4abf-b13d-84d63075e61a}*SharedItemsImports = 4
 		..\ODataDataProvider\ODataDataProvider.projitems*{4cb59adf-f59d-4310-9eb9-0bcdfd4cece2}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,16 +27,23 @@ Global
 		{4CB59ADF-F59D-4310-9EB9-0BCDFD4CECE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4CB59ADF-F59D-4310-9EB9-0BCDFD4CECE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4CB59ADF-F59D-4310-9EB9-0BCDFD4CECE2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{16509F04-894A-4ABB-9821-8A1ED93D266C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{16509F04-894A-4ABB-9821-8A1ED93D266C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{16509F04-894A-4ABB-9821-8A1ED93D266C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{16509F04-894A-4ABB-9821-8A1ED93D266C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2D978939-4120-4ABF-B13D-84D63075E61A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2D978939-4120-4ABF-B13D-84D63075E61A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2D978939-4120-4ABF-B13D-84D63075E61A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2D978939-4120-4ABF-B13D-84D63075E61A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{391831F9-A5FC-4D6A-B28F-F3B0425DACC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{391831F9-A5FC-4D6A-B28F-F3B0425DACC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{391831F9-A5FC-4D6A-B28F-F3B0425DACC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{391831F9-A5FC-4D6A-B28F-F3B0425DACC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85649AA6-A500-4875-82CA-F7BF34F02A5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85649AA6-A500-4875-82CA-F7BF34F02A5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85649AA6-A500-4875-82CA-F7BF34F02A5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85649AA6-A500-4875-82CA-F7BF34F02A5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C455A840-2FE1-4273-8DB7-C605EB1299B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C455A840-2FE1-4273-8DB7-C605EB1299B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C455A840-2FE1-4273-8DB7-C605EB1299B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C455A840-2FE1-4273-8DB7-C605EB1299B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ABDE6E8F-20DA-4AFA-A9B4-AAB5865FF381}
 	EndGlobalSection
 EndGlobal

@@ -32,8 +32,9 @@ namespace Infragistics.Controls.DataSource
         private IDataSourceSchema _schema;
         private int _pageIndex;
         private ISectionInformation[] _groupInfromation;
+        private ISummaryResult[] _summaryInformation;
 
-        public ODataDataSourcePage(IEnumerable<IDictionary<string, object>> sourceData, IDataSourceSchema schema, ISectionInformation[] groupInformation, int pageIndex)
+        public ODataDataSourcePage(IEnumerable<IDictionary<string, object>> sourceData, IDataSourceSchema schema, ISectionInformation[] groupInformation, ISummaryResult[] summaryInformation, int pageIndex)
         {
             if (sourceData == null)
             {
@@ -45,6 +46,7 @@ namespace Infragistics.Controls.DataSource
             }
             _schema = schema;
             _groupInfromation = groupInformation;
+            _summaryInformation = summaryInformation;
             _pageIndex = pageIndex;
         }
 
@@ -108,6 +110,16 @@ namespace Infragistics.Controls.DataSource
         public ISectionInformation[] GetGroupInformation()
         {
             return _groupInfromation;
+        }
+
+        /// <summary>
+        /// Information about root level summaries, if available.  Group specific summaries should be provided along with the
+        /// other group information in the GetGroupInformation method.
+        /// </summary>
+        /// <returns>Summary information for the entire data set.</returns>
+        public ISummaryResult[] GetSummaryInformation()
+        {
+            return _summaryInformation;
         }
     }
 }

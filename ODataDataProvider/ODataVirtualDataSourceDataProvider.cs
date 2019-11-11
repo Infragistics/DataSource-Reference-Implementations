@@ -38,6 +38,8 @@ namespace Infragistics.Controls.DataSource
             _groupDescriptions.CollectionChanged += GroupDescriptions_CollectionChanged;
             _filterExpressions = new FilterExpressionCollection();
             _filterExpressions.CollectionChanged += FilterExpressions_CollectionChanged;
+            _summaryDescriptions = new SummaryDescriptionCollection();
+            _summaryDescriptions.CollectionChanged += SummaryDescriptions_CollectionChanged;
         }
 
         private void FilterExpressions_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -51,6 +53,11 @@ namespace Infragistics.Controls.DataSource
         }
 
         private void GroupDescriptions_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            QueueAutoRefresh();
+        }
+
+        private void SummaryDescriptions_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             QueueAutoRefresh();
         }
@@ -124,7 +131,9 @@ namespace Infragistics.Controls.DataSource
                 FilterExpressions = _filterExpressions,
                 PropertiesRequested = _propertiesRequested,
                 GroupDescriptions = _groupDescriptions,
-                IsAggregationSupportedByServer = _isAggregationSupportedByServer
+                IsAggregationSupportedByServer = _isAggregationSupportedByServer,
+                SummaryDescriptions = _summaryDescriptions,
+                SummaryScope = _summaryScope
             };
         }
 
@@ -467,6 +476,28 @@ namespace Infragistics.Controls.DataSource
             get
             {
                 return _groupDescriptions;
+            }
+        }
+
+        private SummaryDescriptionCollection _summaryDescriptions;
+        public SummaryDescriptionCollection SummaryDescriptions
+        {
+            get
+            {
+                return _summaryDescriptions;
+            }
+        }
+
+        private DataSourceSummaryScope _summaryScope;
+        public DataSourceSummaryScope SummaryScope
+        {
+            get
+            {
+                return _summaryScope;
+            }
+            set
+            {
+                _summaryScope = value;
             }
         }
 

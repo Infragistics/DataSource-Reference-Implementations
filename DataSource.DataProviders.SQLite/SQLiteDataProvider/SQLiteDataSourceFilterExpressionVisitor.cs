@@ -173,7 +173,7 @@ namespace Infragistics.Controls.DataSource
 		/// Visits an operation expression.
 		/// </summary>
 		/// <param name="expression">The operation expression to visit.</param>
-        public override void VisitOperationExpression(OperationFilterExpression expression)
+        public override void VisitOperationExpression(IOperationFilterExpression expression)
         {
             bool isBinary = true;
             string operatorString = "";
@@ -270,7 +270,7 @@ namespace Infragistics.Controls.DataSource
 		/// Visits a function expression.
 		/// </summary>
 		/// <param name="expression">The function expression to visit.</param>
-        public override void VisitFunctionExpression(FunctionFilterExpression expression)
+        public override void VisitFunctionExpression(IFunctionFilterExpression expression)
         {
             string functionName = null;
             string prefix = null;
@@ -418,12 +418,12 @@ namespace Infragistics.Controls.DataSource
         /// Visits a literal expression.
         /// </summary>
         /// <param name="expression">The literal expression to visit.</param>
-        public override void VisitLiteralExpression(LiteralFilterExpression expression)
+        public override void VisitLiteralExpression(ILiteralFilterExpression expression)
         {
             RenderLiteral(expression, expression.LiteralValue);
         }
 
-        private void RenderLiteral(LiteralFilterExpression expression, object literalValue)
+        private void RenderLiteral(ILiteralFilterExpression expression, object literalValue)
         {
             var value = _literalEmitter.EmitLiteral(literalValue, expression.LeaveUnquoted);
 
@@ -454,7 +454,7 @@ namespace Infragistics.Controls.DataSource
 		/// Visits a property reference expression.
 		/// </summary>
 		/// <param name="expression">The expression to visit.</param>
-        public override void VisitPropertyReferenceExpression(PropertyReferenceFilterExpression expression)
+        public override void VisitPropertyReferenceExpression(IPropertyReferenceFilterExpression expression)
         {
             //This is working around a missing property on the filter api.
             //This could can be removed when the issue is resolved.
