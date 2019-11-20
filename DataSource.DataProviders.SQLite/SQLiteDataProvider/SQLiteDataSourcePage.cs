@@ -33,8 +33,9 @@ namespace Infragistics.Controls.DataSource
         private IDataSourceSchema _schema;
         private int _pageIndex;
         private ISectionInformation[] _groupInformation;
+        private ISummaryResult[] _summaryInformation;
 
-        internal SQLiteDataSourcePage(SQLiteDataSourceQueryResult sourceData, IDataSourceSchema schema, ISectionInformation[] groupInformation, int pageIndex)
+        internal SQLiteDataSourcePage(SQLiteDataSourceQueryResult sourceData, IDataSourceSchema schema, ISectionInformation[] groupInformation, ISummaryResult[] summaryInformation, int pageIndex)
         {
             if (sourceData == null)
             {
@@ -47,6 +48,7 @@ namespace Infragistics.Controls.DataSource
             _schema = schema;
             _pageIndex = pageIndex;
             _groupInformation = groupInformation;
+            _summaryInformation = summaryInformation;
         }
 
         /// <summary>
@@ -125,6 +127,11 @@ namespace Infragistics.Controls.DataSource
         public ISectionInformation[] GetGroupInformation()
         {
             return _groupInformation;
+        }
+
+        public ISummaryResult[] GetSummaryInformation()
+        {
+            return _summaryInformation;
         }
     }
 }

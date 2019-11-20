@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ODataSampleApp"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525"
-        xmlns:grid="clr-namespace:Infragistics.Controls;assembly=InfragisticsWPF4.Controls.Grids.XGrid.v17.2">
+        xmlns:grid="clr-namespace:Infragistics.Controls;assembly=InfragisticsWPF4.Controls.Grids.XGrid.v19.2">
     <Grid>
         <grid:XamDataGrid
                     Grid.Row="1"
