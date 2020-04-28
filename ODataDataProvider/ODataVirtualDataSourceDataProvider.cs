@@ -668,6 +668,31 @@ namespace Infragistics.Controls.DataSource
 
 			return DataSourceSchemaPropertyType.ObjectValue;
 		}
+
+        public IDataSourceDataProvider Clone()
+        {
+            var provider = new ODataVirtualDataSourceDataProvider();
+            provider.ExecutionContext = ExecutionContext;
+            provider.EntitySet = EntitySet;
+            provider.PageSizeRequested = PageSizeRequested;
+            provider.PropertiesRequested = PropertiesRequested;
+            provider.SummaryScope = SummaryScope;
+            provider.TimeoutMilliseconds = TimeoutMilliseconds;
+
+            for (var i = 0; i < FilterExpressions.Count; i++)
+                provider.FilterExpressions.Add(FilterExpressions[i]);
+
+            for (var i = 0; i < SortDescriptions.Count; i++)
+                provider.SortDescriptions.Add(SortDescriptions[i]);
+
+            for (var i = 0; i < GroupDescriptions.Count; i++)
+                provider.GroupDescriptions.Add(GroupDescriptions[i]);
+
+            for (var i = 0; i < SummaryDescriptions.Count; i++)
+                provider.SummaryDescriptions.Add(SummaryDescriptions[i]);
+
+            return provider;
+        }
     }
 
    

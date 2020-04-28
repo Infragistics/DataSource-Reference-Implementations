@@ -304,6 +304,17 @@ namespace Infragistics.Controls.DataSource
             }
         }
 #endif
+
+        public override IDataSource Clone()
+        {
+            var dataSource = new ODataVirtualDataSource();
+            base.CloneProperties(dataSource);
+            dataSource.BaseUri = BaseUri;
+            dataSource.EntitySet = EntitySet;
+            dataSource.TimeoutMilliseconds = TimeoutMilliseconds;
+            dataSource.IsAggregationSupportedByServer = IsAggregationSupportedByServer;
+            return dataSource;
+        }
     }
 
 }
