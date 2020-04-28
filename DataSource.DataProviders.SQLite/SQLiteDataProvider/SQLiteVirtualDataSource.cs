@@ -247,6 +247,19 @@ namespace Infragistics.Controls.DataSource
 				}
 			}
 		}
-	}
+
+        public override IDataSource Clone()
+        {
+            var dataSource = new SQLiteVirtualDataSource();
+            base.CloneProperties(dataSource);
+            dataSource.Connection = Connection;
+            dataSource.GroupingColumn = GroupingColumn;
+            dataSource.TimeoutMilliseconds = TimeoutMilliseconds;
+            dataSource.ProjectionType = ProjectionType;
+            dataSource.SelectExpressionOverride = SelectExpressionOverride;
+            dataSource.TableExpression = TableExpression;
+            return dataSource;
+        }
+    }
 
 }
