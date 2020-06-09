@@ -375,7 +375,7 @@ namespace Infragistics.Controls.DataSource
                     }
                 }
 
-                if (_summaryScope == DataSourceSummaryScope.Both || _summaryScope == DataSourceSummaryScope.Sections)
+                if (_summaryScope == DataSourceSummaryScope.Both || _summaryScope == DataSourceSummaryScope.Groups)
                 {
                     var summaryQuery = GetSummaryQueryParameters(true);
                     if (!string.IsNullOrEmpty(summaryQuery))
@@ -455,7 +455,7 @@ namespace Infragistics.Controls.DataSource
             }
 
             ISummaryResult[] summaryResults = null;
-            if (_summaryScope == DataSourceSummaryScope.Both || _summaryScope == DataSourceSummaryScope.Sections)
+            if (_summaryScope == DataSourceSummaryScope.Both || _summaryScope == DataSourceSummaryScope.Groups)
             {
                 summaryResults = CreateSummaryResults(group);
             }
@@ -477,7 +477,7 @@ namespace Infragistics.Controls.DataSource
             {
                 if (_summaryDescriptions == null ||
                     _summaryDescriptions.Count == 0 ||
-                    _summaryScope == DataSourceSummaryScope.Sections ||
+                    _summaryScope == DataSourceSummaryScope.Groups ||
                     _summaryScope == DataSourceSummaryScope.None)
                 {
                     return null;
