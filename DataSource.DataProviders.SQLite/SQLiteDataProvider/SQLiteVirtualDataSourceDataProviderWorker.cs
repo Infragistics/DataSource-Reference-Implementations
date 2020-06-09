@@ -250,7 +250,7 @@ namespace Infragistics.Controls.DataSource
             }
 
             if (SummaryDescriptions.Count > 0 &&
-                (SummaryScope == DataSourceSummaryScope.Both || SummaryScope == DataSourceSummaryScope.Sections))
+                (SummaryScope == DataSourceSummaryScope.Both || SummaryScope == DataSourceSummaryScope.Groups))
             {
                 sb.Append(", ");
 
