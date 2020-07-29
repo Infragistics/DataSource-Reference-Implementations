@@ -16,15 +16,15 @@
 
   <ItemGroup>
     <Reference Include="Infragistics.Core">
-      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\Xamarin\2019.2\Source\Build\netstandard2.0\Infragistics.Core.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\Xamarin\2020.1\Source\Build\netstandard2.0\Infragistics.Core.dll</HintPath>
       <SpecificVersion>false</SpecificVersion>
     </Reference>
     <Reference Include="Infragistics.Core.DataVisualization">
-      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\Xamarin\2019.2\Source\Build\netstandard2.0\Infragistics.Core.DataVisualization.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\Xamarin\2020.1\Source\Build\netstandard2.0\Infragistics.Core.DataVisualization.dll</HintPath>
       <SpecificVersion>false</SpecificVersion>
     </Reference>
     <Reference Include="Infragistics.Core.Platform">
-      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\Xamarin\2019.2\Source\Build\netstandard2.0\Infragistics.Core.Platform.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\Xamarin\2020.1\Source\Build\netstandard2.0\Infragistics.Core.Platform.dll</HintPath>
       <SpecificVersion>false</SpecificVersion>
     </Reference>
   </ItemGroup>
