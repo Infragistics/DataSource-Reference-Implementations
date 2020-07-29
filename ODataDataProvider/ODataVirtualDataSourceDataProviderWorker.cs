@@ -241,6 +241,11 @@ namespace Infragistics.Controls.DataSource
             if (schema == null)
             {
                 schema = ResolveSchema();
+
+                lock (SyncLock)
+                {
+                    ActualSchema = schema;
+                }
             }
             if (isAggregationSupportedByServer)
             {
@@ -375,7 +380,7 @@ namespace Infragistics.Controls.DataSource
                     }
                 }
 
-                if (_summaryScope == DataSourceSummaryScope.Both || _summaryScope == DataSourceSummaryScope.Sections)
+                if (_summaryScope == DataSourceSummaryScope.Both || _summaryScope == DataSourceSummaryScope.Groups)
                 {
                     var summaryQuery = GetSummaryQueryParameters(true);
                     if (!string.IsNullOrEmpty(summaryQuery))
@@ -455,7 +460,7 @@ namespace Infragistics.Controls.DataSource
             }
 
             ISummaryResult[] summaryResults = null;
-            if (_summaryScope == DataSourceSummaryScope.Both || _summaryScope == DataSourceSummaryScope.Sections)
+            if (_summaryScope == DataSourceSummaryScope.Both || _summaryScope == DataSourceSummaryScope.Groups)
             {
                 summaryResults = CreateSummaryResults(group);
             }
@@ -477,7 +482,7 @@ namespace Infragistics.Controls.DataSource
             {
                 if (_summaryDescriptions == null ||
                     _summaryDescriptions.Count == 0 ||
-                    _summaryScope == DataSourceSummaryScope.Sections ||
+                    _summaryScope == DataSourceSummaryScope.Groups ||
                     _summaryScope == DataSourceSummaryScope.None)
                 {
                     return null;
@@ -489,7 +494,7 @@ namespace Infragistics.Controls.DataSource
                 summary = GetSummaryQueryParameters(false);
             }
 
-            var commandText = _entitySet + "&$apply=";
+            var commandText = _entitySet + "?$apply=";
             if (!String.IsNullOrEmpty(filter))
             {
                 commandText += "filter(" + filter + ")/";
@@ -572,7 +577,8 @@ namespace Infragistics.Controls.DataSource
             for (var i = 0; i < _summaryDescriptions.Count; i++)
             {
                 var summary = _summaryDescriptions[i];
-                var summaryName = _summaryDescriptions[i].PropertyName;
+                var propertyName = _summaryDescriptions[i].PropertyName;
+                var summaryName = propertyName;
                 switch (summary.Operand)
                 {
                     case SummaryOperand.Average:
@@ -588,7 +594,7 @@ namespace Infragistics.Controls.DataSource
                         summaryName += "Sum";
                         break;
                     case SummaryOperand.Count:
-                        summaryName += "$__count";
+                        summaryName = "$__count";
                         break;
                 }
 
@@ -597,11 +603,66 @@ namespace Infragistics.Controls.DataSource
                     break;
                 }
 
-                var summaryValue = data[summaryName];
+                object summaryValue = data[summaryName];
+                // odata is returning strings to us so we need to convert it to the appropriate
+                // type.
+                if (summary.Operand == SummaryOperand.Count)
+                {
+                    summaryValue = Convert.ToInt32(data[summaryName]);
+                }
+                else
+                {
+                    switch (ResolvePropertyType(propertyName))
+                    {
+                        case DataSourceSchemaPropertyType.BooleanValue:
+                            summaryValue = Convert.ToBoolean(summaryValue);
+                            break;
+                        case DataSourceSchemaPropertyType.ByteValue:
+                            summaryValue = Convert.ToByte(summaryValue);
+                            break;
+                        case DataSourceSchemaPropertyType.DateTimeValue:
+                            summaryValue = Convert.ToDateTime(summaryValue);
+                            break;
+                        case DataSourceSchemaPropertyType.DecimalValue:
+                            summaryValue = Convert.ToDecimal(summaryValue);
+                            break;
+                        case DataSourceSchemaPropertyType.DoubleValue:
+                            summaryValue = Convert.ToDouble(summaryValue);
+                            break;
+                        case DataSourceSchemaPropertyType.IntValue:
+                            summaryValue = (int)Convert.ToDouble(summaryValue);
+                            break;
+                        case DataSourceSchemaPropertyType.LongValue:
+                            summaryValue = Convert.ToInt64(summaryValue);
+                            break;
+                        case DataSourceSchemaPropertyType.ShortValue:
+                            summaryValue = Convert.ToInt16(summaryValue);
+                            break;
+                        case DataSourceSchemaPropertyType.SingleValue:
+                            summaryValue = Convert.ToSingle(summaryValue);
+                            break;
+                        case DataSourceSchemaPropertyType.StringValue:
+                            summaryValue = Convert.ToString(summaryValue);
+                            break;
+                    }
+                }
                 summaryResults.Add(new DefaultSummaryResult(summary.PropertyName, summary.Operand, summaryValue));
             }
 
             return summaryResults.ToArray();
+        }
+
+        private DataSourceSchemaPropertyType ResolvePropertyType(string propertyName)
+        {
+            var valueType = DataSourceSchemaPropertyType.ObjectValue;
+            for (var j = 0; j < this.ActualSchema.PropertyNames.Length; j++)
+            {
+                if (this.ActualSchema.PropertyNames[j] == propertyName)
+                {
+                    valueType = this.ActualSchema.PropertyTypes[j];
+                }
+            }
+            return valueType;
         }
 
         private string _filterString = null;
