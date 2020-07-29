@@ -94,8 +94,9 @@ namespace Infragistics.Controls.DataSource
 
             lock (SyncLock)
             {
-                _client = new ODataClient(new ODataClientSettings(_baseUri)
+                _client = new ODataClient(new ODataClientSettings()
                 {
+                    BaseUri = new Uri(_baseUri),
                     IgnoreUnmappedProperties = true
                 });
             }
@@ -206,7 +207,7 @@ namespace Infragistics.Controls.DataSource
                     return;
                 }
             }
-            catch (TaskCanceledException e)
+            catch (TaskCanceledException)
             {
                 RetryIndex(pageIndex, currentDelay);
                 //TODO: other exceptions? Is there a way to skip this state for canceled stuff?
@@ -436,7 +437,7 @@ namespace Infragistics.Controls.DataSource
 
                     return groupInformation.ToArray();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return null;
                 }
@@ -518,7 +519,7 @@ namespace Infragistics.Controls.DataSource
 
                     return CreateSummaryResults(summaryData);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return null;
                 }
@@ -666,7 +667,6 @@ namespace Infragistics.Controls.DataSource
         }
 
         private string _filterString = null;
-        private string _selectedString = null;
         public const int SchemaRequestIndex = -1;
         private SortDescriptionCollection _groupDescriptions;
         private bool _isAggregationSupportedByServer = false;

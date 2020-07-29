@@ -497,7 +497,7 @@ namespace Infragistics.Controls.DataSource
                     return;
                 }
             }
-            catch (TaskCanceledException e)
+            catch (TaskCanceledException)
             {
                 RetryIndex(pageIndex, currentDelay);
                 //TODO: other exceptions? Is there a way to skip this state for canceled stuff?
