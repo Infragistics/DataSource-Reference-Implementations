@@ -10,10 +10,12 @@ using Simple.OData.Client;
 using System.Diagnostics;
 #if !PCL
 using Infragistics.Controls.DataSource;
+using Infragistics.Controls.DataSource.Transactions;
 #endif
 
 #if PCL
 using Infragistics.Core.Controls.DataSource;
+using Infragistics.Core.Controls.DataSource.Transactions;
 #endif
 
 #if DATA_PRESENTER
@@ -22,8 +24,7 @@ namespace Reference.DataSources.OData
 namespace Infragistics.Controls.DataSource
 #endif
 {
-    public class ODataVirtualDataSourceDataProvider
-        : IDataSourceVirtualDataProvider
+    public class ODataVirtualDataSourceDataProvider : IDataSourceVirtualDataProvider
     {
 
         private ODataVirtualDataSourceDataProviderWorker _worker;
@@ -668,7 +669,41 @@ namespace Infragistics.Controls.DataSource
 
 			return DataSourceSchemaPropertyType.ObjectValue;
 		}
-    }
 
-   
+        private DataSourceBatchCompletedCallback _batchCompleted;
+        public DataSourceBatchCompletedCallback BatchCompleted
+        {
+            get
+            {
+                return _batchCompleted;
+            }
+            set
+            {
+                _batchCompleted = value;
+            }
+        }
+
+        public void SetItemValue(object item, string valueName, object value)
+        {
+            // does nothing.
+        }
+
+        public void RemoveItem(object item)
+        {
+            // does nothing.
+        }
+
+        public void AddItem(object item)
+        {
+            // does nothing.
+        }
+
+        public void CreateBatchRequest(TransactionState[] changes)
+        {
+            if (_worker != null)
+            {
+                _worker.CreateBatchRequest(changes);
+            }
+        }
+    }
 }

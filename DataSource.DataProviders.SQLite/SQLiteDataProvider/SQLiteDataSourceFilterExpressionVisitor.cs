@@ -283,7 +283,6 @@ namespace Infragistics.Controls.DataSource
                 case FilterExpressionFunctionType.Ceiling:
                     throw new NotImplementedException();
                     //functionName = "ceiling";
-                    break;
                 case FilterExpressionFunctionType.Concat:
                     between = " || ";
                     break;
@@ -294,7 +293,6 @@ namespace Infragistics.Controls.DataSource
                     break;
 				case FilterExpressionFunctionType.Day:
                     throw new NotImplementedException();
-                    break;
 				case FilterExpressionFunctionType.EndsWith:
                     unquote = true;
                     between = " LIKE '%";
@@ -302,10 +300,8 @@ namespace Infragistics.Controls.DataSource
                     break;
                 case FilterExpressionFunctionType.Floor:
                     throw new NotImplementedException();
-                    break;
                 case FilterExpressionFunctionType.Hour:
                     throw new NotImplementedException();
-                    break;
                 case FilterExpressionFunctionType.IndexOf:
                     functionName = "intstr";
                     break;
@@ -314,10 +310,8 @@ namespace Infragistics.Controls.DataSource
                     break;
                 case FilterExpressionFunctionType.Minute:
                     throw new NotImplementedException();
-                    break;
                 case FilterExpressionFunctionType.Month:
                     throw new NotImplementedException();
-                    break;
                 case FilterExpressionFunctionType.Replace:
                     functionName = "replace";
                     break;
@@ -326,7 +320,6 @@ namespace Infragistics.Controls.DataSource
                     break;
                 case FilterExpressionFunctionType.Second:
                     throw new NotImplementedException();
-                    break;
                 case FilterExpressionFunctionType.StartsWith:
                     unquote = true;
                     between = " LIKE '";
@@ -346,7 +339,6 @@ namespace Infragistics.Controls.DataSource
                     break;
                 case FilterExpressionFunctionType.Year:
                     throw new NotImplementedException();
-                    break;
             }
 
             if (functionName != null)
