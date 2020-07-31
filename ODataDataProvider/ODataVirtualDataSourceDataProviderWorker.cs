@@ -4,9 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
-#if !PCL
-using GridODataTest;
-#endif
 
 using System.Xml;
 using Infragistics.Controls.DataSource;
