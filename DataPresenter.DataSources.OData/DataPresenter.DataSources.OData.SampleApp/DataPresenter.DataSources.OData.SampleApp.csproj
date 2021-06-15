@@ -40,25 +40,26 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="InfragisticsWPF4.Controls.Editors.XamColorPicker.v19.2, Version=19.2.0.9000, Culture=neutral, PublicKeyToken=1102135f7483647e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\XAML\2019.2\Source\Build\InfragisticsWPF4.Controls.Editors.XamColorPicker.v19.2.dll</HintPath>
+    <Reference Include="InfragisticsWPF, Version=21.1.20211.27, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infragistics.WPF.21.1.27\lib\net40\InfragisticsWPF.dll</HintPath>
     </Reference>
-    <Reference Include="InfragisticsWPF4.DataPresenter.DataSources.Async.v19.2, Version=19.2.0.9000, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\XAML\2019.2\Source\Build\InfragisticsWPF4.DataPresenter.DataSources.Async.v19.2.dll</HintPath>
+    <Reference Include="InfragisticsWPF.Controls.Editors.XamColorPicker, Version=21.1.20211.27, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infragistics.WPF.ColorPicker.21.1.27\lib\net40\InfragisticsWPF.Controls.Editors.XamColorPicker.dll</HintPath>
     </Reference>
-    <Reference Include="InfragisticsWPF4.DataPresenter.v19.2, Version=19.2.0.9000, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\XAML\2019.2\Source\Build\InfragisticsWPF4.DataPresenter.v19.2.dll</HintPath>
+    <Reference Include="InfragisticsWPF.Controls.Editors.XamSlider, Version=21.1.20211.27, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infragistics.WPF.Slider.21.1.27\lib\net40\InfragisticsWPF.Controls.Editors.XamSlider.dll</HintPath>
     </Reference>
-    <Reference Include="InfragisticsWPF4.Editors.v19.2, Version=19.2.0.9000, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\XAML\2019.2\Source\Build\InfragisticsWPF4.Editors.v19.2.dll</HintPath>
+    <Reference Include="InfragisticsWPF.DataPresenter, Version=21.1.20211.27, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infragistics.WPF.DataGrids.21.1.27\lib\net40\InfragisticsWPF.DataPresenter.dll</HintPath>
     </Reference>
-    <Reference Include="InfragisticsWPF4.v19.2, Version=19.2.0.9000, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\XAML\2019.2\Source\Build\InfragisticsWPF4.v19.2.dll</HintPath>
+    <Reference Include="InfragisticsWPF.DataPresenter.DataSources.Async, Version=21.1.20211.27, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infragistics.WPF.DataGrids.Async.21.1.27\lib\net40\InfragisticsWPF.DataPresenter.DataSources.Async.dll</HintPath>
+    </Reference>
+    <Reference Include="InfragisticsWPF.DataVisualization, Version=21.1.20211.27, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infragistics.WPF.DataVisualization.21.1.27\lib\net40\InfragisticsWPF.DataVisualization.dll</HintPath>
+    </Reference>
+    <Reference Include="InfragisticsWPF.Editors, Version=21.1.20211.27, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infragistics.WPF.Editors.21.1.27\lib\net40\InfragisticsWPF.Editors.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Data.Edm, Version=5.8.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Data.Edm.5.8.4\lib\net40\Microsoft.Data.Edm.dll</HintPath>
