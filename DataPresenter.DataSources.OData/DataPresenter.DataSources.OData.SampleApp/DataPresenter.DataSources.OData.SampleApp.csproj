@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DataPresenter.DataSources.OData.SampleApp</RootNamespace>
     <AssemblyName>DataPresenter.DataSources.OData.SampleApp</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -18,6 +18,7 @@
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -39,28 +40,59 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="InfragisticsWPF4.Controls.Editors.XamColorPicker.v19.2, Version=19.2.0.9000, Culture=neutral, PublicKeyToken=1102135f7483647e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\XAML\2019.2\Source\Build\InfragisticsWPF4.Controls.Editors.XamColorPicker.v19.2.dll</HintPath>
+    <Reference Include="InfragisticsWPF, Version=21.1.20211.27, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infragistics.WPF.21.1.27\lib\net40\InfragisticsWPF.dll</HintPath>
     </Reference>
-    <Reference Include="InfragisticsWPF4.DataPresenter.DataSources.Async.v19.2, Version=19.2.0.9000, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\XAML\2019.2\Source\Build\InfragisticsWPF4.DataPresenter.DataSources.Async.v19.2.dll</HintPath>
+    <Reference Include="InfragisticsWPF.Controls.Editors.XamColorPicker, Version=21.1.20211.27, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infragistics.WPF.ColorPicker.21.1.27\lib\net40\InfragisticsWPF.Controls.Editors.XamColorPicker.dll</HintPath>
     </Reference>
-    <Reference Include="InfragisticsWPF4.DataPresenter.v19.2, Version=19.2.0.9000, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\XAML\2019.2\Source\Build\InfragisticsWPF4.DataPresenter.v19.2.dll</HintPath>
+    <Reference Include="InfragisticsWPF.Controls.Editors.XamSlider, Version=21.1.20211.27, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infragistics.WPF.Slider.21.1.27\lib\net40\InfragisticsWPF.Controls.Editors.XamSlider.dll</HintPath>
     </Reference>
-    <Reference Include="InfragisticsWPF4.Editors.v19.2, Version=19.2.0.9000, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\XAML\2019.2\Source\Build\InfragisticsWPF4.Editors.v19.2.dll</HintPath>
+    <Reference Include="InfragisticsWPF.DataPresenter, Version=21.1.20211.27, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infragistics.WPF.DataGrids.21.1.27\lib\net40\InfragisticsWPF.DataPresenter.dll</HintPath>
     </Reference>
-    <Reference Include="InfragisticsWPF4.v19.2, Version=19.2.0.9000, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\work\NetAdvantage\DEV\XAML\2019.2\Source\Build\InfragisticsWPF4.v19.2.dll</HintPath>
+    <Reference Include="InfragisticsWPF.DataPresenter.DataSources.Async, Version=21.1.20211.27, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infragistics.WPF.DataGrids.Async.21.1.27\lib\net40\InfragisticsWPF.DataPresenter.DataSources.Async.dll</HintPath>
+    </Reference>
+    <Reference Include="InfragisticsWPF.DataVisualization, Version=21.1.20211.27, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infragistics.WPF.DataVisualization.21.1.27\lib\net40\InfragisticsWPF.DataVisualization.dll</HintPath>
+    </Reference>
+    <Reference Include="InfragisticsWPF.Editors, Version=21.1.20211.27, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <HintPath>..\packages\Infragistics.WPF.Editors.21.1.27\lib\net40\InfragisticsWPF.Editors.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Data.Edm, Version=5.8.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Data.Edm.5.8.4\lib\net40\Microsoft.Data.Edm.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Data.OData, Version=5.8.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Data.OData.5.8.4\lib\net40\Microsoft.Data.OData.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.OData.Core, Version=7.6.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.OData.Core.7.6.1\lib\portable-net45+win8+wpa81\Microsoft.OData.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.OData.Edm, Version=7.6.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.OData.Edm.7.6.1\lib\portable-net45+win8+wpa81\Microsoft.OData.Edm.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Spatial, Version=7.6.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Spatial.7.6.1\lib\portable-net45+win8+wpa81\Microsoft.Spatial.dll</HintPath>
+    </Reference>
+    <Reference Include="Simple.OData.Client.Core, Version=5.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Simple.OData.Client.5.10.0.1\lib\net452\Simple.OData.Client.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Simple.OData.Client.Dynamic, Version=5.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Simple.OData.Client.5.10.0.1\lib\net452\Simple.OData.Client.Dynamic.dll</HintPath>
+    </Reference>
+    <Reference Include="Simple.OData.Client.V3.Adapter, Version=5.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Simple.OData.Client.5.10.0.1\lib\net452\Simple.OData.Client.V3.Adapter.dll</HintPath>
+    </Reference>
+    <Reference Include="Simple.OData.Client.V4.Adapter, Version=5.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Simple.OData.Client.5.10.0.1\lib\net452\Simple.OData.Client.V4.Adapter.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Spatial, Version=5.8.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Spatial.5.8.4\lib\net40\System.Spatial.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -111,6 +143,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
