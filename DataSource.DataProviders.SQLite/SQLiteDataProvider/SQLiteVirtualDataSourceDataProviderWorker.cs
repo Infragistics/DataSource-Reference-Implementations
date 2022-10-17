@@ -418,7 +418,7 @@ namespace Infragistics.Controls.DataSource
             for (var i = 0; i < SummaryDescriptions.Count; i++)
             {
                 object summaryValue = null;
-                if (SummaryDescriptions[i].Operand == SummaryOperand.Count)
+                if (SummaryDescriptions[i].Operand == DataSourceSummaryOperand.Count)
                 {
                     if (groupingFieldProperty != null)
                     {
@@ -706,7 +706,7 @@ namespace Infragistics.Controls.DataSource
             bool countExists = false;
             for (var i = 0; i < SummaryDescriptions.Count; i++)
             {
-                if (SummaryDescriptions[i].Operand == SummaryOperand.Count && (ignoreCount || countExists))
+                if (SummaryDescriptions[i].Operand == DataSourceSummaryOperand.Count && (ignoreCount || countExists))
                 {
                     continue;
                 }
@@ -719,19 +719,19 @@ namespace Infragistics.Controls.DataSource
                 var summaryFormat = "{0}({1}) as {1}";
                 switch (SummaryDescriptions[i].Operand)
                 {
-                    case SummaryOperand.Sum:
+                    case DataSourceSummaryOperand.Sum:
                         sb.Append(string.Format(summaryFormat, "SUM", SummaryDescriptions[i].PropertyName));
                         break;
-                    case SummaryOperand.Average:
+                    case DataSourceSummaryOperand.Average:
                         sb.Append(string.Format(summaryFormat, "AVG", SummaryDescriptions[i].PropertyName));
                         break;
-                    case SummaryOperand.Min:
+                    case DataSourceSummaryOperand.Min:
                         sb.Append(string.Format(summaryFormat, "MIN", SummaryDescriptions[i].PropertyName));
                         break;
-                    case SummaryOperand.Max:
+                    case DataSourceSummaryOperand.Max:
                         sb.Append(string.Format(summaryFormat, "MAX", SummaryDescriptions[i].PropertyName));
                         break;
-                    case SummaryOperand.Count:
+                    case DataSourceSummaryOperand.Count:
                         sb.Append("COUNT(" + groupingField + ") as " + groupingField);
                         countExists = true;
                         break;

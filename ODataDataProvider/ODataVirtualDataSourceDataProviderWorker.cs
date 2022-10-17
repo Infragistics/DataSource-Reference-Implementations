@@ -533,7 +533,7 @@ namespace Infragistics.Controls.DataSource
                 for (var i = 0; i < _summaryDescriptions.Count; i++)
                 {
                     var summary = _summaryDescriptions[i];
-                    if (summary.Operand == SummaryOperand.Count && (ignoreCount || countExists))
+                    if (summary.Operand == DataSourceSummaryOperand.Count && (ignoreCount || countExists))
                     {
                         continue;
                     }
@@ -545,19 +545,19 @@ namespace Infragistics.Controls.DataSource
 
                     switch (summary.Operand)
                     {
-                        case SummaryOperand.Average:
+                        case DataSourceSummaryOperand.Average:
                             query += summary.PropertyName + " with average as " + summary.PropertyName + "Average";
                             break;
-                        case SummaryOperand.Min:
+                        case DataSourceSummaryOperand.Min:
                             query += summary.PropertyName + " with min as " + summary.PropertyName + "Min";
                             break;
-                        case SummaryOperand.Max:
+                        case DataSourceSummaryOperand.Max:
                             query += summary.PropertyName + " with max as " + summary.PropertyName + "Max";
                             break;
-                        case SummaryOperand.Sum:
+                        case DataSourceSummaryOperand.Sum:
                             query += summary.PropertyName + " with sum as " + summary.PropertyName + "Sum";
                             break;
-                        case SummaryOperand.Count:
+                        case DataSourceSummaryOperand.Count:
                             query += "$count as $__count";
                             countExists = true;
                             break;
@@ -579,19 +579,19 @@ namespace Infragistics.Controls.DataSource
                 var summaryName = propertyName;
                 switch (summary.Operand)
                 {
-                    case SummaryOperand.Average:
+                    case DataSourceSummaryOperand.Average:
                         summaryName += "Average";
                         break;
-                    case SummaryOperand.Min:
+                    case DataSourceSummaryOperand.Min:
                         summaryName += "Min";
                         break;
-                    case SummaryOperand.Max:
+                    case DataSourceSummaryOperand.Max:
                         summaryName += "Max";
                         break;
-                    case SummaryOperand.Sum:
+                    case DataSourceSummaryOperand.Sum:
                         summaryName += "Sum";
                         break;
-                    case SummaryOperand.Count:
+                    case DataSourceSummaryOperand.Count:
                         summaryName = "$__count";
                         break;
                 }
@@ -604,7 +604,7 @@ namespace Infragistics.Controls.DataSource
                 object summaryValue = data[summaryName];
                 // odata is returning strings to us so we need to convert it to the appropriate
                 // type.
-                if (summary.Operand == SummaryOperand.Count)
+                if (summary.Operand == DataSourceSummaryOperand.Count)
                 {
                     summaryValue = Convert.ToInt32(data[summaryName]);
                 }
