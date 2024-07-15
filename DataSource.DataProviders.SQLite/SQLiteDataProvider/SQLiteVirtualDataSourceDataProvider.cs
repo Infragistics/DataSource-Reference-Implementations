@@ -135,6 +135,7 @@ namespace Infragistics.Controls.DataSource
                 GroupDescriptions = _groupDescriptions,
                 FilterExpressions = _filterExpressions,
                 PropertiesRequested = _propertiesRequested,
+                SchemaIncludedProperties = _schemaIncludedProperties,
                 SummaryDescriptions = _summaryDescriptions,
                 SummaryScope = _summaryScope
             };
@@ -530,6 +531,20 @@ namespace Infragistics.Controls.DataSource
             set
             {
                 _propertiesRequested = value;
+                QueueAutoRefresh();
+            }
+        }
+
+        private string[] _schemaIncludedProperties;
+        public string[] SchemaIncludedProperties
+        {
+            get
+            {
+                return _schemaIncludedProperties;
+            }
+            set
+            {
+                _schemaIncludedProperties = value;
                 QueueAutoRefresh();
             }
         }

@@ -35,6 +35,7 @@ namespace Infragistics.Controls.DataSource
         public FilterExpressionCollection FilterExpressions { get; internal set; }
 
         public string[] PropertiesRequested { get; set; }
+        public string[] SchemaIncludedProperties { get; set; }
         public SortDescriptionCollection GroupDescriptions { get; internal set; }
         public string GroupingColumn { get; internal set; }
 
@@ -64,6 +65,7 @@ namespace Infragistics.Controls.DataSource
         private SummaryDescriptionCollection _summaryDescriptions;
         private FilterExpressionCollection _filterExpressions;
         private string[] _desiredPropeties;
+        private string[] _schemaIncludedProperties;
         private DataSourceSummaryScope _summaryScope;
 
         protected SortDescriptionCollection SortDescriptions
@@ -175,6 +177,7 @@ namespace Infragistics.Controls.DataSource
             }
             _filterExpressions = settings.FilterExpressions;
             _desiredPropeties = settings.PropertiesRequested;
+            _schemaIncludedProperties = settings.SchemaIncludedProperties;
             _propertyMappings = ResolvePropertyMappings();
             ActualSchema = ResolveSchema();
             if (_groupDescriptions != null && _groupDescriptions.Count > 0)
@@ -606,6 +609,32 @@ namespace Infragistics.Controls.DataSource
             var actualSchema = new DefaultDataSourceSchema(
                 schema.PropertyNames, schema.PropertyTypes, actualPrimaryKey, schema.PropertyDataIntents);
 
+            if (_schemaIncludedProperties != null)
+            {
+                List<string> propertyNames = new List<string>();
+                List<DataSourceSchemaPropertyType> propertyTypes = new List<DataSourceSchemaPropertyType>();
+
+                for (int i = 0; i < schema.PropertyNames.Length; i++)
+                {
+                    bool found = false;
+                    foreach (var includedProperty in _schemaIncludedProperties)
+                    {
+                        if (includedProperty == schema.PropertyNames[i])
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found)
+                    {
+                        continue;
+                    }
+                    propertyNames.Add(schema.PropertyNames[i]);
+                    propertyTypes.Add(schema.PropertyTypes[i]);
+                }
+                actualSchema = new DefaultDataSourceSchema(
+                    propertyNames.ToArray(), propertyTypes.ToArray(), schema.PrimaryKey, schema.PropertyDataIntents);
+            }
             return actualSchema;
         }
 
