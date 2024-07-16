@@ -58,7 +58,7 @@ namespace Infragistics.Controls.DataSource
         private FilterExpressionCollection _filterExpressions;
         private SummaryDescriptionCollection _summaryDescriptions;
         private string[] _desiredPropeties;
-        private string[] _schemaIncludedProperties;
+        private HashSet<string> _schemaIncludedProperties;
 
         protected SortDescriptionCollection SortDescriptions
         {
@@ -139,6 +139,14 @@ namespace Infragistics.Controls.DataSource
             _sortDescriptions = settings.SortDescriptions;
             _filterExpressions = settings.FilterExpressions;
             _desiredPropeties = settings.PropertiesRequested;
+            if (settings.SchemaIncludedProperties != null)
+            {
+                _schemaIncludedProperties = new HashSet<string>();
+                for (int i = 0; i < settings.SchemaIncludedProperties.Length; i++)
+                {
+                    _schemaIncludedProperties.Add(settings.SchemaIncludedProperties[i]);
+                }
+            }
             _groupDescriptions = settings.GroupDescriptions;
             _summaryDescriptions = settings.SummaryDescriptions;
             _summaryScope = settings.SummaryScope;
@@ -332,16 +340,7 @@ namespace Infragistics.Controls.DataSource
 
                 for (int i = 0; i < schema.PropertyNames.Length; i++)
                 {
-                    bool found = false;
-                    foreach (var includedProperty in this._schemaIncludedProperties)
-                    {
-                        if (includedProperty == schema.PropertyNames[i])
-                        {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found)
+                    if (!_schemaIncludedProperties.Contains(schema.PropertyNames[i]))
                     {
                         continue;
                     }
