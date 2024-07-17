@@ -336,7 +336,6 @@ namespace Infragistics.Controls.DataSource
             {
                 List<string> propertyNames = new List<string>();
                 List<DataSourceSchemaPropertyType> propertyTypes = new List<DataSourceSchemaPropertyType>();
-                List<string> primaryKey = new List<string>();
 
                 for (int i = 0; i < schema.PropertyNames.Length; i++)
                 {
