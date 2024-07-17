@@ -29,6 +29,7 @@ namespace Infragistics.Controls.DataSource
         public FilterExpressionCollection FilterExpressions { get; set; }
 
         public string[] PropertiesRequested { get; set; }
+        public string[] SchemaIncludedProperties { get; set; }
         public SortDescriptionCollection GroupDescriptions { get; internal set; }
         public bool IsAggregationSupportedByServer { get; internal set; }
 
@@ -57,6 +58,7 @@ namespace Infragistics.Controls.DataSource
         private FilterExpressionCollection _filterExpressions;
         private SummaryDescriptionCollection _summaryDescriptions;
         private string[] _desiredPropeties;
+        private HashSet<string> _schemaIncludedProperties;
 
         protected SortDescriptionCollection SortDescriptions
         {
@@ -137,6 +139,14 @@ namespace Infragistics.Controls.DataSource
             _sortDescriptions = settings.SortDescriptions;
             _filterExpressions = settings.FilterExpressions;
             _desiredPropeties = settings.PropertiesRequested;
+            if (settings.SchemaIncludedProperties != null)
+            {
+                _schemaIncludedProperties = new HashSet<string>();
+                for (int i = 0; i < settings.SchemaIncludedProperties.Length; i++)
+                {
+                    _schemaIncludedProperties.Add(settings.SchemaIncludedProperties[i]);
+                }
+            }
             _groupDescriptions = settings.GroupDescriptions;
             _summaryDescriptions = settings.SummaryDescriptions;
             _summaryScope = settings.SummaryScope;
@@ -321,7 +331,24 @@ namespace Infragistics.Controls.DataSource
             t.Wait();
             var metadataDocument = t.Result;
             ODataSchemaProvider sp = new ODataSchemaProvider(metadataDocument);
-			return sp.GetODataDataSourceSchema(this._entitySet);
+            var schema = sp.GetODataDataSourceSchema(this._entitySet);
+            if (this._schemaIncludedProperties != null)
+            {
+                List<string> propertyNames = new List<string>();
+                List<DataSourceSchemaPropertyType> propertyTypes = new List<DataSourceSchemaPropertyType>();
+
+                for (int i = 0; i < schema.PropertyNames.Length; i++)
+                {
+                    if (!_schemaIncludedProperties.Contains(schema.PropertyNames[i]))
+                    {
+                        continue;
+                    }
+                    propertyNames.Add(schema.PropertyNames[i]);
+                    propertyTypes.Add(schema.PropertyTypes[i]);
+                }
+                schema = new ODataDataSourceSchema(propertyNames.ToArray(), propertyTypes.ToArray(), schema.PrimaryKey);
+            }
+            return schema;
         }
         private ISectionInformation[] ResolveGroupInformation()
         {
