@@ -417,6 +417,19 @@ namespace Infragistics.Controls.DataSource
             }
         }
 
+        private string[] _caseInsensitiveSortProperties;
+        public string[] CaseInsensitiveSortProperties
+        {
+            get
+            {
+                return _caseInsensitiveSortProperties;
+            }
+            set
+            {
+                _caseInsensitiveSortProperties = value;
+            }
+        }
+
         private string[] _propertiesRequested;
         public string[] PropertiesRequested
         {
